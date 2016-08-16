@@ -15,6 +15,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+import brotherhood.onboardcomputer.background.BackgroundView;
 import brotherhood.onboardcomputer.utils.MetricUtil;
 
 @EActivity(R.layout.activity_menu)
@@ -22,6 +23,9 @@ public class MenuActivity extends AppCompatActivity {
 
     @ViewById(R.id.centerMenuButton)
     View centerActionButton;
+
+    @ViewById
+    BackgroundView backgroundView;
 
     @ViewById
     TextView title;
@@ -62,7 +66,14 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         animationThreadRun = false;
+        backgroundView.destroy();
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
     }
 
     private void createCircleMenu() {

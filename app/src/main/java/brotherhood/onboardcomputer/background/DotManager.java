@@ -12,10 +12,11 @@ import java.util.Random;
  * Created by Wojtas on 2016-08-09.
  */
 public class DotManager {
-    public static final int REFRESH_THREAD_TIME = 1;
+    public static final int REFRESH_THREAD_TIME = 30;
     private static final float RANGE_OF_LINES = .21f;
-    private static final float SPEED = 1.825f;
-    private static final int DOTS = 10;
+    private static final float SPEED = 2.125f;
+    private static final int DOTS = 20;
+    private static final int MAX_DOTS = 35;
     private int W;
     private int H;
     private float maxDistanceBetweenDots = H * RANGE_OF_LINES;
@@ -36,7 +37,7 @@ public class DotManager {
 
         linePaint = new Paint();
         linePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        linePaint.setColor(Color.WHITE);
+        linePaint.setColor(0xff0000);
 
         dots = new ArrayList<>();
         for (int i = 0; i < DOTS; i++) {
@@ -80,7 +81,6 @@ public class DotManager {
 
         for (int i = 0; i < dotsToAdd; i++)
             addNewDot();
-
     }
 
     private float calculateDistance(Dot dot1, Dot dot2) {
@@ -92,6 +92,8 @@ public class DotManager {
     }
 
     private void addNewDot() {
+        if (dots.size() > MAX_DOTS)
+            dots.remove(0);
         Dot dot = new Dot(drawXinOutsideArea(), drawYinOutsideArea());
         dot.setVelocityX(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
         dot.setVelocityY(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
@@ -99,22 +101,24 @@ public class DotManager {
         dots.add(dot);
     }
 
-    private float drawXinOutsideArea(){
-        float result = - random.nextInt((int) (W*0.05f));
-        if(random.nextBoolean())
+    private float drawXinOutsideArea() {
+        float result = -random.nextInt((int) (W * 0.05f));
+        if (random.nextBoolean())
             result = W + result;
         return result;
     }
 
-    private float drawYinOutsideArea(){
-        float result = - random.nextInt((int) (H*0.05f));
-        if(random.nextBoolean())
+    private float drawYinOutsideArea() {
+        float result = -random.nextInt((int) (H * 0.05f));
+        if (random.nextBoolean())
             result = H + result;
         return result;
     }
 
-    public void addDot(float x,float y){
-        Dot dot = new Dot(x,y);
+    public void addDotOnPosition(float x, float y) {
+        if (dots.size() > MAX_DOTS)
+            dots.remove(0);
+        Dot dot = new Dot(x, y);
         dot.setVelocityX(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
         dot.setVelocityY(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
         dot.setSize(random.nextInt(16) + 5);

@@ -25,6 +25,10 @@ public class BackgroundView extends View {
         H = display.getHeight();
         dotManager = new DotManager(W, H - getStatusBarHeight());
 
+        startDrawingThread();
+    }
+
+    private void startDrawingThread(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -35,7 +39,7 @@ public class BackgroundView extends View {
                         e.printStackTrace();
                     }
 
-                    ((Activity) context).runOnUiThread(new Runnable() {
+                    ((Activity) getContext()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             invalidate();
@@ -63,7 +67,16 @@ public class BackgroundView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN)
-            dotManager.addDot(event.getX(), event.getY());
+            dotManager.addDotOnPosition(event.getX(), event.getY());
         return super.onTouchEvent(event);
+    }
+
+    public void destroy(){
+        refreshThreadRunning = false;
+    }
+
+    public void resume(){
+        refreshThreadRunning = true;
+        startDrawingThread();
     }
 }

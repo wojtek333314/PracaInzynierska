@@ -13,9 +13,9 @@ import java.util.Random;
  */
 public class DotManager {
     public static final int REFRESH_THREAD_TIME = 1;
-    private static final float RANGE_OF_LINES = .19f;
-    private static final float SPEED = .25f;
-    private static final int DOTS = 30;
+    private static final float RANGE_OF_LINES = .21f;
+    private static final float SPEED = 1.825f;
+    private static final int DOTS = 10;
     private int W;
     private int H;
     private float maxDistanceBetweenDots = H * RANGE_OF_LINES;
@@ -111,5 +111,13 @@ public class DotManager {
         if(random.nextBoolean())
             result = H + result;
         return result;
+    }
+
+    public void addDot(float x,float y){
+        Dot dot = new Dot(x,y);
+        dot.setVelocityX(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
+        dot.setVelocityY(random.nextFloat() * SPEED * (random.nextBoolean() ? -1 : 1));
+        dot.setSize(random.nextInt(16) + 5);
+        dots.add(dot);
     }
 }

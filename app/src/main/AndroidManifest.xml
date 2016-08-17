@@ -3,6 +3,8 @@
     package="brotherhood.onboardcomputer">
 
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -18,6 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".speechToText.services.SpeechToTextService"/>
+
     </application>
 
 </manifest>

@@ -1,6 +1,15 @@
 package brotherhood.onboardcomputer;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Build;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,10 +25,11 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.background.BackgroundView;
+import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
 import brotherhood.onboardcomputer.utils.MetricUtil;
 
 @EActivity(R.layout.activity_menu)
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends FragmentActivity {
 
     @ViewById(R.id.centerMenuButton)
     View centerActionButton;
@@ -32,6 +42,39 @@ public class MenuActivity extends AppCompatActivity {
 
     private FloatingActionMenu actionMenu;
     private boolean animationThreadRun = true;
+    private int mBindFlag;
+    private Messenger mServiceMessenger;
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            System.out.println("service connected!");
+            mServiceMessenger = new Messenger(service);
+            Message msg = new Message();
+            msg.what = SpeechToTextService.MSG_RECOGNIZER_START_LISTENING;
+
+            try
+            {
+                mServiceMessenger.send(msg);
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            System.out.println("service DISconnected!");
+             mServiceMessenger = null;
+        }
+
+    }; // mServiceConnection
+
+
 
     @AfterViews
     void afterView() {
@@ -61,6 +104,28 @@ public class MenuActivity extends AppCompatActivity {
                 }
             }
         }).start();
+
+        Intent service = new Intent(getBaseContext(), SpeechToTextService.class);
+        startService(service);
+        mBindFlag = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH ? 0 : Context.BIND_ABOVE_CLIENT;
+
+        bindService(new Intent(this, SpeechToTextService.class), mServiceConnection, mBindFlag);
+    }
+
+
+
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        if (mServiceMessenger != null)
+        {
+            unbindService(mServiceConnection);
+            mServiceMessenger = null;
+        }
+
     }
 
     @Override

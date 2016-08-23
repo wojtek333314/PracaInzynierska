@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.background;
+package brotherhood.onboardcomputer.views.dotsBackground;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

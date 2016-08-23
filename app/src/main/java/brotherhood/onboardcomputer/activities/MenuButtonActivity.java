@@ -1,15 +1,7 @@
-package brotherhood.onboardcomputer;
+package brotherhood.onboardcomputer.activities;
 
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Build;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,57 +16,35 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-import brotherhood.onboardcomputer.background.BackgroundView;
-import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
+import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
+import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
 import brotherhood.onboardcomputer.utils.MetricUtil;
 
+/**
+ * Created by Wojtas on 2016-08-22.
+ */
 @EActivity(R.layout.activity_menu)
-public class MenuActivity extends FragmentActivity {
+public class MenuButtonActivity extends Activity {
+    public static final String STRING_ACTION = "string";
 
     @ViewById(R.id.centerMenuButton)
     View centerActionButton;
 
     @ViewById
-    BackgroundView backgroundView;
+    TextView commandText;
 
     @ViewById
     TextView title;
 
+    @ViewById
+    BackgroundView backgroundView;
+
+    @ViewById
+    RecognizeButton recognizeButton;
+
     private FloatingActionMenu actionMenu;
     private boolean animationThreadRun = true;
-    private int mBindFlag;
-    private Messenger mServiceMessenger;
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection()
-    {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service)
-        {
-            System.out.println("service connected!");
-            mServiceMessenger = new Messenger(service);
-            Message msg = new Message();
-            msg.what = SpeechToTextService.MSG_RECOGNIZER_START_LISTENING;
-
-            try
-            {
-                mServiceMessenger.send(msg);
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name)
-        {
-            System.out.println("service DISconnected!");
-             mServiceMessenger = null;
-        }
-
-    }; // mServiceConnection
-
-
 
     @AfterViews
     void afterView() {
@@ -104,41 +74,6 @@ public class MenuActivity extends FragmentActivity {
                 }
             }
         }).start();
-
-        Intent service = new Intent(getBaseContext(), SpeechToTextService.class);
-        startService(service);
-        mBindFlag = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH ? 0 : Context.BIND_ABOVE_CLIENT;
-
-        bindService(new Intent(this, SpeechToTextService.class), mServiceConnection, mBindFlag);
-    }
-
-
-
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-
-        if (mServiceMessenger != null)
-        {
-            unbindService(mServiceConnection);
-            mServiceMessenger = null;
-        }
-
-    }
-
-    @Override
-    protected void onPause() {
-        animationThreadRun = false;
-        backgroundView.destroy();
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        backgroundView.resume();
     }
 
     private void createCircleMenu() {
@@ -175,5 +110,31 @@ public class MenuActivity extends FragmentActivity {
                 .addSubActionView(infoButton)
                 .attachTo(centerActionButton)
                 .build();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RecognizeButton.RECOGNIZE_RESPONSE && resultCode == RESULT_OK) {
+            recognizeButton.onRecognize(data);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        animationThreadRun = false;
+        backgroundView.destroy();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        recognizeButton.destroy();
+        super.onDestroy();
     }
 }

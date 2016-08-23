@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
 
-    <brotherhood.onboardcomputer.background.BackgroundView
+    <brotherhood.onboardcomputer.views.dotsBackground.BackgroundView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/backgroundView"
@@ -23,7 +23,7 @@
     <View
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:background="@drawable/menu_icon"
+        android:background="@android:color/transparent"
         android:id="@+id/centerMenuButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -41,5 +41,21 @@
         android:textSize="30sp"
         android:background="@android:color/transparent"
         android:autoText="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/commandText"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent" />
+
+    <brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/recognizeButton"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

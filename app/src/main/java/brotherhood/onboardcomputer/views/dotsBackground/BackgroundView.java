@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.background;
+package brotherhood.onboardcomputer.views.dotsBackground;
 
 import android.app.Activity;
 import android.content.Context;

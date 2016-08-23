@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.background;
+package brotherhood.onboardcomputer.views.dotsBackground;
 
 /**
  * Created by Wojtas on 2016-08-09.

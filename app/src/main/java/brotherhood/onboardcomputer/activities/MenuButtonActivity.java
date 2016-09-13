@@ -17,9 +17,9 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.utils.MetricUtil;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
-import brotherhood.onboardcomputer.utils.MetricUtil;
 
 /**
  * Created by Wojtas on 2016-08-22.
@@ -94,6 +94,12 @@ public class MenuButtonActivity extends Activity {
         ImageView engineIcon = new ImageView(this);
         engineIcon.setImageDrawable(getResources().getDrawable(R.drawable.engine_icon));
         SubActionButton engineButton = engineItem.setContentView(engineIcon).build();
+        engineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));
+            }
+        });
 
         SubActionButton.Builder infoItem = new SubActionButton.Builder(this);
         ImageView infoIcon = new ImageView(this);

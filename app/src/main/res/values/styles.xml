@@ -10,6 +10,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/fontColor</item>
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
     </style>
 
+    <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button">
+        <item name="android:textColor">@color/colorAccentRed</item>
+    </style>
 </resources>

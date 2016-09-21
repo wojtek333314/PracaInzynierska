@@ -85,6 +85,12 @@ public class MenuButtonActivity extends Activity {
         ImageView botIcon = new ImageView(this);
         botIcon.setImageDrawable(getResources().getDrawable(R.drawable.bot_icon));
         SubActionButton botButton = botItem.setContentView(botIcon).build();
+        botButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+            }
+        });
 
         ViewGroup.LayoutParams layoutParams = botButton.getLayoutParams();
         layoutParams.width = (int) MetricUtil.convertDpToPixel(this, 60);

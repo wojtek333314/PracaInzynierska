@@ -8,13 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.services.BluetoothConnectionService;
 import brotherhood.onboardcomputer.services.EngineData;
-import brotherhood.onboardcomputer.utils.SimpleListAdapter;
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 
@@ -36,13 +33,8 @@ public class DevicesListActivity extends Activity {
     @ViewById
     Button connectButton;
 
-    @ViewById
-    ListView consoleListView;
-
     private BluetoothController bluetooth;
     private ArrayList<BluetoothDevice> list;
-    private ArrayList<String> consoleList;
-    private SimpleListAdapter consoleAdapter;
     private boolean getDataThreadRunning = true;
     private int atempt = 0;
 
@@ -54,19 +46,19 @@ public class DevicesListActivity extends Activity {
                 EngineData engineData = ((EngineData) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
                 if (engineData != null) {
                     atempt++;
-                    consoleList.clear();
-                    consoleList.add(atempt
-                            + "\n" + engineData.getLast(engineData.getRpm())
+
+                           /* + "\n" + engineData.getLast(engineData.getRpm())
                             + "\n" + engineData.getLast(engineData.getSpeed())
                             + "\noil:" + engineData.getLast(engineData.getOilTemperature())
                             + "\nfuel rate:" + engineData.getLast(engineData.getFuelRate())
                             + "\ncoolant temp:" + engineData.getLast(engineData.getCoolantTemperature())
-                            + "\nfuel pressure:" + engineData.getLast(engineData.getFuelRailAbsolutePressure()) + "\n---------------------");
+                            + "\nfuel pressure:" + engineData.getLast(engineData.getFuelRailAbsolutePressure())
+                            +"\npids:"+engineData.getSupportedPids() + "\n---------------------");*/
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        consoleAdapter.notifyDataSetChanged();
+                      //  consoleAdapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -84,15 +76,6 @@ public class DevicesListActivity extends Activity {
 
     private void initList() {
         list = new ArrayList<>();
-        consoleList = new ArrayList<>();
-        consoleAdapter = new SimpleListAdapter(this, consoleList);
-        consoleListView.setAdapter(consoleAdapter);
-        consoleAdapter.notifyDataSetChanged();
-    }
-
-    @Click(R.id.sendButton)
-    void findDevices() {
-        getDataThreadRunning = !getDataThreadRunning;
     }
 
     void initButton() {
@@ -108,6 +91,7 @@ public class DevicesListActivity extends Activity {
                 Intent serviceIntent = new Intent(DevicesListActivity.this, BluetoothConnectionService.class);
                 serviceIntent.putExtra(BluetoothConnectionService.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
                 startService(serviceIntent);
+                startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
             }
         });
     }
@@ -158,8 +142,6 @@ public class DevicesListActivity extends Activity {
                 if (!isOnList) {
                     RadioButton radioButton = new RadioButton(getApplicationContext());
                     radioButton.setText(text);
-                    consoleList.add(text);
-                    consoleAdapter.notifyDataSetChanged();
                     radioGroup.addView(radioButton);
                     list.add(device);
                 }

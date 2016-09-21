@@ -15,7 +15,7 @@ public class EngineData implements Serializable {
     private ArrayList<String> oilTemperature = new ArrayList<>();
     private ArrayList<String> fuelRailAbsolutePressure = new ArrayList<>();
     private ArrayList<String> fuelRate = new ArrayList<>();
-
+    private ArrayList<String> supportedPids;
     public String getLast(ArrayList<String> list) {
         return list.size() > 0 ? list.get(list.size() - 1) : "NO DATA";
     }
@@ -90,5 +90,14 @@ public class EngineData implements Serializable {
     public EngineData addFuelRate(String fuelRate) {
         this.fuelRate.add(fuelRate);
         return this;
+    }
+
+    public EngineData addSupportedPids(String supportedPids) {
+        this.fuelRate.add(supportedPids);
+        return this;
+    }
+
+    public ArrayList<String> getSupportedPids() {
+        return supportedPids;
     }
 }

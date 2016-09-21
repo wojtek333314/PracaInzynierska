@@ -28,13 +28,14 @@ import brotherhood.onboardcomputer.EcuCommands.CoolantTemperatureCommand;
 import brotherhood.onboardcomputer.EcuCommands.EngineLoadCommand;
 import brotherhood.onboardcomputer.EcuCommands.FuelRailAbsolutePressureCommand;
 import brotherhood.onboardcomputer.EcuCommands.FuelRateCommand;
+import brotherhood.onboardcomputer.EcuCommands.PidsSupportedCommand;
 
 public class BluetoothConnectionService extends Service {
+    public static int UPDATE_INTERVAL = 10;
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
-    private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
 
-    private final int UPDATE_INTERVAL = 2 * 1000;
+    private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
     private Timer timer = new Timer();
     private String deviceAddress = null;
     private boolean serviceRunning = true;
@@ -119,16 +120,18 @@ public class BluetoothConnectionService extends Service {
         final FuelRateCommand fuelRateCommand = new FuelRateCommand();
         final OilTempCommand oilTempCommand = new OilTempCommand();
         final FuelRailAbsolutePressureCommand fuelRailAbsolutePressureCommand = new FuelRailAbsolutePressureCommand();
+        final PidsSupportedCommand supportedPids = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_01_20);
 
         try {
-            engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+     /*       engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
             speedCommand.run(socket.getInputStream(), socket.getOutputStream());
             engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
             engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
             coolantTemperatureCommand.run(socket.getInputStream(), socket.getOutputStream());
             oilTempCommand.run(socket.getInputStream(), socket.getOutputStream());
             fuelRailAbsolutePressureCommand.run(socket.getInputStream(), socket.getOutputStream());
-            fuelRateCommand.run(socket.getInputStream(), socket.getOutputStream());
+            fuelRateCommand.run(socket.getInputStream(), socket.getOutputStream());*/
+            supportedPids.run(socket.getInputStream(), socket.getOutputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -141,6 +144,7 @@ public class BluetoothConnectionService extends Service {
                 .addFuelRailAbsolutePressure(fuelRailAbsolutePressureCommand.getFormattedResult())
                 .addCoolantTemperature(coolantTemperatureCommand.getFormattedResult())
                 .addRpm(engineRpmCommand.getFormattedResult())
+                .addSupportedPids(supportedPids.getFormattedResult())
                 .addFuelRate(fuelRateCommand.getFormattedResult())
                 .addSpeed(speedCommand.getFormattedResult());
         Intent intent = new Intent("engineData");

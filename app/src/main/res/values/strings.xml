@@ -1,4 +1,178 @@
 <resources>
     <string name="app_name">Interface</string>
     <string name="all_connect">Connect</string>
+
+    <string name="table.pids.supported">PIDs supported</string>
+    <string name="real_time">real time</string>
+    <string name="refresh_time">Data refresh interval:</string>
+    <array name="pids_descriptions">
+        <item>PIDs supported</item>
+        <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>
+        <item>Freeze DTC</item>
+        <item>Fuel system status</item>
+        <item>Calculated engine load</item>
+        <item>Engine coolant temperature</item>
+        <item>Short term fuel trim—Bank 1</item>
+        <item>Long term fuel trim—Bank 1</item>
+        <item>Short term fuel trim—Bank 2</item>
+        <item>Long term fuel trim—Bank 2</item>
+        <item>Fuel pressure (gauge pressure)</item>
+        <item>Intake manifold absolute pressure</item>
+        <item>Engine RPM</item>
+        <item>Vehicle speed</item>
+        <item>Timing advance</item>
+        <item>Intake air temperature</item>
+        <item>MAF air flow rate</item>
+        <item>Throttle position</item>
+        <item>Commanded secondary air status</item>
+        <item>Oxygen sensors present (in 2 banks)</item>
+        <item>Oxygen Sensor 1</item>
+        <item>Oxygen Sensor 2</item>
+        <item>Oxygen Sensor 3</item>
+        <item>Oxygen Sensor 4</item>
+        <item>Oxygen Sensor 5</item>
+        <item>Oxygen Sensor 6</item>
+        <item>Oxygen Sensor 7</item>
+        <item>Oxygen Sensor 8</item>
+        <item>OBD standards this vehicle conforms to</item>
+        <item>Oxygen sensors present (in 4 banks)</item>
+        <item>Auxiliary input status</item>
+        <item>Run time since engine start</item>
+        <item>PIDs supported [21 - 40]</item>
+        <item>Distance traveled with malfunction indicator lamp (MIL) on</item>
+        <item>Fuel Rail Pressure (relative to manifold vacuum)</item>
+        <item>Fuel Rail Gauge Pressure (diesel, or gasoline direct injection)</item>
+        <item>Oxygen Sensor 1
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 2
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 3
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 4
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 5
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 6
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 7
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Oxygen Sensor 8
+            AB: Fuel–Air Equivalence Ratio
+            CD: Voltage</item>
+        <item>Commanded EGR</item>
+        <item>EGR Error</item>
+        <item>Commanded evaporative purge</item>
+        <item>Fuel Tank Level Input	</item>
+        <item>Warm-ups since codes cleared</item>
+        <item>Distance traveled since codes cleared</item>
+        <item>Evap. System Vapor Pressure</item>
+        <item>Absolute Barometric Pressure</item>
+        <item>Oxygen Sensor 1
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 2
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 3
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 4
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 5
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 6
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 7
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Oxygen Sensor 8
+            AB: Fuel–Air Equivalence Ratio
+            CD: Current</item>
+        <item>Catalyst Temperature: Bank 1, Sensor 1</item>
+        <item>Catalyst Temperature: Bank 2, Sensor 1</item>
+        <item>Catalyst Temperature: Bank 1, Sensor 2</item>
+        <item>Catalyst Temperature: Bank 2, Sensor 2</item>
+        <item>PIDs supported [41 - 60]</item>
+        <item>Monitor status this drive cycle</item>
+        <item>Control module voltage</item>
+        <item>Absolute load value</item>
+        <item>Fuel–Air commanded equivalence ratio</item>
+        <item>Relative throttle position</item>
+        <item>Ambient air temperature</item>
+        <item>Absolute throttle position B</item>
+        <item>Absolute throttle position C</item>
+        <item>Accelerator pedal position D</item>
+        <item>Accelerator pedal position E</item>
+        <item>Accelerator pedal position F</item>
+        <item>Commanded throttle actuator</item>
+        <item>Time run with MIL on</item>
+        <item>Time since trouble codes cleared</item>
+        <item>Maximum value for Fuel–Air equivalence ratio, oxygen sensor voltage, oxygen sensor current, and intake manifold absolute pressure</item>
+        <item>Maximum value for air flow rate from mass air flow sensor</item>
+        <item>Fuel Type	</item>
+        <item>Ethanol fuel %</item>
+        <item>Absolute Evap system Vapor Pressure</item>
+        <item>Evap system vapor pressure</item>
+        <item>Short term secondary oxygen sensor trim, A: bank 1, B: bank 3</item>
+        <item>Long term secondary oxygen sensor trim, A: bank 1, B: bank 3</item>
+        <item>Short term secondary oxygen sensor trim, A: bank 2, B: bank 4</item>
+        <item>Long term secondary oxygen sensor trim, A: bank 2, B: bank 4</item>
+        <item>Fuel rail absolute pressure</item>
+        <item>Relative accelerator pedal position</item>
+        <item>Hybrid battery pack remaining life</item>
+        <item>Engine oil temperature</item>
+        <item>Fuel injection timing</item>
+        <item>Engine fuel rate</item>
+        <item>Emission requirements to which vehicle is designed</item>
+        <item>PIDs supported [61 - 80]</item>
+        <item>Driver\'s demand engine - percent torque</item>
+        <item>Actual engine - percent torque</item>
+        <item>Engine reference torque</item>
+        <item>Engine percent torque data</item>
+        <item>Auxiliary input / output supported</item>
+        <item>Mass air flow sensor</item>
+        <item>Engine coolant temperature</item>
+        <item>Intake air temperature sensor</item>
+        <item>Commanded EGR and EGR Error</item>
+        <item>Commanded Diesel intake air flow control and relative intake air flow position</item>
+        <item>Exhaust gas recirculation temperature</item>
+        <item>Commanded throttle actuator control and relative throttle position</item>
+        <item>Fuel pressure control system</item>
+        <item>Injection pressure control system</item>
+        <item>Turbocharger compressor inlet pressure</item>
+        <item>Boost pressure control</item>
+        <item>Variable Geometry turbo (VGT) control</item>
+        <item>Wastegate control</item>
+        <item>Exhaust pressure</item>
+        <item>Turbocharger RPM</item>
+        <item>Turbocharger temperature	</item>
+        <item>Turbocharger temperature</item>
+        <item>Charge air cooler temperature (CACT)</item>
+        <item>Exhaust Gas temperature (EGT) Bank 1</item>
+        <item>Exhaust Gas temperature (EGT) Bank 2</item>
+        <item>Diesel particulate filter (DPF)</item>
+        <item>Diesel particulate filter (DPF)</item>
+        <item>Diesel Particulate filter (DPF) temperature</item>
+        <item>NOx NTE control area status</item>
+        <item>PM NTE control area status</item>
+        <item>Engine run time</item>
+        <item>PIDs supported [81 - A0]</item>
+        <item>Engine run time for Auxiliary Emissions Control Device(AECD)</item>
+        <item>Engine run time for Auxiliary Emissions Control Device(AECD)	</item>
+        <item>NOx sensor</item>
+        <item>Manifold surface temperature</item>
+        <item>NOx reagent system</item>
+        <item>Particulate matter (PM) sensor</item>
+        <item>Intake manifold absolute pressure</item>
+    </array>
 </resources>

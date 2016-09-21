@@ -29,6 +29,8 @@
 
         <activity android:name=".activities.DevicesListActivity_"/>
 
+        <activity android:name=".activities.PidsListActivity_"/>
+        
         <service android:name=".speechToText.services.SpeechToTextService"/>
 
         <service android:name=".services.BluetoothConnectionService"/>

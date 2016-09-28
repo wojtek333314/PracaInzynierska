@@ -1,28 +1,26 @@
-package brotherhood.onboardcomputer.EcuCommands;
+package brotherhood.onboardcomputer.ecuCommands;
 
 import android.content.Context;
 
 import com.github.pires.obd.commands.ObdCommand;
 
-import java.math.BigInteger;
+import java.util.LinkedHashMap;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.utils.Helper;
 
-/**
- * Created by Wojtas on 2016-09-13.
- */
 public class PidsSupportedCommand extends ObdCommand {
-
-    private final Range range;
-    private String response = "";
     private Context context;
+    private static LinkedHashMap<String, Pid> response = new LinkedHashMap<>();
     private int offset = 0;
 
     public PidsSupportedCommand(Context context, Range range) {
         super(getCommand(range));
         this.context = context;
-        this.range = range;
-        initOffset();
+
+        for (int i = 0; i < Range.values().length; i++)
+            if (Range.values()[i].equals(range))
+                offset = i;
     }
 
     private static String getCommand(Range range) {
@@ -30,47 +28,36 @@ public class PidsSupportedCommand extends ObdCommand {
             case PIDS_01_20:
                 return "01 00";
             case PIDS_21_40:
-                return "01 00";
-            case PIDS_41_60:
-                return "01 00";
-            case PIDS_61_80:
-                return "01 00";
-            case PIDS_81_A0:
-                return "01 00";
+                return "01 20";
         }
         return "01 00";
     }
 
-    private void initOffset() {
-        for (int i = 0; i < Range.values().length; i++)
-            if (Range.values()[i].equals(range))
-                offset = i;
-    }
-
     @Override
     protected void performCalculations() {
-        response = "";
+        String value = "";
         for (Integer integer : buffer) {
-            response += hexToBinary(Integer.toHexString(integer));
+            value += Helper.hexToBinary(Integer.toHexString(integer));
         }
+        String descriptions[] = context.getResources().getStringArray(R.array.pids_descriptions_mode1);
 
-        String descriptions[] = context.getResources().getStringArray(R.array.pids_descriptions);
-        String result = "";
-        System.out.println("of:"+offset);
-        for (int i = 0; i < response.length(); i++) {
-            System.out.println((descriptions[i + offset * 20] + " | " + response.charAt(i)));
-            result += (descriptions[i + offset * 20] + " | " + response.charAt(i));
+        for (int i = 0; i < value.length(); i++) {
+            int pos = i + offset * 20;
+            response.put(descriptions[pos], new Pid(descriptions[pos], Helper.hexToBinary(String.valueOf(pos)), value.charAt(i) == '1'));
+            System.out.println(descriptions[pos] + "/" + value.charAt(i));
         }
-        response = result;
     }
 
-    public static String hexToBinary(String hex) {
-        return new BigInteger(hex, 16).toString(2);
+    public LinkedHashMap<String, Pid> getResponse() {
+        return response;
     }
 
     @Override
     public String getFormattedResult() {
-        return response;
+        String result = "";
+        for (String key : response.keySet())
+            result += key + "|" + String.valueOf(response.get(key));
+        return result;
     }
 
     @Override
@@ -85,9 +72,8 @@ public class PidsSupportedCommand extends ObdCommand {
 
     public enum Range {
         PIDS_01_20,
-        PIDS_21_40,
-        PIDS_41_60,
-        PIDS_61_80,
-        PIDS_81_A0
+        PIDS_21_40
     }
+
+
 }

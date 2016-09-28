@@ -18,7 +18,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import brotherhood.onboardcomputer.activities.MenuActivity;
+import brotherhood.onboardcomputer.ui.MenuWithVoiceRecognitionActivity;
 import brotherhood.onboardcomputer.speechToText.Command;
 import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
 import brotherhood.onboardcomputer.speechToText.enums.BroadcastMessageType;
@@ -226,7 +226,7 @@ public class SpeechToTextService extends Service {
 
     private void sendBroadcastMessage(BroadcastMessageType type, String msg) {
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(MenuActivity.STRING_ACTION);
+        broadcastIntent.setAction(MenuWithVoiceRecognitionActivity.STRING_ACTION);
         broadcastIntent.putExtra(type.name(), msg);
         sendBroadcast(broadcastIntent);
     }

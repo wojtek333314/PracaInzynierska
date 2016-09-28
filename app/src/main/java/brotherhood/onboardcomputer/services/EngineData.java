@@ -2,10 +2,11 @@ package brotherhood.onboardcomputer.services;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-/**
- * Created by Wojtas on 2016-09-13.
- */
+import brotherhood.onboardcomputer.ecuCommands.Pid;
+
 public class EngineData implements Serializable {
     private ArrayList<String> rpm = new ArrayList<>();
     private ArrayList<String> speed = new ArrayList<>();
@@ -15,7 +16,8 @@ public class EngineData implements Serializable {
     private ArrayList<String> oilTemperature = new ArrayList<>();
     private ArrayList<String> fuelRailAbsolutePressure = new ArrayList<>();
     private ArrayList<String> fuelRate = new ArrayList<>();
-    private ArrayList<String> supportedPids;
+    private LinkedHashMap<String, Pid> supportedPids;
+
     public String getLast(ArrayList<String> list) {
         return list.size() > 0 ? list.get(list.size() - 1) : "NO DATA";
     }
@@ -97,7 +99,14 @@ public class EngineData implements Serializable {
         return this;
     }
 
-    public ArrayList<String> getSupportedPids() {
+    public HashMap<String, Pid> getSupportedPids() {
         return supportedPids;
     }
+
+    public EngineData setSupportedPids(LinkedHashMap<String, Pid> supportedPids) {
+        this.supportedPids = supportedPids;
+        return this;
+    }
+
+
 }

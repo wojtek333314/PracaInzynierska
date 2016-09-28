@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.activities;
+package brotherhood.onboardcomputer.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.utils.MetricUtil;
+import brotherhood.onboardcomputer.services.BluetoothConnectionService;
+import brotherhood.onboardcomputer.utils.Helper;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
 
@@ -25,9 +26,7 @@ import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
  * Created by Wojtas on 2016-08-22.
  */
 @EActivity(R.layout.activity_menu)
-public class MenuButtonActivity extends Activity {
-    public static final String STRING_ACTION = "string";
-
+public class MenuActivity extends Activity {
     @ViewById(R.id.centerMenuButton)
     View centerActionButton;
 
@@ -49,6 +48,10 @@ public class MenuButtonActivity extends Activity {
     @AfterViews
     void afterView() {
         createCircleMenu();
+        initMenuAnimationThreads();
+    }
+
+    private void initMenuAnimationThreads() {
         YoYo.with(Techniques.Wobble)
                 .duration(1700)
                 .playOn(title);
@@ -78,7 +81,7 @@ public class MenuButtonActivity extends Activity {
 
     private void createCircleMenu() {
 
-        ImageView icon = new ImageView(this); // Create an icon
+        ImageView icon = new ImageView(this);
         icon.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon));
 
         SubActionButton.Builder botItem = new SubActionButton.Builder(this);
@@ -88,13 +91,19 @@ public class MenuButtonActivity extends Activity {
         botButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+                if(!Helper.isMyServiceRunning(getApplicationContext(), BluetoothConnectionService.class)){
+                    Helper.showInfoMsg(MenuActivity.this, getString(R.string.firstConnectToDevice));
+                    return;
+                }
+                if (checkBluetooth()) {
+                    startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+                }
             }
         });
 
         ViewGroup.LayoutParams layoutParams = botButton.getLayoutParams();
-        layoutParams.width = (int) MetricUtil.convertDpToPixel(this, 60);
-        layoutParams.height = (int) MetricUtil.convertDpToPixel(this, 60);
+        layoutParams.width = (int) Helper.convertDpToPixel(this, 60);
+        layoutParams.height = (int) Helper.convertDpToPixel(this, 60);
 
         SubActionButton.Builder engineItem = new SubActionButton.Builder(this);
         ImageView engineIcon = new ImageView(this);
@@ -103,7 +112,9 @@ public class MenuButtonActivity extends Activity {
         engineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));
+                if (checkBluetooth()) {
+                    startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));
+                }
             }
         });
 
@@ -122,6 +133,14 @@ public class MenuButtonActivity extends Activity {
                 .addSubActionView(infoButton)
                 .attachTo(centerActionButton)
                 .build();
+    }
+
+    private boolean checkBluetooth() {
+        if (!Helper.checkIsBluetoothEnabled()) {
+            Helper.showInfoMsg(this, getString(R.string.enable_bluetooth_msg));
+            return false;
+        } else
+            return true;
     }
 
     @Override

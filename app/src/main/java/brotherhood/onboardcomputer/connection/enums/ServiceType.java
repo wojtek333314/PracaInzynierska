@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.server.enums;
+package brotherhood.onboardcomputer.connection.enums;
 
 
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;

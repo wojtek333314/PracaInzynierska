@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.EcuCommands;
+package brotherhood.onboardcomputer.ecuCommands;
 
 import com.github.pires.obd.commands.ObdCommand;
 

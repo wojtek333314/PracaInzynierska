@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.server;
+package brotherhood.onboardcomputer.connection;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,8 +20,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-import brotherhood.onboardcomputer.server.enums.ServiceType;
-import brotherhood.onboardcomputer.server.parameters.Parameters;
+import brotherhood.onboardcomputer.connection.enums.ServiceType;
+import brotherhood.onboardcomputer.connection.parameters.Parameters;
 
 
 public class ServerRequest extends AsyncTask<Void, Void, String> {

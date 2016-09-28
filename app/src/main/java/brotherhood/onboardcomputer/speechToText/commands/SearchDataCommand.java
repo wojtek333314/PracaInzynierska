@@ -5,9 +5,9 @@ import android.speech.tts.TextToSpeech;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import brotherhood.onboardcomputer.server.ServerRequest;
-import brotherhood.onboardcomputer.server.enums.ServiceType;
-import brotherhood.onboardcomputer.server.parameters.Parameters;
+import brotherhood.onboardcomputer.connection.ServerRequest;
+import brotherhood.onboardcomputer.connection.enums.ServiceType;
+import brotherhood.onboardcomputer.connection.parameters.Parameters;
 import brotherhood.onboardcomputer.speechToText.Command;
 import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
 

@@ -1,11 +1,9 @@
-package brotherhood.onboardcomputer.activities;
+package brotherhood.onboardcomputer.ui;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.services.BluetoothConnectionService;
-import brotherhood.onboardcomputer.services.EngineData;
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 
@@ -35,43 +32,12 @@ public class DevicesListActivity extends Activity {
 
     private BluetoothController bluetooth;
     private ArrayList<BluetoothDevice> list;
-    private boolean getDataThreadRunning = true;
-    private int atempt = 0;
-
-    private final BroadcastReceiver serviceReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals("engineData")) {
-                EngineData engineData = ((EngineData) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
-                if (engineData != null) {
-                    atempt++;
-
-                           /* + "\n" + engineData.getLast(engineData.getRpm())
-                            + "\n" + engineData.getLast(engineData.getSpeed())
-                            + "\noil:" + engineData.getLast(engineData.getOilTemperature())
-                            + "\nfuel rate:" + engineData.getLast(engineData.getFuelRate())
-                            + "\ncoolant temp:" + engineData.getLast(engineData.getCoolantTemperature())
-                            + "\nfuel pressure:" + engineData.getLast(engineData.getFuelRailAbsolutePressure())
-                            +"\npids:"+engineData.getSupportedPids() + "\n---------------------");*/
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                      //  consoleAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        }
-    };
 
     @AfterViews
     void afterView() {
         initList();
         initBluetooth();
         initButton();
-        IntentFilter intentFilter = new IntentFilter("engineData");
-        registerReceiver(serviceReceiver, intentFilter);
     }
 
     private void initList() {
@@ -79,12 +45,16 @@ public class DevicesListActivity extends Activity {
     }
 
     void initButton() {
+
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int checkedPosition = radioGroup.indexOfChild(findViewById(radioGroup.getCheckedRadioButtonId()));
-                if (checkedPosition < 0)
+                if (checkedPosition < 0) {
+                    connectButton.setText(getString(R.string.all_connect));
+                    bluetooth.startScan();
                     return;
+                }
                 bluetooth.cancelScan();
                 System.out.println(list.get(checkedPosition).getAddress());
                 Toast.makeText(getApplicationContext(), list.get(checkedPosition).getAddress(), Toast.LENGTH_SHORT).show();
@@ -119,6 +89,10 @@ public class DevicesListActivity extends Activity {
             @Override
             public void onActionDiscoveryStateChanged(String discoveryState) {
                 System.out.println("onActionDiscoveryStateChanged" + discoveryState);
+                if (discoveryState.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                    list.clear();
+                    connectButton.setText(getString(R.string.search));
+                }
             }
 
             @Override

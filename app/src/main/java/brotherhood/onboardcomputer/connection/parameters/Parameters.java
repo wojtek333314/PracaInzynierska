@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.server.parameters;
+package brotherhood.onboardcomputer.connection.parameters;
 
 import java.util.HashMap;
 

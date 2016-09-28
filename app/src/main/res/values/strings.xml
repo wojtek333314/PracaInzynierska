@@ -5,7 +5,11 @@
     <string name="table.pids.supported">PIDs supported</string>
     <string name="real_time">real time</string>
     <string name="refresh_time">Data refresh interval:</string>
-    <array name="pids_descriptions">
+    <string name="enable_bluetooth_msg">First enable bluetooth!</string>
+    <string name="ok">OK</string>
+    <string name="search">Search</string>
+    <string name="firstConnectToDevice">First connect to ELM327 device!</string>
+    <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>
         <item>Freeze DTC</item>

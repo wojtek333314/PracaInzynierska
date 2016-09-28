@@ -19,7 +19,7 @@
         android:hardwareAccelerated="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MenuButtonActivity_" android:noHistory="false">
+        <activity android:name=".ui.MenuActivity_" android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,9 +27,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.DevicesListActivity_"/>
+        <activity android:name=".ui.DevicesListActivity_"/>
 
-        <activity android:name=".activities.PidsListActivity_"/>
+        <activity android:name=".ui.PidsListActivity_"/>
         
         <service android:name=".speechToText.services.SpeechToTextService"/>
 

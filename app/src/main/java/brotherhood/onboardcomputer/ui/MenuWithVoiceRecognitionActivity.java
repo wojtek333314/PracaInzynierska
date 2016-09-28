@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.activities;
+package brotherhood.onboardcomputer.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -27,13 +27,13 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.utils.Helper;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.speechToText.enums.BroadcastMessageType;
 import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
-import brotherhood.onboardcomputer.utils.MetricUtil;
 
 @EActivity(R.layout.activity_menu)
-public class MenuActivity extends FragmentActivity {
+public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
     public static final String STRING_ACTION = "string";
 
     @ViewById(R.id.centerMenuButton)
@@ -158,7 +158,7 @@ public class MenuActivity extends FragmentActivity {
         super.onResume();
         backgroundView.resume();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MenuActivity.STRING_ACTION);
+        intentFilter.addAction(MenuWithVoiceRecognitionActivity.STRING_ACTION);
         registerReceiver(serviceReceiver, intentFilter);
     }
 
@@ -173,8 +173,8 @@ public class MenuActivity extends FragmentActivity {
         SubActionButton botButton = botItem.setContentView(botIcon).build();
 
         ViewGroup.LayoutParams layoutParams = botButton.getLayoutParams();
-        layoutParams.width = (int) MetricUtil.convertDpToPixel(this, 60);
-        layoutParams.height = (int) MetricUtil.convertDpToPixel(this, 60);
+        layoutParams.width = (int) Helper.convertDpToPixel(this, 60);
+        layoutParams.height = (int) Helper.convertDpToPixel(this, 60);
 
         SubActionButton.Builder engineItem = new SubActionButton.Builder(this);
         ImageView engineIcon = new ImageView(this);

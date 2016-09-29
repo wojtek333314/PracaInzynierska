@@ -1,15 +1,10 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
-import com.github.pires.obd.commands.ObdCommand;
-
-/**
- * Created by Wojtas on 2016-09-13.
- */
-public class FuelRailAbsolutePressureCommand extends ObdCommand {
+public class FuelRailAbsolutePressureCommand extends Command {
     private float kPaPressure = 0;
 
-    public FuelRailAbsolutePressureCommand() {
-        super("01 59");
+    public FuelRailAbsolutePressureCommand(Pid pid) {
+        super(pid);
     }
 
     @Override
@@ -29,6 +24,11 @@ public class FuelRailAbsolutePressureCommand extends ObdCommand {
 
     @Override
     public String getName() {
-        return null;
+        return getPid().getDescription();
+    }
+
+    @Override
+    protected String getUnit() {
+        return getPid().getUnit();
     }
 }

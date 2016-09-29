@@ -81,6 +81,11 @@ public class MenuActivity extends Activity {
 
     private void createCircleMenu() {
 
+
+        String descriptions[] = getResources().getStringArray(R.array.pids_descriptions_mode1);
+        String units[] = getResources().getStringArray(R.array.pids_units_model);
+
+        System.out.println("SIZES:"+descriptions.length+"/"+units.length);
         ImageView icon = new ImageView(this);
         icon.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon));
 

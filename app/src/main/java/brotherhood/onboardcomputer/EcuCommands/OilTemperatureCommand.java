@@ -4,8 +4,8 @@ public class OilTemperatureCommand extends Command {
 
     private float oilTemperature = 0;
 
-    public OilTemperatureCommand() {
-        super("01 5C");
+    public OilTemperatureCommand(Pid pid) {
+        super(pid);
     }
 
     @Override
@@ -25,6 +25,11 @@ public class OilTemperatureCommand extends Command {
 
     @Override
     public String getName() {
-        return null;
+        return getPid().getDescription();
+    }
+
+    @Override
+    protected String getUnit() {
+        return getPid().getUnit();
     }
 }

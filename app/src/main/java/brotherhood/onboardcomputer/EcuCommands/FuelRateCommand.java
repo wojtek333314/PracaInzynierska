@@ -1,16 +1,11 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
-import com.github.pires.obd.commands.ObdCommand;
-
-/**
- * Created by Wojtas on 2016-09-13.
- */
-public class FuelRateCommand extends ObdCommand {
+public class FuelRateCommand extends Command {
 
     private int fuelRate = 0;
 
-    public FuelRateCommand() {
-        super("01 5E");
+    public FuelRateCommand(Pid pid) {
+        super(pid);
     }
 
     @Override
@@ -30,6 +25,11 @@ public class FuelRateCommand extends ObdCommand {
 
     @Override
     public String getName() {
-        return null;
+        return getPid().getDescription();
+    }
+
+    @Override
+    protected String getUnit() {
+        return getPid().getUnit();
     }
 }

@@ -54,21 +54,8 @@ public class PidsListActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals("engineData")) {
-                EngineData engineData = ((EngineData) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
-                if (engineData != null && !availablePidsAddedToAdapter) {
-                    HashMap<String, Pid> availablePids = engineData.getSupportedPids();
-                    for (String key : availablePids.keySet()) {
-                        boolean isAvailable = availablePids.get(key).isAvailable();
-                        ChartCard chartCard = new ChartCard(PidsListActivity.this,
-                                new ChartModel(key,engineData, availablePids.get(key).isAvailable()));
-                        if (!isAvailable)
-                            pidsList.add(chartCard);
-                        else
-                            pidsList.add(0, chartCard);
-                    }
-                    cardsRecyclerViewAdapter.notifyDataSetChanged();
-                    availablePidsAddedToAdapter = true;
-                }
+                fillListWithCards(intent);
+                availablePidsAddedToAdapter = true;
                 refreshAdapter();
             }
         }
@@ -101,6 +88,23 @@ public class PidsListActivity extends Activity {
         cardsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
+    private void fillListWithCards(Intent intent) {
+        EngineData engineData = ((EngineData) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
+        if (engineData != null && !availablePidsAddedToAdapter) {
+            HashMap<String, Pid> availablePids = engineData.getSupportedPids();
+            for (String key : availablePids.keySet()) {
+                boolean isAvailable = availablePids.get(key).isAvailable();
+                ChartCard chartCard = new ChartCard(PidsListActivity.this,
+                        new ChartModel(key, availablePids.get(key).isAvailable()));
+                if (!isAvailable)
+                    pidsList.add(chartCard);
+                else
+                    pidsList.add(0, chartCard);
+            }
+            cardsRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void initTimeBar() {
         timeBar.setMax(MAX_TIME_VALUE_MS);
         timeBar.incrementProgressBy(SEEK_BAR_STEP);
@@ -130,4 +134,5 @@ public class PidsListActivity extends Activity {
             }
         });
     }
+
 }

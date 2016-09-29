@@ -56,7 +56,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         status.setImageDrawable(data.isStatusEnabled() ?
                 getResources().getDrawable(android.R.drawable.presence_online) :
                 getResources().getDrawable(android.R.drawable.presence_offline));
-        temporaryValue.setText(data.);
+      //  temporaryValue.setText(data.);
      /*   LineSet dataset = new LineSet(prepareLabels(data.getChartValues().length), data.getChartValues());
         dataset.setColor(getResources().getColor(R.color.colorAccentRed));
         dataset.setThickness(2);

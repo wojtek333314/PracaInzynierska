@@ -1,16 +1,11 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
-import com.github.pires.obd.commands.ObdCommand;
-
-/**
- * Created by Wojtas on 2016-09-13.
- */
-public class EngineLoadCommand extends ObdCommand {
+public class EngineLoadCommand extends Command {
 
     float engineLoadInPercents = 0;
 
-    public EngineLoadCommand() {
-        super("01 04");
+    public EngineLoadCommand(Pid pid) {
+        super(pid);
     }
 
     @Override
@@ -30,6 +25,11 @@ public class EngineLoadCommand extends ObdCommand {
 
     @Override
     public String getName() {
-        return null;
+        return getPid().getDescription();
+    }
+
+    @Override
+    protected String getUnit() {
+        return getPid().getUnit();
     }
 }

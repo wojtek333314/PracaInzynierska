@@ -18,88 +18,66 @@ import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
-import com.github.pires.obd.exceptions.NoDataException;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.UUID;
 
-import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.ecuCommands.CoolantTemperatureCommand;
 import brotherhood.onboardcomputer.ecuCommands.EngineLoadCommand;
 import brotherhood.onboardcomputer.ecuCommands.FuelRailAbsolutePressureCommand;
 import brotherhood.onboardcomputer.ecuCommands.FuelRateCommand;
-import brotherhood.onboardcomputer.ecuCommands.Pid;
 import brotherhood.onboardcomputer.ecuCommands.PidsSupportedCommand;
-import brotherhood.onboardcomputer.utils.Helper;
 
 public class BluetoothConnectionService extends Service {
-    public static final boolean DEMO = false;
-    public static int UPDATE_INTERVAL = 1000;
+    public static int UPDATE_INTERVAL = 10;
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
-    private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private LinkedHashMap<String, Pid> availablePidsMap = new LinkedHashMap<>();
 
+    private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
+    private Thread timer;
     private String deviceAddress = null;
     private boolean serviceRunning = true;
     private EngineData engineData;
-    private boolean pidsChecked;
+    private IntentFilter filter;
+
+    public BluetoothConnectionService() {
+    }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startid) {
-        fillAvailablePidsMap();
-        final BluetoothSocket socket = connect(intent);
+    public IBinder onBind(Intent intent) {
+        deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
+        return null;
+    }
 
-        Thread refreshDataTimer = new Thread(new Runnable() {
+    @Override
+    public void onCreate() {
+        engineData = new EngineData();
+        filter = new IntentFilter();
+        filter.addAction("engineData");
+    }
+
+    private void initTimer(final BluetoothSocket socket) {
+        timer = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (serviceRunning) {
                     try {
                         Thread.sleep(UPDATE_INTERVAL);
-                        timeRefresh(socket);
-                    } catch (IOException | InterruptedException e) {
+                        collectData(socket);
+                    } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        refreshDataTimer.start();
-        return START_STICKY;
+        timer.start();
     }
 
-    private void timeRefresh(BluetoothSocket socket) throws IOException, InterruptedException {
-        System.out.println("Data Refresh:" + UPDATE_INTERVAL);
-        if (DEMO) {
-            collectData(socket);
-        } else {
-            if (!pidsChecked) {
-                while (!pidsChecked) {
-                    checkAvailablePids(socket);
-                }
-            } else {
-                collectData(socket);
-            }
-        }
-    }
-
-    private void fillAvailablePidsMap() {
-        String[] pidsDescriptions = getBaseContext().getResources().getStringArray(R.array.pids_descriptions_mode1);
-        int offset = 0;
-        for (String string : pidsDescriptions) {
-            availablePidsMap.put(string, new Pid(string, Helper.hexToBinary(String.valueOf(offset)), false));
-            offset++;
-            if(offset > 41)
-                return;
-        }
-    }
-
-    private BluetoothSocket connect(Intent intent) {
-        if (DEMO)
-            return null;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startid) {
         deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
+        System.out.println("DEVICE ADRESS SERVICE:" + deviceAddress);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        System.out.println(deviceAddress);
         BluetoothDevice device = btAdapter.getRemoteDevice(deviceAddress);
         UUID uuid = UUID.fromString(DEVICE_UUID);
         BluetoothSocket socket = null;
@@ -116,7 +94,8 @@ public class BluetoothConnectionService extends Service {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        return socket;
+        initTimer(socket);
+        return START_STICKY;
     }
 
     private void initializeOBDconnection(BluetoothSocket socket) throws IOException, InterruptedException {
@@ -143,11 +122,9 @@ public class BluetoothConnectionService extends Service {
             engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
             engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
             coolantTemperatureCommand.run(socket.getInputStream(), socket.getOutputStream());
-            oilTempCommand.run(socket.getInputStream(), socket.getOutputStream());
-            fuelRailAbsolutePressureCommand.run(socket.getInputStream(), socket.getOutputStream());
-            fuelRateCommand.run(socket.getInputStream(), socket.getOutputStream());
             supportedPids.run(socket.getInputStream(), socket.getOutputStream());
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         Log.d("TAG", "RPM: " + engineRpmCommand.getFormattedResult());
@@ -160,51 +137,16 @@ public class BluetoothConnectionService extends Service {
                 .addRpm(engineRpmCommand.getFormattedResult())
                 .addSupportedPids(supportedPids.getFormattedResult())
                 .addFuelRate(fuelRateCommand.getFormattedResult())
+                .setSupportedPids(supportedPids.getResponse())
                 .addSpeed(speedCommand.getFormattedResult());
-        engineData.setSupportedPids(availablePidsMap);
         Intent intent = new Intent("engineData");
         intent.putExtra(REFRESH_FRAME, engineData);
         sendBroadcast(intent);
-    }
-
-    private void checkAvailablePids(BluetoothSocket socket) throws IOException, InterruptedException {
-        for (PidsSupportedCommand.Range range : PidsSupportedCommand.Range.values()) {
-            try {
-                PidsSupportedCommand pidsSupportedCommand = new PidsSupportedCommand(this, range);
-                pidsSupportedCommand.run(socket.getInputStream(), socket.getOutputStream());
-                availablePidsMap = pidsSupportedCommand.getResponse();
-            } catch (NoDataException noDataException) {
-                noDataException.printStackTrace();
-            }
-        }
-        pidsChecked = true;
-    }
-
-    private void stopService() {
-        serviceRunning = false;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         serviceRunning = false;
         return super.onUnbind(intent);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
-        return null;
-    }
-
-    @Override
-    public void onCreate() {
-        engineData = new EngineData();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("engineData");
-    }
-
-    @Override
-    public void onDestroy() {
-        serviceRunning = false;
     }
 }

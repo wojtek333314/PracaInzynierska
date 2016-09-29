@@ -2,14 +2,18 @@ package brotherhood.onboardcomputer.data;
 
 import java.util.ArrayList;
 
+import brotherhood.onboardcomputer.services.EngineData;
+
 public class ChartModel {
     private ArrayList<Float> chartValues;
     private String name;
     private boolean status;
+    private EngineData engineData;
 
-    public ChartModel(String name, boolean status) {
+    public ChartModel(String name, EngineData engineData, boolean status) {
         this.name = name;
         this.status = status;
+        this.engineData = engineData;
         chartValues = new ArrayList<>();
     }
 

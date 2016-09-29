@@ -1,11 +1,6 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
-import com.github.pires.obd.commands.ObdCommand;
-
-/**
- * Created by Wojtas on 2016-09-13.
- */
-public class OilTemperatureCommand extends ObdCommand {
+public class OilTemperatureCommand extends Command {
 
     private float oilTemperature = 0;
 

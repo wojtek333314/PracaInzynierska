@@ -19,6 +19,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     private View view;
     private OnClickListener onClickListener;
     private TextView name;
+    private TextView temporaryValue;
     private ImageView status;
     private LineChartView lineChartView;
     private MaterialRippleLayout rippleLayout;
@@ -36,6 +37,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         status = (ImageView) view.findViewById(R.id.imageView_status);
         lineChartView = (LineChartView) view.findViewById(R.id.lineChart);
         rippleLayout = (MaterialRippleLayout) view.findViewById(R.id.ripple);
+        temporaryValue = (TextView) view.findViewById(R.id.textViewTemporaryValue);
     }
 
     public ChartCard(Context context, ChartModel chartModel) {
@@ -54,7 +56,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         status.setImageDrawable(data.isStatusEnabled() ?
                 getResources().getDrawable(android.R.drawable.presence_online) :
                 getResources().getDrawable(android.R.drawable.presence_offline));
-
+        temporaryValue.setText(data.);
      /*   LineSet dataset = new LineSet(prepareLabels(data.getChartValues().length), data.getChartValues());
         dataset.setColor(getResources().getColor(R.color.colorAccentRed));
         dataset.setThickness(2);

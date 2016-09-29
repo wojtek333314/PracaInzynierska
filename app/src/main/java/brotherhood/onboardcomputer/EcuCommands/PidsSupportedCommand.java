@@ -44,7 +44,6 @@ public class PidsSupportedCommand extends ObdCommand {
         for (int i = 0; i < value.length(); i++) {
             int pos = i + offset * 20;
             response.put(descriptions[pos], new Pid(descriptions[pos], Helper.hexToBinary(String.valueOf(pos)), value.charAt(i) == '1'));
-            System.out.println(descriptions[pos] + "/" + value.charAt(i));
         }
     }
 
@@ -68,6 +67,11 @@ public class PidsSupportedCommand extends ObdCommand {
     @Override
     public String getName() {
         return null;
+    }
+
+    public static boolean isCommandAvailable(Command command){
+
+        return false;
     }
 
     public enum Range {

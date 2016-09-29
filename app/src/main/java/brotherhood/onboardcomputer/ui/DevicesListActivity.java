@@ -90,8 +90,10 @@ public class DevicesListActivity extends Activity {
             public void onActionDiscoveryStateChanged(String discoveryState) {
                 System.out.println("onActionDiscoveryStateChanged" + discoveryState);
                 if (discoveryState.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
-                    list.clear();
                     connectButton.setText(getString(R.string.search));
+                }else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(discoveryState)){
+                    connectButton.setText(getString(R.string.all_connect));
+                    list.clear();
                 }
             }
 

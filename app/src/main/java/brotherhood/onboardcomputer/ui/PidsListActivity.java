@@ -58,8 +58,15 @@ public class PidsListActivity extends Activity {
                 if (engineData != null && !availablePidsAddedToAdapter) {
                     HashMap<String, Pid> availablePids = engineData.getSupportedPids();
                     for (String key : availablePids.keySet()) {
-                        pidsList.add(new ChartCard(PidsListActivity.this, new ChartModel(key, availablePids.get(key).isAvailable())));
+                        boolean isAvailable = availablePids.get(key).isAvailable();
+                        ChartCard chartCard = new ChartCard(PidsListActivity.this,
+                                new ChartModel(key,engineData, availablePids.get(key).isAvailable()));
+                        if (!isAvailable)
+                            pidsList.add(chartCard);
+                        else
+                            pidsList.add(0, chartCard);
                     }
+                    cardsRecyclerViewAdapter.notifyDataSetChanged();
                     availablePidsAddedToAdapter = true;
                 }
                 refreshAdapter();
@@ -72,10 +79,6 @@ public class PidsListActivity extends Activity {
         initTimeBar();
         initRecyclerView();
         registerReceiver();
-
-        Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
-        serviceIntent.putExtra(BluetoothConnectionService.DEVICE_ADDRESS_KEY, "");
-        startService(serviceIntent);
     }
 
     private void registerReceiver() {

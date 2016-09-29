@@ -1,11 +1,9 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
-import com.github.pires.obd.commands.ObdCommand;
-
 /**
  * Created by Wojtas on 2016-09-13.
  */
-public class CoolantTemperatureCommand extends ObdCommand{
+public class CoolantTemperatureCommand extends Command{
 
     private int temperature = 0;
 

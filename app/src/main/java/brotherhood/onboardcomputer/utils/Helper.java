@@ -10,6 +10,8 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 
 import brotherhood.onboardcomputer.R;
@@ -21,7 +23,7 @@ public class Helper {
     }
 
     public static void showInfoMsg(Context context, String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context,R.style.AlertDialogCustom));
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialogCustom));
         builder.setMessage(msg).setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -61,5 +63,21 @@ public class Helper {
             }
         }
         return false;
+    }
+
+    public static String loadJSONFromAsset(Context context, String filename) {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

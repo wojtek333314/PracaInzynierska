@@ -12,6 +12,7 @@ import com.db.chart.view.LineChartView;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
+import brotherhood.onboardcomputer.utils.Helper;
 
 public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     private ChartModel chartModel;
@@ -50,21 +51,18 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     public void refreshData(ChartModel data) {
         if (data == null)
             return;
-        if (data.getName() != null)
-            name.setText(data.getName());
+        if (data.getPid().getDescription() != null)
+            name.setText(data.getPid().getDescription());
 
-        status.setImageDrawable(data.isStatusEnabled() ?
+        status.setImageDrawable(data.getPid().isSupported() ?
                 getResources().getDrawable(android.R.drawable.presence_online) :
                 getResources().getDrawable(android.R.drawable.presence_offline));
-        temporaryValue.setText(data.);
-     /*   LineSet dataset = new LineSet(prepareLabels(data.getChartValues().length), data.getChartValues());
-        dataset.setColor(getResources().getColor(R.color.colorAccentRed));
-        dataset.setThickness(2);
-        lineChartView.setAxisColor(getResources().getColor(R.color.white));
-        lineChartView.setLabelsColor(getResources().getColor(R.color.white));*/
+        temporaryValue.setText(String.format("%s %s", data.getPid().getValue(), data.getPid().getUnit()));
         lineChartView.setVisibility(GONE);//todo calculate!
-        //lineChartView.addData(dataset);
-        // lineChartView.show();
+        if (data.getPid().getDescription().equals("Engine RPM")) {
+            System.out.println(data.getPid().getDescription() + "/" + data.getPid().getValue());
+            Helper.showToast(context, data.getPid().getDescription() + "/" + data.getPid().getValue());
+        }
 
         rippleLayout.setOnClickListener(new OnClickListener() {
             @Override

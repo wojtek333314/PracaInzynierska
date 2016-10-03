@@ -4,14 +4,17 @@ import android.content.Context;
 
 import com.github.pires.obd.commands.ObdCommand;
 
-import java.util.LinkedHashMap;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import brotherhood.onboardcomputer.R;
+import java.util.ArrayList;
+
 import brotherhood.onboardcomputer.utils.Helper;
 
 public class PidsSupportedCommand extends ObdCommand {
     private Context context;
-    private static LinkedHashMap<String, Pid> response = new LinkedHashMap<>();
+    private static ArrayList<Pid> response = new ArrayList<>();
     private int offset = 0;
 
     public PidsSupportedCommand(Context context, Range range) {
@@ -39,23 +42,32 @@ public class PidsSupportedCommand extends ObdCommand {
         for (Integer integer : buffer) {
             value += Helper.hexToBinary(Integer.toHexString(integer));
         }
-        String descriptions[] = context.getResources().getStringArray(R.array.pids_descriptions_mode1);
 
-        for (int i = 0; i < value.length(); i++) {
-            int pos = i + offset * 20;
-            response.put(descriptions[pos], new Pid(descriptions[pos], Helper.hexToBinary(String.valueOf(pos)), value.charAt(i) == '1'));
+        try {
+            JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(context, "pids.json"));
+            for (int i = 0; i < 20; i++) {
+                int pos = i + offset * 20;
+                JSONObject object = jsonArray.getJSONObject(pos);
+                response.add(new Pid(object.getString("command")
+                        , object.getString("description")
+                        , object.getString("calculationsScript")
+                        , object.getString("unit")
+                        , value.charAt(i) == '1'));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    public LinkedHashMap<String, Pid> getResponse() {
+    public ArrayList<Pid> getResponse() {
         return response;
     }
 
     @Override
     public String getFormattedResult() {
         String result = "";
-        for (String key : response.keySet())
-            result += key + "|" + String.valueOf(response.get(key));
+        for (Pid pid : response)
+            result += pid.getDescription() + "|" + pid.isSupported();
         return result;
     }
 
@@ -69,15 +81,9 @@ public class PidsSupportedCommand extends ObdCommand {
         return null;
     }
 
-    public static boolean isCommandAvailable(Command command){
-
-        return false;
-    }
-
     public enum Range {
         PIDS_01_20,
         PIDS_21_40
     }
-
 
 }

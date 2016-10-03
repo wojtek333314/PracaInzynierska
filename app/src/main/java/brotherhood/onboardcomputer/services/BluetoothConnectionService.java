@@ -7,12 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.util.Log;
 
-import com.github.pires.obd.commands.SpeedCommand;
-import com.github.pires.obd.commands.engine.OilTempCommand;
-import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.fuel.FuelLevelCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -20,28 +15,25 @@ import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
 
-import brotherhood.onboardcomputer.ecuCommands.CoolantTemperatureCommand;
-import brotherhood.onboardcomputer.ecuCommands.EngineLoadCommand;
-import brotherhood.onboardcomputer.ecuCommands.FuelRailAbsolutePressureCommand;
-import brotherhood.onboardcomputer.ecuCommands.FuelRateCommand;
+import brotherhood.onboardcomputer.ecuCommands.Command;
+import brotherhood.onboardcomputer.ecuCommands.Pid;
 import brotherhood.onboardcomputer.ecuCommands.PidsSupportedCommand;
 
 public class BluetoothConnectionService extends Service {
     public static int UPDATE_INTERVAL = 10;
+    public static final String INTENT_FILTER_TAG = "engineData";
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
-
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private Thread timer;
-    private String deviceAddress = null;
-    private boolean serviceRunning = true;
-    private EngineData engineData;
-    private IntentFilter filter;
 
-    public BluetoothConnectionService() {
-    }
+    private String deviceAddress = null;
+    private ArrayList<Pid> pidsSupported = new ArrayList<>();
+    private ArrayList<Command> commands = new ArrayList<>();
+    private boolean serviceRunning = true;
+    private boolean pidsSupportedChecked;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,19 +43,21 @@ public class BluetoothConnectionService extends Service {
 
     @Override
     public void onCreate() {
-        engineData = new EngineData();
-        filter = new IntentFilter();
-        filter.addAction("engineData");
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(INTENT_FILTER_TAG);
     }
 
     private void initTimer(final BluetoothSocket socket) {
-        timer = new Thread(new Runnable() {
+        checkSupportedCommands(socket);
+        Thread timer = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (serviceRunning) {
                     try {
                         Thread.sleep(UPDATE_INTERVAL);
-                        collectData(socket);
+                        if (pidsSupportedChecked) {
+                            collectData(socket);
+                        }
                     } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
                     }
@@ -105,43 +99,45 @@ public class BluetoothConnectionService extends Service {
         new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
     }
 
-    private void collectData(final BluetoothSocket socket) throws IOException, InterruptedException {
-        final RPMCommand engineRpmCommand = new RPMCommand();
-        final SpeedCommand speedCommand = new SpeedCommand();
-        final EngineLoadCommand engineLoadCommand = new EngineLoadCommand();
-        final CoolantTemperatureCommand coolantTemperatureCommand = new CoolantTemperatureCommand();
-        final FuelLevelCommand fuelLevelCommand = new FuelLevelCommand();
-        final FuelRateCommand fuelRateCommand = new FuelRateCommand();
-        final OilTempCommand oilTempCommand = new OilTempCommand();
-        final FuelRailAbsolutePressureCommand fuelRailAbsolutePressureCommand = new FuelRailAbsolutePressureCommand();
-        final PidsSupportedCommand supportedPids = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_01_20);
+    private void checkSupportedCommands(final BluetoothSocket socket) {
+        PidsSupportedCommand supportedPids = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_01_20);
+        PidsSupportedCommand supportedPids2 = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_21_40);
 
         try {
-            engineRpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-            speedCommand.run(socket.getInputStream(), socket.getOutputStream());
-            engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
-            engineLoadCommand.run(socket.getInputStream(), socket.getOutputStream());
-            coolantTemperatureCommand.run(socket.getInputStream(), socket.getOutputStream());
             supportedPids.run(socket.getInputStream(), socket.getOutputStream());
+            supportedPids2.run(socket.getInputStream(), socket.getOutputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.d("TAG", "RPM: " + engineRpmCommand.getFormattedResult());
-        Log.d("TAG", "fuelRate: " + fuelRateCommand.getFormattedResult());
-        engineData.addCoolantTemperature(coolantTemperatureCommand.getFormattedResult())
-                .addEngineLoad(engineLoadCommand.getFormattedResult())
-                .addFuelLevel(fuelLevelCommand.getFormattedResult())
-                .addFuelRailAbsolutePressure(fuelRailAbsolutePressureCommand.getFormattedResult())
-                .addCoolantTemperature(coolantTemperatureCommand.getFormattedResult())
-                .addRpm(engineRpmCommand.getFormattedResult())
-                .addSupportedPids(supportedPids.getFormattedResult())
-                .addFuelRate(fuelRateCommand.getFormattedResult())
-                .setSupportedPids(supportedPids.getResponse())
-                .addSpeed(speedCommand.getFormattedResult());
-        Intent intent = new Intent("engineData");
-        intent.putExtra(REFRESH_FRAME, engineData);
+        pidsSupported = supportedPids.getResponse();
+        for (Pid pid : supportedPids.getResponse()) {
+            System.out.println(pid.getCommand() + "/" + pid.isSupported());
+            commands.add(new Command(pid));
+        }
+
+        pidsSupportedChecked = true;
+    }
+
+    private void collectData(final BluetoothSocket socket) throws IOException, InterruptedException {
+        updatePids(socket);
+        Intent intent = new Intent(INTENT_FILTER_TAG);
+        intent.putExtra(REFRESH_FRAME, pidsSupported);
         sendBroadcast(intent);
+    }
+
+    private void updatePids(BluetoothSocket socket) {
+
+        try {
+          /*  commands.get(5).run(socket.getInputStream(),socket.getOutputStream());
+            commands.get(12).run(socket.getInputStream(),socket.getOutputStream());
+            commands.get(13).run(socket.getInputStream(),socket.getOutputStream());*/
+            for(Command command : commands){
+                command.run(socket.getInputStream(), socket.getOutputStream());
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

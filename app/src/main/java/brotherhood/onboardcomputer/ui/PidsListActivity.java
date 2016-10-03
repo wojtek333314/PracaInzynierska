@@ -16,13 +16,11 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
 import brotherhood.onboardcomputer.ecuCommands.Pid;
 import brotherhood.onboardcomputer.services.BluetoothConnectionService;
-import brotherhood.onboardcomputer.services.EngineData;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.ChartCard;
@@ -54,22 +52,19 @@ public class PidsListActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals("engineData")) {
-                EngineData engineData = ((EngineData) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
-                if (engineData != null && !availablePidsAddedToAdapter) {
-                    HashMap<String, Pid> availablePids = engineData.getSupportedPids();
-                    for (String key : availablePids.keySet()) {
-                        boolean isAvailable = availablePids.get(key).isAvailable();
-                        ChartCard chartCard = new ChartCard(PidsListActivity.this,
-                                new ChartModel(key,engineData, availablePids.get(key).isAvailable()));
-                        if (!isAvailable)
-                            pidsList.add(chartCard);
-                        else
-                            pidsList.add(0, chartCard);
+                ArrayList<Pid> pidsData = ((ArrayList<Pid>) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
+                System.out.println("refresh!");
+                if (pidsData != null) {
+                    if (!availablePidsAddedToAdapter) {
+                        for (Pid pid : pidsData) {
+                            pidsList.add(new ChartCard(PidsListActivity.this, new ChartModel(pid)));
+                        }
+                        availablePidsAddedToAdapter = true;
                     }
-                    cardsRecyclerViewAdapter.notifyDataSetChanged();
-                    availablePidsAddedToAdapter = true;
+                    refreshAdapter();
                 }
-                refreshAdapter();
+
+
             }
         }
     };

@@ -1,27 +1,59 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Pid implements Serializable {
-    private String description;
     private String command;
-    private boolean available;
+    private String description;
+    private String unit;
+    private String calculationsScript;
+    private ArrayList<String> values;
+    private boolean isSupported;
 
-    public Pid(String description, String command, boolean available) {
-        this.description = description;
+    public Pid(String command, String description, String calculationsScript, String unit, boolean isSupported) {
         this.command = command;
-        this.available = available;
+        this.description = description;
+        this.unit = unit;
+        this.calculationsScript = calculationsScript;
+        this.isSupported = isSupported;
+        values = new ArrayList<>();
     }
 
-    public String getDescription() {
-        return description;
+    public String getUnit() {
+        return unit;
     }
 
     public String getCommand() {
         return command;
     }
 
-    public boolean isAvailable() {
-        return available;
+    public String getCalculationsScript() {
+        return calculationsScript;
+    }
+
+    public void addValue(String value) {
+        values.add(value);
+    }
+
+    public String getValue() {
+        return values.size() > 0 ? values.get(values.size() - 1) : "0";
+    }
+
+    public ArrayList<String> getValues() {
+        return values;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isSupported() {
+        return isSupported;
+    }
+
+    public Pid setSupported(boolean supported) {
+        this.isSupported = supported;
+        return this;
     }
 }

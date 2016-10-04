@@ -14,6 +14,10 @@ import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -21,19 +25,23 @@ import java.util.UUID;
 import brotherhood.onboardcomputer.ecuCommands.Command;
 import brotherhood.onboardcomputer.ecuCommands.Pid;
 import brotherhood.onboardcomputer.ecuCommands.PidsSupportedCommand;
+import brotherhood.onboardcomputer.utils.Helper;
 
 public class BluetoothConnectionService extends Service {
-    public static int UPDATE_INTERVAL = 10;
+    public static boolean DEMO = false;
+    public static int UPDATE_INTERVAL = 1000;
     public static final String INTENT_FILTER_TAG = "engineData";
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
+    private static final int MIN_UPDATE_INTERVAL = 100;
 
     private String deviceAddress = null;
     private ArrayList<Pid> pidsSupported = new ArrayList<>();
     private ArrayList<Command> commands = new ArrayList<>();
     private boolean serviceRunning = true;
     private boolean pidsSupportedChecked;
+    private int demoValue = 1;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -54,6 +62,9 @@ public class BluetoothConnectionService extends Service {
             public void run() {
                 while (serviceRunning) {
                     try {
+                        if(UPDATE_INTERVAL < MIN_UPDATE_INTERVAL){
+                            UPDATE_INTERVAL = MIN_UPDATE_INTERVAL;
+                        }
                         Thread.sleep(UPDATE_INTERVAL);
                         if (pidsSupportedChecked) {
                             collectData(socket);
@@ -69,6 +80,10 @@ public class BluetoothConnectionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startid) {
+        if (DEMO) {
+            initTimer(null);
+            return START_STICKY;
+        }
         deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
         System.out.println("DEVICE ADRESS SERVICE:" + deviceAddress);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -103,20 +118,41 @@ public class BluetoothConnectionService extends Service {
         PidsSupportedCommand supportedPids = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_01_20);
         PidsSupportedCommand supportedPids2 = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_21_40);
 
-        try {
-            supportedPids.run(socket.getInputStream(), socket.getOutputStream());
-            supportedPids2.run(socket.getInputStream(), socket.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!DEMO) {
+            try {
+                supportedPids.run(socket.getInputStream(), socket.getOutputStream());
+                supportedPids2.run(socket.getInputStream(), socket.getOutputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         pidsSupported = supportedPids.getResponse();
+        if (pidsSupported.size() == 0 && DEMO) {
+            createDemoPids();
+        }
         for (Pid pid : supportedPids.getResponse()) {
             System.out.println(pid.getCommand() + "/" + pid.isSupported());
             commands.add(new Command(pid));
         }
 
         pidsSupportedChecked = true;
+    }
+
+    private void createDemoPids() {
+        try {
+            JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(getApplication(), "pids.json"));
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                pidsSupported.add(new Pid(object.getString("command")
+                        , object.getString("description")
+                        , object.getString("calculationsScript")
+                        , object.getString("unit")
+                        , true));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void collectData(final BluetoothSocket socket) throws IOException, InterruptedException {
@@ -129,11 +165,15 @@ public class BluetoothConnectionService extends Service {
     private void updatePids(BluetoothSocket socket) {
 
         try {
-          /*  commands.get(5).run(socket.getInputStream(),socket.getOutputStream());
-            commands.get(12).run(socket.getInputStream(),socket.getOutputStream());
-            commands.get(13).run(socket.getInputStream(),socket.getOutputStream());*/
-            for(Command command : commands){
-                command.run(socket.getInputStream(), socket.getOutputStream());
+            for (Command command : commands) {
+                if (!DEMO) {
+                    command.run(socket.getInputStream(), socket.getOutputStream());
+                } else {
+                    command.getPid().addValue(String.valueOf(demoValue));
+                }
+            }
+            if (DEMO) {
+                demoValue++;
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

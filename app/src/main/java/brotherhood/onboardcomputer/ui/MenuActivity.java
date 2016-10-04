@@ -91,11 +91,16 @@ public class MenuActivity extends Activity {
         botButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Helper.isMyServiceRunning(getApplicationContext(), BluetoothConnectionService.class)){
+                if (!Helper.isMyServiceRunning(getApplicationContext(), BluetoothConnectionService.class)
+                        && !BluetoothConnectionService.DEMO) {
                     Helper.showInfoMsg(MenuActivity.this, getString(R.string.firstConnectToDevice));
                     return;
                 }
-                if (checkBluetooth()) {
+                if (checkBluetooth() || BluetoothConnectionService.DEMO) {
+                    if (BluetoothConnectionService.DEMO) {
+                        Intent serviceIntent = new Intent(MenuActivity.this, BluetoothConnectionService.class);
+                        startService(serviceIntent);
+                    }
                     startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
                 }
             }

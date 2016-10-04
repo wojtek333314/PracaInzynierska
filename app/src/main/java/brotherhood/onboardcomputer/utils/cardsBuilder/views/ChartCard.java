@@ -12,7 +12,6 @@ import com.db.chart.view.LineChartView;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
-import brotherhood.onboardcomputer.utils.Helper;
 
 public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     private ChartModel chartModel;
@@ -59,10 +58,6 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
                 getResources().getDrawable(android.R.drawable.presence_offline));
         temporaryValue.setText(String.format("%s %s", data.getPid().getValue(), data.getPid().getUnit()));
         lineChartView.setVisibility(GONE);//todo calculate!
-        if (data.getPid().getDescription().equals("Engine RPM")) {
-            System.out.println(data.getPid().getDescription() + "/" + data.getPid().getValue());
-            Helper.showToast(context, data.getPid().getDescription() + "/" + data.getPid().getValue());
-        }
 
         rippleLayout.setOnClickListener(new OnClickListener() {
             @Override

@@ -47,27 +47,43 @@ public class PidsListActivity extends Activity {
     private CardsRecyclerViewAdapter cardsRecyclerViewAdapter;
     private boolean availablePidsAddedToAdapter;
 
+    private ArrayList<ChartModel> chartModels;
     private final BroadcastReceiver serviceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals("engineData")) {
                 ArrayList<Pid> pidsData = ((ArrayList<Pid>) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
-                System.out.println("refresh!");
                 if (pidsData != null) {
                     if (!availablePidsAddedToAdapter) {
                         for (Pid pid : pidsData) {
-                            pidsList.add(new ChartCard(PidsListActivity.this, new ChartModel(pid)));
+                            ChartModel chartModel = new ChartModel(pid);
+                            chartModels.add(chartModel);
+                            pidsList.add(new ChartCard(PidsListActivity.this, chartModel));
                         }
                         availablePidsAddedToAdapter = true;
+                    } else {
+                        for (ChartModel chartModel : chartModels) {
+                            for (Pid pid : pidsData) {
+                                if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
+                                    chartModel.setPid(pid);
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    refreshAdapter();
+                    refreshList();
                 }
 
 
             }
         }
     };
+
+    @UiThread
+    void refreshList() {
+        cardsRecyclerViewAdapter.notifyDataSetChanged();
+    }
 
     @AfterViews
     void afterViews() {
@@ -81,18 +97,20 @@ public class PidsListActivity extends Activity {
         registerReceiver(serviceReceiver, intentFilter);
     }
 
+    @Override
+    protected void onPause() {
+        unregisterReceiver(serviceReceiver);
+        super.onPause();
+    }
+
     private void initRecyclerView() {
         pidsList = new ArrayList<>();
+        chartModels = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         linearLayoutManager.setSmoothScrollbarEnabled(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         cardsRecyclerViewAdapter = new CardsRecyclerViewAdapter(this, pidsList);
         recyclerView.setAdapter(cardsRecyclerViewAdapter);
-        cardsRecyclerViewAdapter.notifyDataSetChanged();
-    }
-
-    @UiThread
-    void refreshAdapter() {
         cardsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
@@ -107,7 +125,6 @@ public class PidsListActivity extends Activity {
                 else
                     timeBarValue.setText(String.format("%s%s", String.valueOf(progress / 1000), "s"));
 
-                System.out.println(progress);
                 if (progress / 1000 > 0)
                     BluetoothConnectionService.UPDATE_INTERVAL = progress;
                 else

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 import brotherhood.onboardcomputer.ecuCommands.Command;
@@ -34,10 +35,10 @@ public class BluetoothConnectionService extends Service {
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private static final int MIN_UPDATE_INTERVAL = 100;
+    private static final int MIN_UPDATE_INTERVAL = 150;
 
     private String deviceAddress = null;
-    private ArrayList<Pid> pidsSupported = new ArrayList<>();
+    public static ArrayList<Pid> pidsSupported = new ArrayList<>();
     private ArrayList<Command> commands = new ArrayList<>();
     private boolean serviceRunning = true;
     private boolean pidsSupportedChecked;
@@ -62,7 +63,7 @@ public class BluetoothConnectionService extends Service {
             public void run() {
                 while (serviceRunning) {
                     try {
-                        if(UPDATE_INTERVAL < MIN_UPDATE_INTERVAL){
+                        if (UPDATE_INTERVAL < MIN_UPDATE_INTERVAL) {
                             UPDATE_INTERVAL = MIN_UPDATE_INTERVAL;
                         }
                         Thread.sleep(UPDATE_INTERVAL);
@@ -173,7 +174,7 @@ public class BluetoothConnectionService extends Service {
                 }
             }
             if (DEMO) {
-                demoValue++;
+                demoValue = new Random().nextInt(300);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

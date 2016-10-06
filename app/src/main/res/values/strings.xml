@@ -10,6 +10,7 @@
     <string name="search">Search</string>
     <string name="firstConnectToDevice">First connect to ELM327 device!</string>
     <string name="coolant_temperature">Coolant temperature</string>
+    <string name="all_current_value">Current value:</string>
     <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>

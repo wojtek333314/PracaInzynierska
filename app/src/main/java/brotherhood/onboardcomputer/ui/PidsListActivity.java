@@ -51,31 +51,28 @@ public class PidsListActivity extends Activity {
     private final BroadcastReceiver serviceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals("engineData")) {
-                ArrayList<Pid> pidsData = ((ArrayList<Pid>) intent.getExtras().getSerializable(BluetoothConnectionService.REFRESH_FRAME));
-                if (pidsData != null) {
-                    if (!availablePidsAddedToAdapter) {
-                        for (Pid pid : pidsData) {
-                            ChartModel chartModel = new ChartModel(pid);
+            ArrayList<Pid> pidsData = BluetoothConnectionService.pidsSupported;
+            if (pidsData != null) {
+                if (!availablePidsAddedToAdapter) {
+                    for (Pid pid : pidsData) {
+                        ChartModel chartModel = new ChartModel(pid);
+                        if (chartModel.getPid().isSupported()) {
                             chartModels.add(chartModel);
                             pidsList.add(new ChartCard(PidsListActivity.this, chartModel));
                         }
-                        availablePidsAddedToAdapter = true;
-                    } else {
-                        for (ChartModel chartModel : chartModels) {
-                            for (Pid pid : pidsData) {
-                                if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
-                                    chartModel.setPid(pid);
-                                    break;
-                                }
+                    }
+                    availablePidsAddedToAdapter = true;
+                } else {
+                    for (ChartModel chartModel : chartModels) {
+                        for (Pid pid : pidsData) {
+                            if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
+                                chartModel.setPid(pid);
+                                break;
                             }
                         }
                     }
-                    refreshList();
                 }
-
-
+                refreshList();
             }
         }
     };

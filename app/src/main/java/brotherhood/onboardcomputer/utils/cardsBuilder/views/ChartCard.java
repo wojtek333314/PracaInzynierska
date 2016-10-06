@@ -8,21 +8,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.db.chart.view.LineChartView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
 
 public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
+    private static final int MAX_ENTRIES_ON_CHART = 25;
     private ChartModel chartModel;
     private Context context;
     private View view;
-    private OnClickListener onClickListener;
     private TextView name;
     private TextView temporaryValue;
     private ImageView status;
-    private LineChartView lineChartView;
+    private LineChart lineChartView;
     private MaterialRippleLayout rippleLayout;
+    private OnClickListener onClickListener;
 
     public ChartCard(Context context) {
         super(context);
@@ -35,9 +38,19 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
 
         name = (TextView) view.findViewById(R.id.textViewName);
         status = (ImageView) view.findViewById(R.id.imageView_status);
-        lineChartView = (LineChartView) view.findViewById(R.id.lineChart);
+        lineChartView = (LineChart) view.findViewById(R.id.lineChart);
         rippleLayout = (MaterialRippleLayout) view.findViewById(R.id.ripple);
         temporaryValue = (TextView) view.findViewById(R.id.textViewTemporaryValue);
+
+        onClickListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getData() != null) {
+                    getData().setShowChart(!getData().isShowChart());
+                    refreshData(getData());
+                }
+            }
+        };
     }
 
     public ChartCard(Context context, ChartModel chartModel) {
@@ -48,23 +61,50 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
 
     @Override
     public void refreshData(ChartModel data) {
-        if (data == null)
+        if (data == null) {
             return;
-        if (data.getPid().getDescription() != null)
+        }
+        if (data.getPid().getDescription() != null) {
             name.setText(data.getPid().getDescription());
+        }
+
+        lineChartView.setVisibility(data.isShowChart() ? VISIBLE : GONE);
+        if (data.isShowChart()) {
+            configLineChart(data);
+        }
 
         status.setImageDrawable(data.getPid().isSupported() ?
                 getResources().getDrawable(android.R.drawable.presence_online) :
                 getResources().getDrawable(android.R.drawable.presence_offline));
-        temporaryValue.setText(String.format("%s %s", data.getPid().getValue(), data.getPid().getUnit()));
-        lineChartView.setVisibility(GONE);//todo calculate!
+        temporaryValue.setText(String.format("%s: %s %s", context.getString(R.string.all_current_value),
+                data.getPid().getValue(), data.getPid().getUnit()));
+        rippleLayout.setOnClickListener(onClickListener);
+    }
 
-        rippleLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("cv");
-            }
-        });
+    private void configLineChart(ChartModel data) {
+        LineDataSet dataSet = new LineDataSet(data.getEntries(), "");
+        while (dataSet.getEntryCount() > MAX_ENTRIES_ON_CHART) {
+            dataSet.removeFirst();
+        }
+        dataSet.setDrawCircles(false);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataSet.setFillColor(getResources().getColor(R.color.white));
+        dataSet.setColor(getResources().getColor(R.color.colorAccentRed));
+
+        LineData lineData = new LineData(dataSet);
+        lineData.setDrawValues(false);
+        lineChartView.setData(lineData);
+        lineChartView.getLegend().setEnabled(false);
+        lineChartView.setDescription("");
+        lineChartView.getAxisRight().setDrawLabels(false);
+        lineChartView.getAxisRight().setGridColor(getResources().getColor(R.color.white));
+        lineChartView.getXAxis().setDrawGridLines(false);
+        lineChartView.getXAxis().setDrawAxisLine(false);
+        lineChartView.getXAxis().setDrawLabels(false);
+        lineChartView.getAxisLeft().setGridColor(getResources().getColor(R.color.white));
+        lineChartView.getAxisLeft().setTextColor(getResources().getColor(R.color.white));
+        lineChartView.getAxisLeft().setAxisLineColor(getResources().getColor(R.color.white));
+        lineChartView.invalidate();
     }
 
     private String[] prepareLabels(int size) {

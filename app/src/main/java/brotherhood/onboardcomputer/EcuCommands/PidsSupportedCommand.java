@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import brotherhood.onboardcomputer.services.BluetoothConnectionService;
 import brotherhood.onboardcomputer.utils.Helper;
 
 public class PidsSupportedCommand extends ObdCommand {
@@ -48,11 +49,13 @@ public class PidsSupportedCommand extends ObdCommand {
             for (int i = 0; i < 20; i++) {
                 int pos = i + offset * 20;
                 JSONObject object = jsonArray.getJSONObject(pos);
-                response.add(new Pid(object.getString("command")
-                        , object.getString("description")
-                        , object.getString("calculationsScript")
-                        , object.getString("unit")
-                        , value.charAt(i) == '1'));
+                if (value.charAt(i) == '1' || BluetoothConnectionService.DEMO) {
+                    response.add(new Pid(object.getString("command")
+                            , object.getString("description")
+                            , object.getString("calculationsScript")
+                            , object.getString("unit")
+                            , value.charAt(i) == '1'));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -9,15 +9,10 @@ import brotherhood.onboardcomputer.connection.ServerRequest;
 import brotherhood.onboardcomputer.connection.enums.ServiceType;
 import brotherhood.onboardcomputer.connection.parameters.Parameters;
 import brotherhood.onboardcomputer.speechToText.Command;
-import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
 
-/**
- * Created by Wojtas on 2016-08-23.
- */
 public class SearchDataCommand extends Command {
-    public SearchDataCommand(SpeechToTextService speechToTextService) {
-        super(speechToTextService);
-    }
+    private static final String[] SEARCH = new String[]{"szukaj", "poszukaj", "wyszukaj", "znajdź"};
+    private static final String[] INFORMATION = new String[]{"informacji", "informację", "danych", "w wikipedii", "informację o"};
 
     public SearchDataCommand(TextToSpeech speaker) {
         super(speaker);
@@ -25,7 +20,7 @@ public class SearchDataCommand extends Command {
 
     @Override
     protected void initWords() {
-        runWords = new String[][]{{"search"}, {"szukaj informacji"}, {"wyszukaj informacji"}, {"poszukaj informacji"}};
+        runWords = getPermutedArray(SEARCH, INFORMATION);
     }
 
     @Override

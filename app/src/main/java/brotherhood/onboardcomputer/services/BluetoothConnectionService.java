@@ -35,14 +35,15 @@ public class BluetoothConnectionService extends Service {
     public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
     public static final String REFRESH_FRAME = "refreshFrame";
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private static final int MIN_UPDATE_INTERVAL = 150;
+    private static final int MIN_UPDATE_INTERVAL = 20;
 
     private String deviceAddress = null;
     public static ArrayList<Pid> pidsSupported = new ArrayList<>();
     private ArrayList<Command> commands = new ArrayList<>();
-    private boolean serviceRunning = true;
+    public static boolean serviceRunning = true;
     private boolean pidsSupportedChecked;
     private int demoValue = 1;
+    private Random random = new Random();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -68,9 +69,9 @@ public class BluetoothConnectionService extends Service {
                         }
                         Thread.sleep(UPDATE_INTERVAL);
                         if (pidsSupportedChecked) {
-                            collectData(socket);
+                            updatePids(socket);
                         }
-                    } catch (InterruptedException | IOException e) {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -133,14 +134,18 @@ public class BluetoothConnectionService extends Service {
             createDemoPids();
         }
         for (Pid pid : supportedPids.getResponse()) {
-            System.out.println(pid.getCommand() + "/" + pid.isSupported());
-            commands.add(new Command(pid));
+            if (pid.isSupported()) {
+                System.out.println(pid.getCommand() + "/" + pid.isSupported());
+                commands.add(new Command(pid));
+            }
         }
 
         pidsSupportedChecked = true;
+        System.out.println("check supported command, count of supported pids: " + commands.size());
     }
 
     private void createDemoPids() {
+        System.out.println("demo pids created!");
         try {
             JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(getApplication(), "pids.json"));
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -156,25 +161,15 @@ public class BluetoothConnectionService extends Service {
         }
     }
 
-    private void collectData(final BluetoothSocket socket) throws IOException, InterruptedException {
-        updatePids(socket);
-        Intent intent = new Intent(INTENT_FILTER_TAG);
-        intent.putExtra(REFRESH_FRAME, pidsSupported);
-        sendBroadcast(intent);
-    }
-
     private void updatePids(BluetoothSocket socket) {
-
         try {
             for (Command command : commands) {
                 if (!DEMO) {
                     command.run(socket.getInputStream(), socket.getOutputStream());
                 } else {
+                    demoValue = random.nextInt(300);
                     command.getPid().addValue(String.valueOf(demoValue));
                 }
-            }
-            if (DEMO) {
-                demoValue = new Random().nextInt(300);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

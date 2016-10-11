@@ -3,11 +3,6 @@ package brotherhood.onboardcomputer.views.recognizeButton;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
@@ -18,30 +13,19 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.speechToText.Command;
 import brotherhood.onboardcomputer.speechToText.commands.CloseAppCommand;
 import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
+import brotherhood.onboardcomputer.speechToText.commands.NavigationCommand;
 import brotherhood.onboardcomputer.speechToText.commands.RepeatByMeCommand;
 import brotherhood.onboardcomputer.speechToText.commands.SearchDataCommand;
 
-/**
- * Created by Wojtas on 2016-08-22.
- */
 public class RecognizeButton extends Button {
     public static final String LOCALE_LANGUAGE = "pl";
     public static int RECOGNIZE_RESPONSE = 141;
 
     private ArrayList<Command> commands = new ArrayList<>();
     private TextToSpeech speaker;
-    private Paint lineColor;
-    private Bitmap bar = null;
-    private Bitmap barLight;
-    private boolean animationRunning = true;
-    private int countOfBars = 17;
-    private int animationPosition = 0;
-    private boolean animationToTheRight = true;
-    private int spaceBetweenBars = 0;
 
     public RecognizeButton(Context context) {
         super(context);
@@ -58,34 +42,6 @@ public class RecognizeButton extends Button {
         createSpeaker();
         initCommands();
         setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        lineColor = new Paint();
-        lineColor.setColor(Color.RED);
-        lineColor.setAntiAlias(true);
-        lineColor.setStrokeWidth(50);
-
-        bar = BitmapFactory.decodeResource(getResources(),
-                R.drawable.bar);
-        barLight = BitmapFactory.decodeResource(getResources(),
-                R.drawable.bar_light);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (animationRunning) {
-                    try {
-                        Thread.sleep(30);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    ((Activity) getContext()).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            invalidate();
-                        }
-                    });
-                }
-            }
-        }).start();
     }
 
     public RecognizeButton(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -98,6 +54,7 @@ public class RecognizeButton extends Button {
         commands.add(new SearchDataCommand(speaker));
         commands.add(new CloseAppCommand(speaker).setContext(getContext()));
         commands.add(new RepeatByMeCommand(speaker));
+        commands.add(new NavigationCommand(speaker).setContext(getContext()));
     }
 
     private void setClickListener() {
@@ -144,37 +101,10 @@ public class RecognizeButton extends Button {
         });
     }
 
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        spaceBetweenBars = (getWidth()- (countOfBars * bar.getWidth())) / countOfBars;
-        for (int i = 0; i < countOfBars; i++) {
-            if (i == animationPosition) {
-                canvas.drawBitmap(barLight, 90+i * bar.getWidth() + spaceBetweenBars, bar.getHeight() * 3, lineColor);
-            } else
-                canvas.drawBitmap(bar,90+i * bar.getWidth() + spaceBetweenBars, bar.getHeight() * 3, lineColor);
-        }
-
-        if (animationToTheRight)
-            animationPosition++;
-        else
-            animationPosition--;
-        if (animationPosition >= countOfBars) {
-            animationToTheRight = false;
-            animationPosition -= 2;
-        }
-        if (animationPosition < 0) {
-            animationToTheRight = true;
-            animationPosition = 1;
-        }
-    }
-
     public void destroy() {
         if (speaker != null) {
             speaker.stop();
             speaker.shutdown();
         }
-
-        animationRunning = false;
     }
 }

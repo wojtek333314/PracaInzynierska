@@ -24,10 +24,8 @@ import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
 import brotherhood.onboardcomputer.speechToText.enums.BroadcastMessageType;
 import brotherhood.onboardcomputer.speechToText.enums.SpeechToTextServiceStatus;
 
-/**
- * Created by Wojtas on 2016-08-17.
- */
 public class SpeechToTextService extends Service {
+    public static final String LOCALE_LANGUAGE = "en";
     public static final int MSG_RECOGNIZER_START_LISTENING = 1;
     public static final int MSG_RECOGNIZER_CANCEL = 2;
     public static final int MSG_RECOGNIZER_RESET = 3;
@@ -41,6 +39,10 @@ public class SpeechToTextService extends Service {
     protected SpeechRecognizer speechRecognizer;
     protected Intent speechRecognizerIntent;
     protected Messenger serverMessenger = new Messenger(new IncomingHandler(this));
+    protected SpeechRecognitionListener speechRecognitionListener = new SpeechRecognitionListener();
+    private TextToSpeech speaker;
+    private String recognizedText = null;
+    private ArrayList<Command> commands = new ArrayList<>();
     protected volatile boolean muteAfterEndOfSpeaking = false;
     protected volatile boolean isListening;
     protected volatile boolean isSpeaking = false;
@@ -48,10 +50,6 @@ public class SpeechToTextService extends Service {
     protected volatile boolean wordRecognized = false;
     protected int streamOriginalVolume;
     protected float stuckTimeAccumulator; // sometimes service stuck onReadyOfSpeach
-    protected SpeechRecognitionListener speechRecognitionListener = new SpeechRecognitionListener();
-    private TextToSpeech speaker;
-    private String recognizedText = null;
-    private ArrayList<Command> commands = new ArrayList<>();
     private boolean isServiceRunning = true;
     private boolean isTtsConnected = false;
     private boolean isReadyForSpeechStuck;
@@ -65,6 +63,9 @@ public class SpeechToTextService extends Service {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(speechRecognitionListener);
         speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, LOCALE_LANGUAGE);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, LOCALE_LANGUAGE);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, LOCALE_LANGUAGE);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, "brotherhood.onboardcomputer.speechToText.services");
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -86,7 +87,7 @@ public class SpeechToTextService extends Service {
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
 
-                    int result = speaker.setLanguage(Locale.ENGLISH);
+                    int result = speaker.setLanguage(new Locale("pl"));
 
                     if (result == TextToSpeech.LANG_MISSING_DATA
                             || result == TextToSpeech.LANG_NOT_SUPPORTED) {

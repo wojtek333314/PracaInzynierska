@@ -4,15 +4,10 @@ import android.app.Activity;
 import android.speech.tts.TextToSpeech;
 
 import brotherhood.onboardcomputer.speechToText.Command;
-import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
+import brotherhood.onboardcomputer.speechToText.util.Words;
 
-/**
- * Created by Wojtas on 2016-08-23.
- */
 public class CloseAppCommand extends Command {
-    public CloseAppCommand(SpeechToTextService speechToTextService) {
-        super(speechToTextService);
-    }
+    private final static String[] APP = new String[]{"aplikację", "aplikacje", "app", "application"};
 
     public CloseAppCommand(TextToSpeech speaker) {
         super(speaker);
@@ -20,7 +15,7 @@ public class CloseAppCommand extends Command {
 
     @Override
     protected void initWords() {
-        runWords = new String[][]{{"zamknij aplikację"}, {"zamknij aplikacje"}, {"close app"}, {"close application"}};
+        runWords = getPermutedArray(Words.STOP_COMMANDS, APP);
     }
 
     @Override

@@ -22,9 +22,6 @@ import brotherhood.onboardcomputer.utils.Helper;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
 
-/**
- * Created by Wojtas on 2016-08-22.
- */
 @EActivity(R.layout.activity_menu)
 public class MenuActivity extends Activity {
     @ViewById(R.id.centerMenuButton)
@@ -43,6 +40,7 @@ public class MenuActivity extends Activity {
     RecognizeButton recognizeButton;
 
     private FloatingActionMenu actionMenu;
+    private SubActionButton demoButton;
     private boolean animationThreadRun = true;
 
     @AfterViews
@@ -80,64 +78,80 @@ public class MenuActivity extends Activity {
     }
 
     private void createCircleMenu() {
-
-        ImageView icon = new ImageView(this);
-        icon.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon));
-
-        SubActionButton.Builder botItem = new SubActionButton.Builder(this);
-        ImageView botIcon = new ImageView(this);
-        botIcon.setImageDrawable(getResources().getDrawable(R.drawable.bot_icon));
-        SubActionButton botButton = botItem.setContentView(botIcon).build();
-        botButton.setOnClickListener(new View.OnClickListener() {
+        demoButton = createMenuButton(R.drawable.demo_off, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Helper.isMyServiceRunning(getApplicationContext(), BluetoothConnectionService.class)
-                        && !BluetoothConnectionService.DEMO) {
-                    Helper.showInfoMsg(MenuActivity.this, getString(R.string.firstConnectToDevice));
-                    return;
-                }
-                if (checkBluetooth() || BluetoothConnectionService.DEMO) {
-                    if (BluetoothConnectionService.DEMO) {
-                        Intent serviceIntent = new Intent(MenuActivity.this, BluetoothConnectionService.class);
-                        startService(serviceIntent);
-                    }
-                    startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
-                }
+                onDemoButtonClick();
             }
         });
-
-        ViewGroup.LayoutParams layoutParams = botButton.getLayoutParams();
-        layoutParams.width = (int) Helper.convertDpToPixel(this, 60);
-        layoutParams.height = (int) Helper.convertDpToPixel(this, 60);
-
-        SubActionButton.Builder engineItem = new SubActionButton.Builder(this);
-        ImageView engineIcon = new ImageView(this);
-        engineIcon.setImageDrawable(getResources().getDrawable(R.drawable.engine_icon));
-        SubActionButton engineButton = engineItem.setContentView(engineIcon).build();
-        engineButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkBluetooth()) {
-                    startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));
-                }
-            }
-        });
-
-        SubActionButton.Builder infoItem = new SubActionButton.Builder(this);
-        ImageView infoIcon = new ImageView(this);
-        infoIcon.setImageDrawable(getResources().getDrawable(R.drawable.info));
-        SubActionButton infoButton = infoItem.setContentView(infoIcon).build();
-
-        engineButton.setLayoutParams(layoutParams);
-        botButton.setLayoutParams(layoutParams);
-        infoButton.setLayoutParams(layoutParams);
 
         actionMenu = new FloatingActionMenu.Builder(this)
-                .addSubActionView(engineButton)
-                .addSubActionView(botButton)
-                .addSubActionView(infoButton)
+                .setRadius(90)
+                .setStartAngle(180)
+                .setEndAngle(360)
+                .addSubActionView(createMenuButton(R.drawable.engine_icon, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onEngineClick();
+                    }
+                }))
+                .addSubActionView(createMenuButton(R.drawable.bot_icon, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBotButtonClick();
+                    }
+                }))
+                .addSubActionView(demoButton)
+                .addSubActionView(createMenuButton(R.drawable.info, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println("info");
+                    }
+                }))
+                .setRadius(Helper.dpToPx(this, 80))
                 .attachTo(centerActionButton)
                 .build();
+    }
+
+    private void onDemoButtonClick() {
+        if(BluetoothConnectionService.DEMO){
+            BluetoothConnectionService.DEMO = false;
+            ((ImageView) demoButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.demo_off));
+        }else{
+            BluetoothConnectionService.DEMO = true;
+            ((ImageView) demoButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.demo_on));
+        }
+    }
+
+    private SubActionButton createMenuButton(int iconResource, View.OnClickListener onClickListener) {
+        SubActionButton.Builder item = new SubActionButton.Builder(this);
+        ImageView icon = new ImageView(this);
+        icon.setImageDrawable(getResources().getDrawable(iconResource));
+        SubActionButton button = item.setContentView(icon).build();
+        button.setOnClickListener(onClickListener);
+        button.setTag(icon);
+
+        ViewGroup.LayoutParams layoutParams = button.getLayoutParams();
+        layoutParams.width = (int) Helper.convertDpToPixel(this, Helper.dpToPx(this, 30));
+        layoutParams.height = (int) Helper.convertDpToPixel(this, Helper.dpToPx(this, 30));
+        button.setLayoutParams(layoutParams);
+
+        return button;
+    }
+
+    private void onEngineClick() {
+        if(BluetoothConnectionService.DEMO){
+            Intent serviceIntent = new Intent(MenuActivity.this, BluetoothConnectionService.class);
+            startService(serviceIntent);
+            startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+        }
+        if (checkBluetooth()) {
+            startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));
+        }
+    }
+
+    private void onBotButtonClick() {
+
     }
 
     private boolean checkBluetooth() {

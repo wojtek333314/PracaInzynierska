@@ -1,10 +1,6 @@
 package brotherhood.onboardcomputer.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.SeekBar;
@@ -30,6 +26,7 @@ import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 public class PidsListActivity extends Activity {
     private final static int MAX_TIME_VALUE_MS = 10000;
     private final static int SEEK_BAR_STEP = 500;
+    private boolean collectData = false;
 
     @ViewById
     BackgroundView backgroundView;
@@ -46,36 +43,7 @@ public class PidsListActivity extends Activity {
     private ArrayList<CardModel> pidsList;
     private CardsRecyclerViewAdapter cardsRecyclerViewAdapter;
     private boolean availablePidsAddedToAdapter;
-
     private ArrayList<ChartModel> chartModels;
-    private final BroadcastReceiver serviceReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ArrayList<Pid> pidsData = BluetoothConnectionService.pidsSupported;
-            if (pidsData != null) {
-                if (!availablePidsAddedToAdapter) {
-                    for (Pid pid : pidsData) {
-                        ChartModel chartModel = new ChartModel(pid);
-                        if (chartModel.getPid().isSupported()) {
-                            chartModels.add(chartModel);
-                            pidsList.add(new ChartCard(PidsListActivity.this, chartModel));
-                        }
-                    }
-                    availablePidsAddedToAdapter = true;
-                } else {
-                    for (ChartModel chartModel : chartModels) {
-                        for (Pid pid : pidsData) {
-                            if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
-                                chartModel.setPid(pid);
-                                break;
-                            }
-                        }
-                    }
-                }
-                refreshList();
-            }
-        }
-    };
 
     @UiThread
     void refreshList() {
@@ -86,17 +54,63 @@ public class PidsListActivity extends Activity {
     void afterViews() {
         initTimeBar();
         initRecyclerView();
-        registerReceiver();
+        initRefreshThread();
     }
 
-    private void registerReceiver() {
-        IntentFilter intentFilter = new IntentFilter("engineData");
-        registerReceiver(serviceReceiver, intentFilter);
+    void initRefreshThread() {
+        collectData = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (collectData) {
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayList<Pid> pidsData = BluetoothConnectionService.pidsSupported;
+                    if (pidsData != null) {
+                        if (!availablePidsAddedToAdapter) {
+                            initPidsList(pidsData);
+                        } else {
+                            refreshPidsData(pidsData);
+                        }
+                        refreshList();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    @UiThread
+    void initPidsList(ArrayList<Pid> pidsData) {
+        for (Pid pid : pidsData) {
+            ChartModel chartModel = new ChartModel(pid);
+            if (chartModel.getPid().isSupported()) {
+                chartModels.add(chartModel);
+                chartModel.setPid(pid);
+                pidsList.add(new ChartCard(PidsListActivity.this, chartModel));
+            }
+        }
+        availablePidsAddedToAdapter = true;
+    }
+
+    @UiThread
+    void refreshPidsData(ArrayList<Pid> pidsData) {
+        for (ChartModel chartModel : chartModels) {
+            for (Pid pid : pidsData) {
+                if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
+                    chartModel.setPid(pid);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
     protected void onPause() {
-        unregisterReceiver(serviceReceiver);
+        collectData = false;
         super.onPause();
     }
 

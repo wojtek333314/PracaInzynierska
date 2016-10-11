@@ -5,9 +5,6 @@ import android.speech.tts.TextToSpeech;
 import brotherhood.onboardcomputer.speechToText.Command;
 import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
 
-/**
- * Created by Wojtas on 2016-08-20.
- */
 public class HelloCommand extends Command {
 
     public HelloCommand(SpeechToTextService speechToTextService) {
@@ -20,7 +17,7 @@ public class HelloCommand extends Command {
 
     @Override
     protected void initWords() {
-        runWords = new String[][]{{"hello"}, {"cześć"}};
+        runWords = new String[]{"hello", "cześć"};
     }
 
     @Override

@@ -12,11 +12,13 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.util.Arrays;
+
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
 
 public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
-    private static final int MAX_ENTRIES_ON_CHART = 25;
+    private static final int MAX_ENTRIES_ON_CHART = 100;
     private ChartModel chartModel;
     private Context context;
     private View view;
@@ -51,6 +53,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
                 }
             }
         };
+        configLineChart();
     }
 
     public ChartCard(Context context, ChartModel chartModel) {
@@ -70,19 +73,19 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
 
         lineChartView.setVisibility(data.isShowChart() ? VISIBLE : GONE);
         if (data.isShowChart()) {
-            configLineChart(data);
+            refreshLineChart(data);
         }
 
         status.setImageDrawable(data.getPid().isSupported() ?
                 getResources().getDrawable(android.R.drawable.presence_online) :
                 getResources().getDrawable(android.R.drawable.presence_offline));
-        temporaryValue.setText(String.format("%s: %s %s", context.getString(R.string.all_current_value),
+        temporaryValue.setText(String.format("%s %s %s", context.getString(R.string.all_current_value),
                 data.getPid().getValue(), data.getPid().getUnit()));
         rippleLayout.setOnClickListener(onClickListener);
     }
 
-    private void configLineChart(ChartModel data) {
-        LineDataSet dataSet = new LineDataSet(data.getEntries(), "");
+    private void refreshLineChart(ChartModel data){
+        LineDataSet dataSet = new LineDataSet(Arrays.asList(data.getEntries()), "");
         while (dataSet.getEntryCount() > MAX_ENTRIES_ON_CHART) {
             dataSet.removeFirst();
         }
@@ -94,6 +97,9 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         LineData lineData = new LineData(dataSet);
         lineData.setDrawValues(false);
         lineChartView.setData(lineData);
+    }
+
+    private void configLineChart() {
         lineChartView.getLegend().setEnabled(false);
         lineChartView.setDescription("");
         lineChartView.getAxisRight().setDrawLabels(false);

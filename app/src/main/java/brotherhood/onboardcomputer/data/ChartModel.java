@@ -2,17 +2,15 @@ package brotherhood.onboardcomputer.data;
 
 import com.github.mikephil.charting.data.Entry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import brotherhood.onboardcomputer.ecuCommands.Pid;
 
 public class ChartModel {
+    public static final int CHART_DATA_SIZE = 80;
     private static int x;
     private boolean isEntriesAdding = false;
     private boolean showChart = false;
     private Pid pid;
-    private List<Entry> entries = new ArrayList<>();
+    private Entry entries[] = new Entry[CHART_DATA_SIZE];
 
     public ChartModel(Pid pid) {
         this.pid = pid;
@@ -24,20 +22,21 @@ public class ChartModel {
 
     public ChartModel setPid(Pid pid) {
         this.pid = pid;
-        if(isEntriesAdding){
+        if (isEntriesAdding) {
             return this;
         }
         isEntriesAdding = true;
-        entries.clear();
+        int position = 0;
         for (String value : pid.getValues()) {
-            entries.add(new Entry(x, Float.parseFloat(value)));
+            entries[position] = new Entry(x, Float.parseFloat(value));
+            position++;
             x++;
         }
         isEntriesAdding = false;
         return this;
     }
 
-    public List<Entry> getEntries() {
+    public Entry[] getEntries() {
         return entries;
     }
 

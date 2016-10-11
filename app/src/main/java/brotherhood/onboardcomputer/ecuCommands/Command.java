@@ -16,6 +16,7 @@ public class Command extends ObdCommand {
     private final static String PIDS_SUPPORTED = "PIDS_SUPPORTED";
     private final static String BIT_ENCODED = "BIT_ENCODED";
     private Pid pid;
+    private boolean commandOnceSended = false;
 
     public Command(Pid pid) {
         super(pid.getCommand());
@@ -71,7 +72,12 @@ public class Command extends ObdCommand {
     public void run(InputStream in, OutputStream out) throws IOException, InterruptedException {
         if (getPid().isSupported()) {
             try {
-                super.run(in, out);
+                if (!commandOnceSended) {
+                    super.run(in, out);
+                    commandOnceSended = true;
+                } else {
+                    resendCommand(out);
+                }
             } catch (NoDataException noData) {
                 noData.printStackTrace();
             }

@@ -7,13 +7,10 @@ import java.util.Random;
 
 import brotherhood.onboardcomputer.speechToText.services.SpeechToTextService;
 
-/**
- * Created by Wojtas on 2016-07-05.
- */
 public abstract class Command {
     protected static Random random = new Random();
-    protected String[][] runWords;
-    protected String[][] stopWords;
+    protected String[] runWords;
+    protected String[] stopWords;
     protected boolean isRunning;
     protected TextToSpeech speaker;
     private String wordAfterRunWords = "";
@@ -47,10 +44,10 @@ public abstract class Command {
 
     protected boolean recognizeStartCommand(String sentence) {
         if (runWords != null)
-            for (String[] runWord : runWords) {
-                String wholeSentence = "";
-                for (String str1 : runWord)
-                    wholeSentence += str1 + " ";
+            for (String wholeSentence : runWords) {
+                if (wholeSentence.charAt(wholeSentence.length() - 1) != ' ') {
+                    wholeSentence += ' ';
+                }
                 wholeSentence = wholeSentence.substring(0, wholeSentence.length() - 1);
                 wholeSentence = wholeSentence.toLowerCase();
                 sentence = sentence.toLowerCase();
@@ -83,10 +80,7 @@ public abstract class Command {
 
     protected boolean recognizeStopCommand(String sentence) {
         if (stopWords != null)
-            for (String[] stopWord : this.stopWords) {
-                String wholeSentence = "";
-                for (String str1 : stopWord)
-                    wholeSentence += str1 + " ";
+            for (String wholeSentence : this.stopWords) {
                 wholeSentence = wholeSentence.substring(0, wholeSentence.length() - 1);
                 wholeSentence = wholeSentence.toLowerCase();
                 sentence = sentence.toLowerCase();
@@ -133,6 +127,46 @@ public abstract class Command {
         }).start();
         speak(textToSpeak);
 
+    }
+
+    protected String[] connectArrays(String[]... arrays) {
+        String[] result;
+        int size = 0;
+        for (String[] array : arrays) {
+            size += array.length;
+        }
+        result = new String[size];
+
+        int i = 0;
+        for (String[] array : arrays) {
+            for (String string : array) {
+                result[i] = string;
+                i++;
+            }
+        }
+        return result;
+    }
+
+    protected String[] getPermutedArray(String[] array, String toPermute) {
+        String[] result = new String[array.length];
+        int i = 0;
+        for (String string : array) {
+            result[i] = string + " " + toPermute;
+            i++;
+        }
+        return result;
+    }
+
+    protected String[] getPermutedArray(String[] array1, String[] array2) {
+        String[] result = new String[array1.length * array2.length];
+        int i = 0;
+        for (String string1 : array1) {
+            for (String string2 : array2) {
+                result[i] = string1 + " " + string2;
+                i++;
+            }
+        }
+        return result;
     }
 
     public interface SpeakListener {

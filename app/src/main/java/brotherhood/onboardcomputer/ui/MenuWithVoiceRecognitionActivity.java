@@ -138,7 +138,6 @@ public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        System.out.println("On DESTROY!");
         if (mServiceMessenger != null) {
             unbindService(serviceConnection);
             mServiceMessenger = null;

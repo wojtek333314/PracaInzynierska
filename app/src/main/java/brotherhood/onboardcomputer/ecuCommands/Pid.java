@@ -1,14 +1,15 @@
 package brotherhood.onboardcomputer.ecuCommands;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
+import brotherhood.onboardcomputer.data.ChartModel;
 
 public class Pid implements Serializable {
     private String command;
     private String description;
     private String unit;
     private String calculationsScript;
-    private ArrayList<String> values;
+    private String[] values;
     private boolean isSupported;
 
     public Pid(String command, String description, String calculationsScript, String unit, boolean isSupported) {
@@ -17,7 +18,10 @@ public class Pid implements Serializable {
         this.unit = unit;
         this.calculationsScript = calculationsScript;
         this.isSupported = isSupported;
-        values = new ArrayList<>();
+        values = new String[ChartModel.CHART_DATA_SIZE];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = "0";
+        }
     }
 
     public String getUnit() {
@@ -33,14 +37,15 @@ public class Pid implements Serializable {
     }
 
     public void addValue(String value) {
-        values.add(value);
+        System.arraycopy(values, 1, values, 0, values.length - 1);
+        values[values.length - 1] = value;
     }
 
     public String getValue() {
-        return values.size() > 0 ? values.get(values.size() - 1) : "0";
+        return values[values.length - 1];
     }
 
-    public ArrayList<String> getValues() {
+    public String[] getValues() {
         return values;
     }
 

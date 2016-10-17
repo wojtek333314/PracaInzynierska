@@ -92,6 +92,10 @@ public abstract class Command {
         return false;
     }
 
+    protected void reset(){
+        isRunning = false;
+    }
+
     protected abstract void initWords();
 
     protected abstract void onInput(String sentence, boolean firstRun);

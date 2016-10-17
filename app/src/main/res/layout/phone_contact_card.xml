@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<app:com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                    android:id="@+id/ripple"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    app:mrl_rippleColor="@color/colorAccentRed"
+                                                    app:mrl_rippleOverlay="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/spacing_normal"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/phone_icon"/>
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/imageView"
+            android:layout_marginRight="@dimen/spacing_normal"
+            android:layout_toRightOf="@+id/imageView"
+            android:gravity="center_vertical"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </RelativeLayout>
+</app:com.balysv.materialripple.MaterialRippleLayout>

@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import brotherhood.onboardcomputer.speechToText.Command;
+import brotherhood.onboardcomputer.speechToText.commands.CallCommand;
 import brotherhood.onboardcomputer.speechToText.commands.CloseAppCommand;
 import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
 import brotherhood.onboardcomputer.speechToText.commands.NavigationCommand;
 import brotherhood.onboardcomputer.speechToText.commands.RepeatByMeCommand;
 import brotherhood.onboardcomputer.speechToText.commands.SearchDataCommand;
+import brotherhood.onboardcomputer.speechToText.commands.SmsCommand;
 
 public class RecognizeButton extends Button {
     public static final String LOCALE_LANGUAGE = "pl";
@@ -55,6 +57,8 @@ public class RecognizeButton extends Button {
         commands.add(new CloseAppCommand(speaker).setContext(getContext()));
         commands.add(new RepeatByMeCommand(speaker));
         commands.add(new NavigationCommand(speaker).setContext(getContext()));
+        commands.add(new SmsCommand(speaker).setContext(getContext()));
+        commands.add(new CallCommand(speaker).setContext(getContext()));
     }
 
     private void setClickListener() {

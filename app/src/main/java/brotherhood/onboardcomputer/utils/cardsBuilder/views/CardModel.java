@@ -18,7 +18,7 @@ public interface CardModel<D> {
     View.OnClickListener getClickListener();
 
     enum Type {
-        CHART_CARD(0);
+        CHART_CARD(0), PHONE_CONTACT(1);
 
 
         private final int value;
@@ -31,6 +31,8 @@ public interface CardModel<D> {
             switch (type) {
                 case CHART_CARD:
                     return new ChartCard(context, (ChartModel) model);
+                case PHONE_CONTACT:
+                    return new PhoneContactCard(context, (String)model);
             }
             return null;
         }

@@ -17,7 +17,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.services.BluetoothConnectionService;
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 
@@ -58,10 +57,9 @@ public class DevicesListActivity extends Activity {
                 bluetooth.cancelScan();
                 System.out.println(list.get(checkedPosition).getAddress());
                 Toast.makeText(getApplicationContext(), list.get(checkedPosition).getAddress(), Toast.LENGTH_SHORT).show();
-                Intent serviceIntent = new Intent(DevicesListActivity.this, BluetoothConnectionService.class);
-                serviceIntent.putExtra(BluetoothConnectionService.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
-                startService(serviceIntent);
-                startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+                Intent intent = new Intent(getApplicationContext(), PidsListActivity_.class);
+                intent.putExtra(PidsListActivity.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
+                startActivity(intent);
             }
         });
     }

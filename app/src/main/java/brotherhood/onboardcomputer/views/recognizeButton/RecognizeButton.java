@@ -16,9 +16,8 @@ import java.util.Locale;
 import brotherhood.onboardcomputer.speechToText.Command;
 import brotherhood.onboardcomputer.speechToText.commands.CallCommand;
 import brotherhood.onboardcomputer.speechToText.commands.CloseAppCommand;
-import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
 import brotherhood.onboardcomputer.speechToText.commands.NavigationCommand;
-import brotherhood.onboardcomputer.speechToText.commands.RepeatByMeCommand;
+import brotherhood.onboardcomputer.speechToText.commands.PositionInformCommand;
 import brotherhood.onboardcomputer.speechToText.commands.SearchDataCommand;
 import brotherhood.onboardcomputer.speechToText.commands.SmsCommand;
 
@@ -52,10 +51,9 @@ public class RecognizeButton extends Button {
     }
 
     private void initCommands() {
-        commands.add(new HelloCommand(speaker));
+        commands.add(new PositionInformCommand(speaker).setContext(getContext()));
         commands.add(new SearchDataCommand(speaker));
         commands.add(new CloseAppCommand(speaker).setContext(getContext()));
-        commands.add(new RepeatByMeCommand(speaker));
         commands.add(new NavigationCommand(speaker).setContext(getContext()));
         commands.add(new SmsCommand(speaker).setContext(getContext()));
         commands.add(new CallCommand(speaker).setContext(getContext()));
@@ -67,8 +65,8 @@ public class RecognizeButton extends Button {
             public void onClick(View v) {
                 speaker.stop();
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 500);
-                intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 800);
+                intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 100);
+                intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 100);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, LOCALE_LANGUAGE);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, LOCALE_LANGUAGE);
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, LOCALE_LANGUAGE);
@@ -83,8 +81,9 @@ public class RecognizeButton extends Button {
         ArrayList<String> data = bundle.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
         if (data.size() > 0) {
             System.out.println(data.get(0));
-            for (Command command : commands)
+            for (Command command : commands) {
                 command.process(data.get(0));
+            }
         }
     }
 

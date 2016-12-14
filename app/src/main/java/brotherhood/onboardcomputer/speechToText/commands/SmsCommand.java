@@ -1,24 +1,25 @@
 package brotherhood.onboardcomputer.speechToText.commands;
 
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.speech.tts.TextToSpeech;
-import android.telephony.SmsManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import brotherhood.onboardcomputer.speechToText.Command;
+import brotherhood.onboardcomputer.speechToText.services.SmsReceiver;
+import brotherhood.onboardcomputer.speechToText.util.ContactsUtil;
 import brotherhood.onboardcomputer.speechToText.util.Words;
-import brotherhood.onboardcomputer.utils.Helper;
+import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
 public class SmsCommand extends Command {
-    private final static String[] SMS_SENTENCE = new String[]{"sms do"};
+    private final static String[] SMS_SENTENCE = new String[]{"sms do", "do", "wiadomość do"};
+    private final static String contentSentence = "o treści";
 
     public SmsCommand(TextToSpeech speaker) {
         super(speaker);
+        SmsReceiver.command = this;
     }
+
 
     @Override
     protected void initWords() {
@@ -27,67 +28,41 @@ public class SmsCommand extends Command {
 
     @Override
     protected void onInput(String sentence, boolean firstRun) {
-        sendSMS("666109334", getSentenceAfterRunWords());
+        if (!getSentenceAfterRunWords().contains(contentSentence)) {
+            reset();
+            return;
+        }
+        String contactName = getSentenceAfterRunWords().substring(0, getSentenceAfterRunWords().indexOf(contentSentence));
+        final String message = getSentenceAfterRunWords().substring(getSentenceAfterRunWords().indexOf(contentSentence) + contentSentence.length());
+        HashMap<String, String> contacts = ContactsUtil.getContactNumberByName(getContext(), contactName);
+        if (contacts.size() == 0) {
+            speak("Brak takiego kontaktu");
+            reset();
+        } else if (contacts.size() > 1) {
+            speak("Wybierz kontakt");
+            PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
+                    , new PhoneContactChooseDialog.OnContactChooseListener() {
+                @Override
+                public void onContactChoose(String contactName) {
+                    HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
+                    for (String key : allContacts.keySet()) {
+                        if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
+                            ContactsUtil.sendSMS(SmsCommand.this, key, message);
+                            return;
+                        }
+                    }
+                }
+            });
+            contactChooseDialog.show(contacts);
+        } else {
+            speak("Wysyłam wiadomość");
+            Map.Entry<String, String> entry = contacts.entrySet().iterator().next();
+            ContactsUtil.sendSMS(SmsCommand.this, entry.getKey(), message);
+        }
     }
 
     @Override
     protected void cancel() {
 
     }
-
-    private void sendSMS(final String phoneNumber, String message) {
-        String SENT = "SMS_SENT_ACTION";
-        String DELIVERED = "SMS_DELIVERED_ACTION";
-
-        SmsManager sms = SmsManager.getDefault();
-        PendingIntent sentPI = PendingIntent.getBroadcast(
-                getContext().getApplicationContext(), 0, new Intent(SENT),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent deliveryIntent = new Intent(DELIVERED);
-        PendingIntent deliverPI = PendingIntent.getBroadcast(
-                getContext().getApplicationContext(), 0, deliveryIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        getContext().registerReceiver(new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String result = "";
-
-                switch (getResultCode()) {
-
-                    case Activity.RESULT_OK:
-                        result = "Transmission successful";
-                        break;
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        result = "Transmission failed";
-                        break;
-                    case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        result = "Radio off";
-                        break;
-                    case SmsManager.RESULT_ERROR_NULL_PDU:
-                        result = "No PDU defined";
-                        break;
-                    case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        result = "No service";
-                        break;
-                }
-
-                Helper.showToast(getContext(),result);
-            }
-
-        }, new IntentFilter(SENT));
-     /* Register for Delivery event */
-        getContext().registerReceiver(new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Helper.showToast(getContext(),"deliveered");
-            }
-
-        }, new IntentFilter(DELIVERED));
-
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliverPI);
-    }
-
 }

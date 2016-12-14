@@ -11,12 +11,14 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
 import brotherhood.onboardcomputer.ecuCommands.Pid;
-import brotherhood.onboardcomputer.services.BluetoothConnectionService;
+import brotherhood.onboardcomputer.services.EngineController;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.ChartCard;
@@ -26,7 +28,7 @@ import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 public class PidsListActivity extends Activity {
     private final static int MAX_TIME_VALUE_MS = 10000;
     private final static int SEEK_BAR_STEP = 500;
-    private boolean collectData = false;
+    public static final String DEVICE_ADDRESS_KEY = "address";
 
     @ViewById
     BackgroundView backgroundView;
@@ -40,10 +42,12 @@ public class PidsListActivity extends Activity {
     @ViewById
     RecyclerView recyclerView;
 
-    private ArrayList<CardModel> pidsList;
     private CardsRecyclerViewAdapter cardsRecyclerViewAdapter;
-    private boolean availablePidsAddedToAdapter;
     private ArrayList<ChartModel> chartModels;
+    private ArrayList<CardModel> cardsList;
+    private HashMap<Pid, ChartModel> refreshMap = new HashMap<>();
+    private EngineController engineController;
+    private boolean availablePidsAddedToAdapter;
 
     @UiThread
     void refreshList() {
@@ -52,75 +56,53 @@ public class PidsListActivity extends Activity {
 
     @AfterViews
     void afterViews() {
-        initTimeBar();
-        initRecyclerView();
-        initRefreshThread();
-    }
-
-    void initRefreshThread() {
-        collectData = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (collectData) {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    ArrayList<Pid> pidsData = BluetoothConnectionService.pidsSupported;
-                    if (pidsData != null) {
-                        if (!availablePidsAddedToAdapter) {
-                            initPidsList(pidsData);
-                        } else {
-                            refreshPidsData(pidsData);
-                        }
+        try {
+            String engineBluetoothAddress = null;
+            if (getIntent().hasExtra(DEVICE_ADDRESS_KEY)) {
+                engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
+            }
+            engineController = new EngineController(this, engineBluetoothAddress, new EngineController.EngineListener() {
+                @Override
+                public void onDataRefresh(ArrayList<Pid> pidsSupported) {
+                    if (!availablePidsAddedToAdapter) {
+                        initPidsList(pidsSupported);
+                    } else {
+                        refreshPidsData(pidsSupported);
                         refreshList();
                     }
                 }
-            }
-        }).start();
+            });
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        initTimeBar();
+        initRecyclerView();
     }
 
     @UiThread
     void initPidsList(ArrayList<Pid> pidsData) {
         for (Pid pid : pidsData) {
             ChartModel chartModel = new ChartModel(pid);
-            if (chartModel.getPid().isSupported()) {
-                chartModels.add(chartModel);
-                chartModel.setPid(pid);
-                pidsList.add(new ChartCard(PidsListActivity.this, chartModel));
-            }
+            chartModels.add(chartModel);
+            chartModel.setPid(pid);
+            ChartCard chartCard = new ChartCard(PidsListActivity.this, chartModel);
+            cardsList.add(chartCard);
+            refreshMap.put(pid, chartModel);
         }
         availablePidsAddedToAdapter = true;
     }
 
     @UiThread
     void refreshPidsData(ArrayList<Pid> pidsData) {
-        for (ChartModel chartModel : chartModels) {
-            for (Pid pid : pidsData) {
-                if (chartModel.getPid().getDescription().equals(pid.getDescription())) {
-                    chartModel.setPid(pid);
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        collectData = false;
-        super.onPause();
+        cardsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     private void initRecyclerView() {
-        pidsList = new ArrayList<>();
         chartModels = new ArrayList<>();
+        cardsList = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
-        linearLayoutManager.setSmoothScrollbarEnabled(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        cardsRecyclerViewAdapter = new CardsRecyclerViewAdapter(this, pidsList);
+        cardsRecyclerViewAdapter = new CardsRecyclerViewAdapter(this, cardsList);
         recyclerView.setAdapter(cardsRecyclerViewAdapter);
         cardsRecyclerViewAdapter.notifyDataSetChanged();
     }
@@ -131,15 +113,12 @@ public class PidsListActivity extends Activity {
         timeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress / 1000 < 1)
+                if (progress < 100) {
                     timeBarValue.setText(getString(R.string.real_time));
-                else
-                    timeBarValue.setText(String.format("%s%s", String.valueOf(progress / 1000), "s"));
-
-                if (progress / 1000 > 0)
-                    BluetoothConnectionService.UPDATE_INTERVAL = progress;
-                else
-                    BluetoothConnectionService.UPDATE_INTERVAL = 10;
+                } else {
+                    timeBarValue.setText(String.format("%.2f%s", ((float) progress / 1000), "s"));
+                }
+                EngineController.UPDATE_INTERVAL = progress;
             }
 
             @Override
@@ -152,5 +131,11 @@ public class PidsListActivity extends Activity {
 
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        engineController.destroy();
+        super.onPause();
     }
 }

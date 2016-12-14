@@ -17,7 +17,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.services.BluetoothConnectionService;
+import brotherhood.onboardcomputer.services.EngineController;
 import brotherhood.onboardcomputer.utils.Helper;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;
@@ -114,11 +114,11 @@ public class MenuActivity extends Activity {
     }
 
     private void onDemoButtonClick() {
-        if(BluetoothConnectionService.DEMO){
-            BluetoothConnectionService.DEMO = false;
+        if(EngineController.DEMO){
+            EngineController.DEMO = false;
             ((ImageView) demoButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.demo_off));
         }else{
-            BluetoothConnectionService.DEMO = true;
+            EngineController.DEMO = true;
             ((ImageView) demoButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.demo_on));
         }
     }
@@ -140,10 +140,9 @@ public class MenuActivity extends Activity {
     }
 
     private void onEngineClick() {
-        if(BluetoothConnectionService.DEMO){
-            Intent serviceIntent = new Intent(MenuActivity.this, BluetoothConnectionService.class);
-            startService(serviceIntent);
+        if(EngineController.DEMO){
             startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+            return;
         }
         if (checkBluetooth()) {
             startActivity(new Intent(getApplicationContext(), DevicesListActivity_.class));

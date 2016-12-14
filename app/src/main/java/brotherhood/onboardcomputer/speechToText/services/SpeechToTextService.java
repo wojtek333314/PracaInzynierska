@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import brotherhood.onboardcomputer.ui.MenuWithVoiceRecognitionActivity;
 import brotherhood.onboardcomputer.speechToText.Command;
-import brotherhood.onboardcomputer.speechToText.commands.HelloCommand;
 import brotherhood.onboardcomputer.speechToText.enums.BroadcastMessageType;
 import brotherhood.onboardcomputer.speechToText.enums.SpeechToTextServiceStatus;
 
@@ -103,9 +102,8 @@ public class SpeechToTextService extends Service {
     }
 
 
-
     private void initCommands() {
-        commands.add(new HelloCommand(this));
+    //    commands.add(new HelloCommand(this));
     }
 
     public void speak(String textToSpeak) {
@@ -113,8 +111,9 @@ public class SpeechToTextService extends Service {
     }
 
     private void recognizeCommand(String sentence) {
-        for (Command command : commands)
+        for (Command command : commands) {
             command.process(sentence);
+        }
     }
 
 

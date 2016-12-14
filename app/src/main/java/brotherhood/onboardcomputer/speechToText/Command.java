@@ -102,9 +102,9 @@ public abstract class Command {
 
     protected abstract void cancel();
 
-    protected void speak(String textToSpeak) {
+    public void speak(String textToSpeak) {
         if (textToSpeak != null)
-            speaker.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            speaker.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
     }
 
     protected void speak(String textToSpeak, final SpeakListener speakListener) {

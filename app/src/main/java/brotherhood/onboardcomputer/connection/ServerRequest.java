@@ -3,10 +3,6 @@ package brotherhood.onboardcomputer.connection;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,13 +21,12 @@ import brotherhood.onboardcomputer.connection.parameters.Parameters;
 
 
 public class ServerRequest extends AsyncTask<Void, Void, String> {
-    private static final boolean SIMPLY_MODE = true;//simply mode zwraca tekst taki jak pobiera, nie
-    //parsuje z formatu ustalonego przy gramatyce2016
+    private static final int CONNECTION_TIMEOUT = 10000;
+    private static final String CODING = "UTF-8";
     private ServiceType serviceType;
     private Parameters parameters;
     private ServerRequestListener serverRequestListener;
-    private int code;
-    private String description;
+    private Type type = Type.POST;
 
     public ServerRequest(ServiceType serviceType, Parameters parameters) {
         this.serviceType = serviceType;
@@ -56,27 +51,49 @@ public class ServerRequest extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... urls) {
 
         try {
-            URL url = new URL(ServiceType.getURL(serviceType));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setConnectTimeout(10000);
-            HashMap<String, String> params = new HashMap<String, String>();
-
-            if (parameters != null)
-                for (String key : parameters.getParameters().keySet()) {
-                    params.put(key, parameters.getParameters().get(key));
+            HashMap<String, String> params = new HashMap<>();
+            String stringUrl = ServiceType.getURL(serviceType);
+            if (type == Type.GET) {
+                if (parameters != null) {
+                    for (String key : parameters.getParameters().keySet()) {
+                        params.put(key, parameters.getParameters().get(key));
+                    }
                 }
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getQuery(params));
-            writer.flush();
-            writer.close();
-            os.close();
+                stringUrl += "&" + getQuery(params);
+            }
+            System.out.println("Calling url: " + stringUrl);
+            URL url = new URL(stringUrl);
 
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-            return streamToString(in);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(type.name().toUpperCase());
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");
+            connection.setRequestProperty("Accept", "*/*");
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            if (type == Type.POST) {
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                if (parameters != null) {
+                    for (String key : parameters.getParameters().keySet()) {
+                        params.put(key, parameters.getParameters().get(key));
+                    }
+                }
+                System.out.println("POST PARAMS:" + getQuery(params));
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, CODING));
+                writer.write(getQuery(params));
+                writer.flush();
+                writer.close();
+                os.close();
+            }
+            int status = connection.getResponseCode();
+            System.out.println("Response code:" + status);
+            if (status >= 400 && status < 600) {
+                InputStream in = connection.getErrorStream();
+                return streamToString(in);
+            } else {
+                InputStream in = connection.getInputStream();
+                return streamToString(in);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,6 +101,7 @@ public class ServerRequest extends AsyncTask<Void, Void, String> {
         }
 
     }
+
 
     private String getQuery(HashMap<String, String> params) {
         StringBuilder result = new StringBuilder();
@@ -96,9 +114,9 @@ public class ServerRequest extends AsyncTask<Void, Void, String> {
                 result.append("&");
 
             try {
-                result.append(URLEncoder.encode(key, "UTF-8"));
+                result.append(URLEncoder.encode(key, CODING));
                 result.append("=");
-                result.append(URLEncoder.encode(params.get(key), "UTF-8"));
+                result.append(URLEncoder.encode(params.get(key), CODING));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -108,29 +126,15 @@ public class ServerRequest extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        try {
-            if (result == null)
-                Log.e("ServerRequest", "PROBABLY YOU WANT TO CALL URL THAT DOESN'T EXIST!");
-            if(SIMPLY_MODE)
-            {
-                code = 200;
-                description = result;
-                serverRequestListener.onSuccess(result);
-                return;
+        if (result == null) {
+            Log.e("ServerRequest", "PROBABLY YOU WANT TO CALL URL THAT DOESN'T EXIST!");
+            if (serverRequestListener != null) {
+                serverRequestListener.onError(500, "something goes wrong. Result is null!");
             }
-            JSONObject jsonObject = new JSONObject(result);
-            JSONObject status = jsonObject.getJSONObject("result");
-            code = status.getInt("code");
-            description = status.getString("description");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (serverRequestListener != null) {
-            if (code != 100)
-                serverRequestListener.onError(code, description);
-            else
+        } else {
+            if (serverRequestListener != null) {
                 serverRequestListener.onSuccess(result);
+            }
         }
     }
 
@@ -150,10 +154,19 @@ public class ServerRequest extends AsyncTask<Void, Void, String> {
         return stringBuilder.toString();
     }
 
+    public ServerRequest setType(Type type) {
+        this.type = type;
+        return this;
+    }
 
     public interface ServerRequestListener {
         void onSuccess(String json);
 
         void onError(int code, String description);
+    }
+
+    public enum Type {
+        GET,
+        POST
     }
 }

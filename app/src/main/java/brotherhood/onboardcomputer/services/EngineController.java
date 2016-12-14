@@ -1,12 +1,9 @@
 package brotherhood.onboardcomputer.services;
 
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.IBinder;
+import android.content.Context;
 
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
@@ -28,33 +25,40 @@ import brotherhood.onboardcomputer.ecuCommands.Pid;
 import brotherhood.onboardcomputer.ecuCommands.PidsSupportedCommand;
 import brotherhood.onboardcomputer.utils.Helper;
 
-public class BluetoothConnectionService extends Service {
+public class EngineController {
     public static boolean DEMO = false;
     public static int UPDATE_INTERVAL = 1000;
-    public static final String INTENT_FILTER_TAG = "engineData";
-    public static final String DEVICE_ADDRESS_KEY = "deviceAddress";
-    public static final String REFRESH_FRAME = "refreshFrame";
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private static final int MIN_UPDATE_INTERVAL = 20;
+    private static final int MIN_UPDATE_INTERVAL = 90;
 
-    private String deviceAddress = null;
-    public static ArrayList<Pid> pidsSupported = new ArrayList<>();
-    private ArrayList<Command> commands = new ArrayList<>();
-    public static boolean serviceRunning = true;
-    private boolean pidsSupportedChecked;
-    private int demoValue = 1;
+    private Context context;
     private Random random = new Random();
+    private ArrayList<Pid> pidsSupported = new ArrayList<>();
+    private ArrayList<Command> commandsSupported = new ArrayList<>();
+    private EngineListener engineListener;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
-        return null;
-    }
+    private boolean collectingData = true;
+    private boolean pidsSupportedChecked;
 
-    @Override
-    public void onCreate() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(INTENT_FILTER_TAG);
+    public EngineController(Context context, String deviceAddress, EngineListener engineListener) throws IOException, InterruptedException {
+        this.context = context;
+        this.engineListener = engineListener;
+
+        if (DEMO) {
+            initTimer(null);
+            return;
+        }
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+        UUID uuid = UUID.fromString(DEVICE_UUID);
+        BluetoothSocket socket = null;
+        socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+        if (socket != null) {
+            socket.connect();
+            initializeOBDconnection(socket);
+        }
+        initTimer(socket);
     }
 
     private void initTimer(final BluetoothSocket socket) {
@@ -62,13 +66,13 @@ public class BluetoothConnectionService extends Service {
         Thread timer = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (serviceRunning) {
+                while (collectingData) {
                     try {
                         if (UPDATE_INTERVAL < MIN_UPDATE_INTERVAL) {
                             UPDATE_INTERVAL = MIN_UPDATE_INTERVAL;
                         }
                         Thread.sleep(UPDATE_INTERVAL);
-                        if (pidsSupportedChecked) {
+                        if (canCollectData()) {
                             updatePids(socket);
                         }
                     } catch (InterruptedException e) {
@@ -80,45 +84,16 @@ public class BluetoothConnectionService extends Service {
         timer.start();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startid) {
-        if (DEMO) {
-            initTimer(null);
-            return START_STICKY;
-        }
-        deviceAddress = intent.getExtras().getString(DEVICE_ADDRESS_KEY, null);
-        System.out.println("DEVICE ADRESS SERVICE:" + deviceAddress);
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice device = btAdapter.getRemoteDevice(deviceAddress);
-        UUID uuid = UUID.fromString(DEVICE_UUID);
-        BluetoothSocket socket = null;
-        try {
-            socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (socket != null)
-                socket.connect();
-            initializeOBDconnection(socket);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        initTimer(socket);
-        return START_STICKY;
-    }
-
     private void initializeOBDconnection(BluetoothSocket socket) throws IOException, InterruptedException {
         new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
         new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-        new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+        new TimeoutCommand(MIN_UPDATE_INTERVAL).run(socket.getInputStream(), socket.getOutputStream());
         new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
     }
 
     private void checkSupportedCommands(final BluetoothSocket socket) {
-        PidsSupportedCommand supportedPids = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_01_20);
-        PidsSupportedCommand supportedPids2 = new PidsSupportedCommand(this, PidsSupportedCommand.Range.PIDS_21_40);
+        PidsSupportedCommand supportedPids = new PidsSupportedCommand(context, PidsSupportedCommand.Range.PIDS_01_20);
+        PidsSupportedCommand supportedPids2 = new PidsSupportedCommand(context, PidsSupportedCommand.Range.PIDS_21_40);
 
         if (!DEMO) {
             try {
@@ -133,21 +108,21 @@ public class BluetoothConnectionService extends Service {
         if (pidsSupported.size() == 0 && DEMO) {
             createDemoPids();
         }
-        for (Pid pid : supportedPids.getResponse()) {
+        for (Pid pid : pidsSupported) {
             if (pid.isSupported()) {
                 System.out.println(pid.getCommand() + "/" + pid.isSupported());
-                commands.add(new Command(pid));
+                commandsSupported.add(new Command(pid));
             }
         }
 
         pidsSupportedChecked = true;
-        System.out.println("check supported command, count of supported pids: " + commands.size());
+        System.out.println("check supported command, count of supported pids: " + commandsSupported.size());
     }
 
     private void createDemoPids() {
         System.out.println("demo pids created!");
         try {
-            JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(getApplication(), "pids.json"));
+            JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(context, "pids.json"));
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
                 pidsSupported.add(new Pid(object.getString("command")
@@ -163,22 +138,38 @@ public class BluetoothConnectionService extends Service {
 
     private void updatePids(BluetoothSocket socket) {
         try {
-            for (Command command : commands) {
+            for (Command command : commandsSupported) {
+                if (!collectingData) {
+                    return;
+                }
                 if (!DEMO) {
                     command.run(socket.getInputStream(), socket.getOutputStream());
                 } else {
-                    demoValue = random.nextInt(300);
+                    int demoValue = random.nextInt(300);
                     command.getPid().addValue(String.valueOf(demoValue));
                 }
+            }
+            if (engineListener != null) {
+                engineListener.onDataRefresh(pidsSupported);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        serviceRunning = false;
-        return super.onUnbind(intent);
+    public ArrayList<Pid> getPidsSupported() {
+        return pidsSupported;
+    }
+
+    public void destroy() {
+        collectingData = false;
+    }
+
+    public boolean canCollectData() {
+        return pidsSupportedChecked;
+    }
+
+    public interface EngineListener {
+        void onDataRefresh(ArrayList<Pid> pidsSupported);
     }
 }

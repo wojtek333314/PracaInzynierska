@@ -10,21 +10,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import brotherhood.onboardcomputer.services.BluetoothConnectionService;
+import brotherhood.onboardcomputer.services.EngineController;
 import brotherhood.onboardcomputer.utils.Helper;
 
 public class PidsSupportedCommand extends ObdCommand {
+    private static ArrayList<Pid> pidsSupported = new ArrayList<>();
     private Context context;
-    private static ArrayList<Pid> response = new ArrayList<>();
     private int offset = 0;
 
     public PidsSupportedCommand(Context context, Range range) {
         super(getCommand(range));
         this.context = context;
-
-        for (int i = 0; i < Range.values().length; i++)
-            if (Range.values()[i].equals(range))
+        for (int i = 0; i < Range.values().length; i++) {
+            if (Range.values()[i].equals(range)) {
                 offset = i;
+            }
+        }
     }
 
     private static String getCommand(Range range) {
@@ -49,8 +50,8 @@ public class PidsSupportedCommand extends ObdCommand {
             for (int i = 0; i < 20; i++) {
                 int pos = i + offset * 20;
                 JSONObject object = jsonArray.getJSONObject(pos);
-                if (value.charAt(i) == '1' || BluetoothConnectionService.DEMO) {
-                    response.add(new Pid(object.getString("command")
+                if (value.charAt(i) == '1' || EngineController.DEMO) {
+                    pidsSupported.add(new Pid(object.getString("command")
                             , object.getString("description")
                             , object.getString("calculationsScript")
                             , object.getString("unit")
@@ -63,13 +64,13 @@ public class PidsSupportedCommand extends ObdCommand {
     }
 
     public ArrayList<Pid> getResponse() {
-        return response;
+        return pidsSupported;
     }
 
     @Override
     public String getFormattedResult() {
         String result = "";
-        for (Pid pid : response)
+        for (Pid pid : pidsSupported)
             result += pid.getDescription() + "|" + pid.isSupported();
         return result;
     }

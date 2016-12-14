@@ -1,15 +1,14 @@
 package brotherhood.onboardcomputer.speechToText.commands;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import brotherhood.onboardcomputer.speechToText.Command;
+import brotherhood.onboardcomputer.speechToText.util.ContactsUtil;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
 public class CallCommand extends Command {
@@ -30,30 +29,32 @@ public class CallCommand extends Command {
         if (waitForConfirmSpecificContact) {
             return;
         }
-        if (getContactNumberByName() == null || getContactNumberByName().size() == 0) {
+        HashMap<String, String> searchedNumbers = ContactsUtil.getContactNumberByName(getContext(), getSentenceAfterRunWords());
+        if (searchedNumbers == null || searchedNumbers.size() == 0) {
             speak("Nie ma takiego kontaktu w pamięci telefonu");
             reset();
             return;
         }
 
-        if (getContactNumberByName().size() > 1) {
+        if (searchedNumbers.size() > 1) {
             PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
                     , new PhoneContactChooseDialog.OnContactChooseListener() {
                 @Override
                 public void onContactChoose(String contactName) {
-                    for (String key : getAllContacts().keySet()) {
-                        if (getAllContacts().get(key).toLowerCase().equals(contactName.toLowerCase())) {
+                    HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
+                    for (String key : allContacts.keySet()) {
+                        if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
                             callTo(key);
                             return;
                         }
                     }
                 }
             });
-            contactChooseDialog.show(getContactNumberByName());
+            contactChooseDialog.show(searchedNumbers);
             waitForConfirmSpecificContact = true;
             return;
         }
-        Map.Entry<String, String> entry = getContactNumberByName().entrySet().iterator().next();
+        Map.Entry<String, String> entry = searchedNumbers.entrySet().iterator().next();
         callTo(entry.getKey());
     }
 
@@ -72,30 +73,5 @@ public class CallCommand extends Command {
 
     }
 
-    public HashMap<String, String> getContactNumberByName() {
-        HashMap<String, String> result = new HashMap<>();
-        String contactName = getSentenceAfterRunWords().replaceAll("\\s+", "").toLowerCase();
-        HashMap<String, String> allContacts = getAllContacts();
-        for (String string : allContacts.keySet()) {
-            if (allContacts.get(string).toLowerCase().contains(contactName)
-                    || contactName.contains(allContacts.get(string).toLowerCase())) {
-                result.put(string, allContacts.get(string));
-            }
-        }
-        return result;
-    }
 
-    private HashMap<String, String> getAllContacts() {
-        HashMap<String, String> allContacts = new HashMap<>();
-        Cursor phones = getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        if (phones != null) {
-            while (phones.moveToNext()) {
-                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                allContacts.put(phoneNumber, name);
-            }
-            phones.close();
-        }
-        return allContacts;
-    }
 }

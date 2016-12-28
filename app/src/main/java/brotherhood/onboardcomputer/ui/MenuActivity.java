@@ -17,7 +17,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.services.EngineController;
+import brotherhood.onboardcomputer.engineController.EngineController;
 import brotherhood.onboardcomputer.utils.Helper;
 import brotherhood.onboardcomputer.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton;

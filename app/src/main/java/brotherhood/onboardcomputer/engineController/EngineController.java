@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.services;
+package brotherhood.onboardcomputer.engineController;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,19 +11,12 @@ import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-import brotherhood.onboardcomputer.ecuCommands.Command;
-import brotherhood.onboardcomputer.ecuCommands.Pid;
-import brotherhood.onboardcomputer.ecuCommands.PidsSupportedCommand;
-import brotherhood.onboardcomputer.utils.Helper;
+import brotherhood.onboardcomputer.ecuCommands.EngineCommand;
+import brotherhood.onboardcomputer.ecuCommands.mode1.Mode1Controller;
 
 public class EngineController {
     public static boolean DEMO = false;
@@ -33,17 +26,16 @@ public class EngineController {
 
     private Context context;
     private Random random = new Random();
-    private ArrayList<Pid> pidsSupported = new ArrayList<>();
-    private ArrayList<Command> commandsSupported = new ArrayList<>();
     private EngineListener engineListener;
 
     private boolean collectingData = true;
     private boolean pidsSupportedChecked;
+    private Mode1Controller mode1Controller;
 
     public EngineController(Context context, String deviceAddress, EngineListener engineListener) throws IOException, InterruptedException {
         this.context = context;
         this.engineListener = engineListener;
-
+        this.mode1Controller = new Mode1Controller();
         if (DEMO) {
             initTimer(null);
             return;
@@ -52,7 +44,7 @@ public class EngineController {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
         UUID uuid = UUID.fromString(DEVICE_UUID);
-        BluetoothSocket socket = null;
+        BluetoothSocket socket;
         socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
         if (socket != null) {
             socket.connect();
@@ -92,73 +84,44 @@ public class EngineController {
     }
 
     private void checkSupportedCommands(final BluetoothSocket socket) {
-        PidsSupportedCommand supportedPids = new PidsSupportedCommand(context, PidsSupportedCommand.Range.PIDS_01_20);
-        PidsSupportedCommand supportedPids2 = new PidsSupportedCommand(context, PidsSupportedCommand.Range.PIDS_21_40);
-
         if (!DEMO) {
             try {
-                supportedPids.run(socket.getInputStream(), socket.getOutputStream());
-                supportedPids2.run(socket.getInputStream(), socket.getOutputStream());
+                mode1Controller.getPidsSupported01_20().run(socket.getInputStream(), socket.getOutputStream());
+                mode1Controller.getPidsSupported21_40().run(socket.getInputStream(), socket.getOutputStream());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            mode1Controller.prepareDemoAvailability();
         }
-
-        pidsSupported = supportedPids.getResponse();
-        if (pidsSupported.size() == 0 && DEMO) {
-            createDemoPids();
-        }
-        for (Pid pid : pidsSupported) {
-            if (pid.isSupported()) {
-                System.out.println(pid.getCommand() + "/" + pid.isSupported());
-                commandsSupported.add(new Command(pid));
-            }
-        }
-
+        mode1Controller.updatePidsAvailability();
         pidsSupportedChecked = true;
-        System.out.println("check supported command, count of supported pids: " + commandsSupported.size());
-    }
-
-    private void createDemoPids() {
-        System.out.println("demo pids created!");
-        try {
-            JSONArray jsonArray = new JSONArray(Helper.loadJSONFromAsset(context, "pids.json"));
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject object = jsonArray.getJSONObject(i);
-                pidsSupported.add(new Pid(object.getString("command")
-                        , object.getString("description")
-                        , object.getString("calculationsScript")
-                        , object.getString("unit")
-                        , true));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        System.out.println("check supported command finished");
     }
 
     private void updatePids(BluetoothSocket socket) {
         try {
-            for (Command command : commandsSupported) {
+            for (EngineCommand engineCommand : mode1Controller.getEngineCommands()) {
                 if (!collectingData) {
                     return;
                 }
                 if (!DEMO) {
-                    command.run(socket.getInputStream(), socket.getOutputStream());
+                    engineCommand.run(socket.getInputStream(), socket.getOutputStream());
                 } else {
                     int demoValue = random.nextInt(300);
-                    command.getPid().addValue(String.valueOf(demoValue));
+                    engineCommand.addValue(String.valueOf(demoValue));
                 }
             }
             if (engineListener != null) {
-                engineListener.onDataRefresh(pidsSupported);
+                engineListener.onDataRefresh();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<Pid> getPidsSupported() {
-        return pidsSupported;
+    public Mode1Controller getMode1Controller() {
+        return mode1Controller;
     }
 
     public void destroy() {
@@ -170,6 +133,6 @@ public class EngineController {
     }
 
     public interface EngineListener {
-        void onDataRefresh(ArrayList<Pid> pidsSupported);
+        void onDataRefresh();
     }
 }

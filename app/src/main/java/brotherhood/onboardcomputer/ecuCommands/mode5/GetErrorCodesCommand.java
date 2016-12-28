@@ -1,10 +1,10 @@
-package brotherhood.onboardcomputer.ecuCommands;
+package brotherhood.onboardcomputer.ecuCommands.mode5;
 
 import com.github.pires.obd.commands.ObdCommand;
 
 public class GetErrorCodesCommand extends ObdCommand {
     public GetErrorCodesCommand(String command) {
-        super(command);
+        super("05 00");
     }
 
     @Override

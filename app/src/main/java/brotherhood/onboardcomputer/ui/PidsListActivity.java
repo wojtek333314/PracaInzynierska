@@ -13,12 +13,11 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.data.ChartModel;
-import brotherhood.onboardcomputer.ecuCommands.Pid;
-import brotherhood.onboardcomputer.services.EngineController;
+import brotherhood.onboardcomputer.ecuCommands.EngineCommand;
+import brotherhood.onboardcomputer.engineController.EngineController;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.ChartCard;
@@ -43,9 +42,7 @@ public class PidsListActivity extends Activity {
     RecyclerView recyclerView;
 
     private CardsRecyclerViewAdapter cardsRecyclerViewAdapter;
-    private ArrayList<ChartModel> chartModels;
     private ArrayList<CardModel> cardsList;
-    private HashMap<Pid, ChartModel> refreshMap = new HashMap<>();
     private EngineController engineController;
     private boolean availablePidsAddedToAdapter;
 
@@ -63,11 +60,11 @@ public class PidsListActivity extends Activity {
             }
             engineController = new EngineController(this, engineBluetoothAddress, new EngineController.EngineListener() {
                 @Override
-                public void onDataRefresh(ArrayList<Pid> pidsSupported) {
+                public void onDataRefresh() {
                     if (!availablePidsAddedToAdapter) {
-                        initPidsList(pidsSupported);
+                        initPidsList();
                     } else {
-                        refreshPidsData(pidsSupported);
+                        refreshPidsData();
                         refreshList();
                     }
                 }
@@ -80,25 +77,21 @@ public class PidsListActivity extends Activity {
     }
 
     @UiThread
-    void initPidsList(ArrayList<Pid> pidsData) {
-        for (Pid pid : pidsData) {
-            ChartModel chartModel = new ChartModel(pid);
-            chartModels.add(chartModel);
-            chartModel.setPid(pid);
+    void initPidsList() {
+        for (EngineCommand engineCommand : engineController.getMode1Controller().getOnlyAvailableEngineCommands()) {
+            ChartModel chartModel = new ChartModel(engineCommand);
             ChartCard chartCard = new ChartCard(PidsListActivity.this, chartModel);
             cardsList.add(chartCard);
-            refreshMap.put(pid, chartModel);
         }
         availablePidsAddedToAdapter = true;
     }
 
     @UiThread
-    void refreshPidsData(ArrayList<Pid> pidsData) {
+    void refreshPidsData() {
         cardsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     private void initRecyclerView() {
-        chartModels = new ArrayList<>();
         cardsList = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

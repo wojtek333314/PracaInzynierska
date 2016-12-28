@@ -51,7 +51,7 @@ public abstract class Command {
                 wholeSentence = wholeSentence.substring(0, wholeSentence.length() - 1);
                 wholeSentence = wholeSentence.toLowerCase();
                 sentence = sentence.toLowerCase();
-                System.out.println("Command:    `"
+                System.out.println("EngineCommand:    `"
                         + sentence
                         + "` contains `"
                         + wholeSentence + "` ? "

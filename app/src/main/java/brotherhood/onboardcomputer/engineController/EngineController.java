@@ -10,6 +10,7 @@ import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
+import com.github.pires.obd.exceptions.NoDataException;
 
 import java.io.IOException;
 import java.util.Random;
@@ -101,15 +102,25 @@ public class EngineController {
 
     private void updatePids(BluetoothSocket socket) {
         try {
-            for (EngineCommand engineCommand : mode1Controller.getEngineCommands()) {
+            if (DEMO) {
                 if (!collectingData) {
                     return;
                 }
-                if (!DEMO) {
-                    engineCommand.run(socket.getInputStream(), socket.getOutputStream());
-                } else {
+                for (EngineCommand engineCommand : mode1Controller.getEngineCommands()) {
                     int demoValue = random.nextInt(300);
                     engineCommand.addValue(String.valueOf(demoValue));
+                }
+            } else {
+                if (!collectingData) {
+                    return;
+                }
+                System.out.println("updateing pids count:" + mode1Controller.getOnlyAvailableEngineCommands().length);
+                for (EngineCommand engineCommand : mode1Controller.getOnlyAvailableEngineCommands()) {
+                    try {
+                        engineCommand.run(socket.getInputStream(), socket.getOutputStream());
+                    } catch (NoDataException e) {
+                        System.out.println(engineCommand.getName() + " NO DATA! ");
+                    }
                 }
             }
             if (engineListener != null) {

@@ -12,6 +12,10 @@
     <string name="coolant_temperature">Coolant temperature</string>
     <string name="all_current_value">Current value:</string>
     <string name="choose_phone_contact">Choose phone contact</string>
+    <string name="engine_tests">Engine tests</string>
+    <string name="database_compare">Compare with same cars</string>
+    <string name="engine_trouble_codes">Trouble codes</string>
+    <string name="trouble_list_delete">Delete all errors</string>
     <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>

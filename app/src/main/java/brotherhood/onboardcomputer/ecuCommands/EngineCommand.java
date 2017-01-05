@@ -86,6 +86,7 @@ public abstract class EngineCommand extends ObdCommand {
         int i = 0;
         for (Entry entry : chartEntries) {
             entry.setY(Float.parseFloat(values[i]));
+            entry.setX(i);
             i++;
         }
     }
@@ -96,7 +97,6 @@ public abstract class EngineCommand extends ObdCommand {
         if (pid != null) {
             result += String.format("%02x", pid);
         }
-        System.out.println(result);
         return result;
     }
 

@@ -10,7 +10,7 @@ public class Mode1Controller {
     private PidsSupported21_40 pidsSupported21_40;
     private EngineCommand[] engineCommands = new EngineCommand[]{
             new CoolantTemperature(), new EngineLoad(), new EngineRPM(), new FuelPressure(), new RuntimeSinceEngineStart(),
-            new FuelPressure(), new ThrottlePosition(), new VehicleSpeed()
+            new ThrottlePosition(), new VehicleSpeed()
     };
 
     public Mode1Controller() {
@@ -36,8 +36,12 @@ public class Mode1Controller {
 
     public void updatePidsAvailability() {
         for (EngineCommand engineCommand : engineCommands) {
-            pidsSupported01_20.checkIsCommandSupported(engineCommand);
-            pidsSupported21_40.checkIsCommandSupported(engineCommand);
+            if(pidsSupported01_20.checkIsCommandSupported(engineCommand)){
+                engineCommand.setSupported(true);
+            }
+            if(pidsSupported21_40.checkIsCommandSupported(engineCommand)){
+                engineCommand.setSupported(true);
+            }
         }
     }
 

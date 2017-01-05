@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import brotherhood.onboardcomputer.data.ChartModel;
+import brotherhood.onboardcomputer.data.TroubleCodeModel;
 
 
 public interface CardModel<D> {
@@ -18,7 +19,9 @@ public interface CardModel<D> {
     View.OnClickListener getClickListener();
 
     enum Type {
-        CHART_CARD(0), PHONE_CONTACT(1);
+        CHART_CARD(0),
+        PHONE_CONTACT(1),
+        TROUBLE_CODE_CARD(2);
 
 
         private final int value;
@@ -32,7 +35,9 @@ public interface CardModel<D> {
                 case CHART_CARD:
                     return new ChartCard(context, (ChartModel) model);
                 case PHONE_CONTACT:
-                    return new PhoneContactCard(context, (String)model);
+                    return new PhoneContactCard(context, (String) model);
+                case TROUBLE_CODE_CARD:
+                    return new TroubleCodeCard(context, (TroubleCodeModel) model);
             }
             return null;
         }

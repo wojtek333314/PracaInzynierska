@@ -41,7 +41,6 @@ public class PidsSupported01_20 extends EngineCommand implements CommandSupporte
 
     @Override
     public boolean checkIsCommandSupported(EngineCommand engineCommand) {
-        System.out.println(engineCommand.getPid()+"/"+engineCommand.getName()+"/"+Integer.parseInt(Integer.toString(engineCommand.getPid()), 16));
         return engineCommand.getPid() < 32 && pidsAvailability[Integer.parseInt(Integer.toHexString(engineCommand.getPid()), 16)];
     }
 }

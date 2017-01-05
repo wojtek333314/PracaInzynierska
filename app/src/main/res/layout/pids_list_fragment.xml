@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:rsv="http://schemas.android.com/apk/res-auto">
+
+
+    <brotherhood.onboardcomputer.views.dotsBackground.BackgroundView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/backgroundView"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerView"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_below="@+id/topDivider"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeBar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:progressDrawable="@drawable/red_scrubber_progress"
+        android:thumb="@drawable/red_scrubber_control"
+        android:padding="@dimen/spacing_normal"
+        android:layout_marginBottom="@dimen/spacing_normal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/real_time"
+        android:id="@+id/timeBarValue"
+        android:layout_above="@+id/recyclerView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/refresh_time"
+        android:id="@+id/textView2"
+        android:layout_above="@+id/recyclerView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/spacing_normal"
+        android:layout_marginBottom="5dp"
+        android:layout_alignTop="@+id/timeBarValue"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout2"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/spacing_small"
+        android:background="@color/transparent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/transparent">
+
+            <ImageView
+                android:layout_width="@dimen/round_button_size"
+                android:layout_height="@dimen/round_button_size"
+                android:id="@+id/engineTestsButton"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_assignment_turned_in_white_24px"
+                android:padding="@dimen/spacing_normal"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/engine_tests"
+                android:id="@+id/textView4"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/spacing_small"
+                android:layout_margin="@dimen/spacing_small"
+                android:textSize="@dimen/font_small"
+                android:background="@color/transparent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/transparent">
+
+            <ImageView
+                android:layout_width="@dimen/round_button_size"
+                android:layout_height="@dimen/round_button_size"
+                android:id="@+id/compareWithOthersButton"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_assignment_turned_in_white_24dp"
+                android:padding="@dimen/spacing_normal"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/database_compare"
+                android:id="@+id/textView5"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/spacing_small"
+                android:layout_margin="@dimen/spacing_small"
+                android:textSize="@dimen/font_small"
+                android:background="@color/transparent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/transparent">
+
+            <ImageView
+                android:layout_width="@dimen/round_button_size"
+                android:layout_height="@dimen/round_button_size"
+                android:id="@+id/troubleCodesButton"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_report_problem_white_24px"
+                android:padding="@dimen/spacing_normal"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/engine_trouble_codes"
+                android:id="@+id/textView6"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/spacing_small"
+                android:layout_margin="@dimen/spacing_small"
+                android:textSize="@dimen/font_small"
+                android:background="@color/transparent"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccentRed"
+        android:id="@+id/bottomDivider">
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccentRed"
+        android:id="@+id/topDivider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/timeBar"
+        />
+</RelativeLayout>

@@ -57,7 +57,7 @@ public class DevicesListActivity extends Activity {
                 bluetooth.cancelScan();
                 System.out.println(list.get(checkedPosition).getAddress());
                 Toast.makeText(getApplicationContext(), list.get(checkedPosition).getAddress(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), PidsListActivity_.class);
+                Intent intent = new Intent(getApplicationContext(), PidsListFragment_.class);
                 intent.putExtra(PidsListActivity.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
                 startActivity(intent);
             }
@@ -121,7 +121,6 @@ public class DevicesListActivity extends Activity {
                 }
             }
         });
-
         bluetooth.startScan();
     }
 }

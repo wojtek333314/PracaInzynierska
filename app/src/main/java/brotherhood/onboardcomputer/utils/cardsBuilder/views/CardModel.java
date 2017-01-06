@@ -3,8 +3,8 @@ package brotherhood.onboardcomputer.utils.cardsBuilder.views;
 import android.content.Context;
 import android.view.View;
 
-import brotherhood.onboardcomputer.data.ChartModel;
-import brotherhood.onboardcomputer.data.TroubleCodeModel;
+import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.models.TroubleCodeModel;
 
 
 public interface CardModel<D> {

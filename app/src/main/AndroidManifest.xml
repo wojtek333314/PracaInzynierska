@@ -39,7 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MenuActivity_"
+            android:name=".ui.menu.MenuActivity_"
             android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -48,14 +48,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DevicesListActivity_"/>
+        <activity android:name=".ui.devicesList.DevicesListActivity_"/>
 
-        <activity android:name=".ui.PidsListActivity_"/>
+        <activity android:name=".ui.engine.PidsListActivity_"/>
 
-        <service android:name=".speechToText.services.SpeechToTextService"/>
+        <service android:name=".assistance.services.SpeechToTextService"/>
 
         <receiver
-            android:name=".speechToText.services.SmsReceiver"
+            android:name=".assistance.services.SmsReceiver"
             android:enabled="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="2147483647">

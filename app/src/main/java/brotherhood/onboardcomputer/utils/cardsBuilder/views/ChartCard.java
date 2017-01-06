@@ -15,7 +15,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.Arrays;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.data.ChartModel;
+import brotherhood.onboardcomputer.models.ChartModel;
 
 public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     private static final int MAX_ENTRIES_ON_CHART = 100;

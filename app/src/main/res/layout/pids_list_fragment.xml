@@ -5,7 +5,7 @@
     xmlns:rsv="http://schemas.android.com/apk/res-auto">
 
 
-    <brotherhood.onboardcomputer.views.dotsBackground.BackgroundView
+    <brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/backgroundView"

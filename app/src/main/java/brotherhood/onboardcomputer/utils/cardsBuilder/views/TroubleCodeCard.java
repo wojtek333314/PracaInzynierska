@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.data.TroubleCodeModel;
+import brotherhood.onboardcomputer.models.TroubleCodeModel;
 
 public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCodeModel> {
 

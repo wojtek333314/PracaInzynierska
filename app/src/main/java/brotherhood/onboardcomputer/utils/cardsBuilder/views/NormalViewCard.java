@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.data.ChartModel;
+import brotherhood.onboardcomputer.models.ChartModel;
 
 public class NormalViewCard extends LinearLayout implements CardModel<ChartModel> {
     private ChartModel chartModel;

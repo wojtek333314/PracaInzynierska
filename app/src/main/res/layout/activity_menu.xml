@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
 
-    <brotherhood.onboardcomputer.views.dotsBackground.BackgroundView
+    <brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/backgroundView"
@@ -30,7 +30,7 @@
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent" />
 
-    <brotherhood.onboardcomputer.views.recognizeButton.RecognizeButton
+    <brotherhood.onboardcomputer.ui.views.recognizeButton.RecognizeButton
         android:layout_width="150dp"
         android:layout_height="250dp"
         android:id="@+id/recognizeButton"

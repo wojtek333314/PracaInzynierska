@@ -8,6 +8,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.FloatingActionButton;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,9 +98,15 @@ public class MenuActivity extends BaseActivity {
         bubblesManager = new BubblesManager.Builder(this).setInitializationCallback(new OnInitializedCallback() {
             @Override
             public void onInitialized() {
-                BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MenuActivity.this).inflate(R.layout.app_fab, null);
+                final BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MenuActivity.this).inflate(R.layout.app_fab, null);
                 bubbleView.setShouldStickToWall(true);
-                floatingActionButton = (android.support.design.widget.FloatingActionButton) bubbleView.findViewById(R.id.fab);
+                bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
+                    @Override
+                    public void onBubbleRemoved(BubbleLayout bubble) {
+                    //    bubblesManager.removeBubble(bubble);
+                    }
+                });
+                floatingActionButton = (FloatingActionButton) bubbleView.findViewById(R.id.fab);
                 bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
                     @Override
                     public void onBubbleClick(BubbleLayout bubble) {
@@ -112,7 +119,7 @@ public class MenuActivity extends BaseActivity {
                 int height = size.y;
                 bubblesManager.addBubble(bubbleView, 0, (int) (height * 0.8f));
             }
-        }).build();
+        }).setTrashLayout(R.layout.fab_trash_layout).build();
         bubblesManager.initialize();
 
     }

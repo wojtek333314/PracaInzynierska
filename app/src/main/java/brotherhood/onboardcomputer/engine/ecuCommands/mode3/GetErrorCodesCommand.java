@@ -11,7 +11,7 @@ public class GetErrorCodesCommand extends EngineCommand {
     protected StringBuilder result = null;
 
     public GetErrorCodesCommand() {
-        super(3, null, EngineCommand.VisibilityMode.NONE);
+        super("03");
         result = new StringBuilder();
     }
 
@@ -46,6 +46,8 @@ public class GetErrorCodesCommand extends EngineCommand {
             this.result.append(dtc);
             this.result.append('\n');
         }
+        addValue(result);
+        System.out.println(result);
     }
 
     private byte hexStringToByteArray(char s) {

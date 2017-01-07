@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode3.GetErrorCodesCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode4.ClearErrorCodesCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
@@ -76,13 +77,18 @@ public class TroubleCodesFragment extends BaseFragment {
             startDemoClearThread();
         } else {
             ClearErrorCodesCommand clearErrorCodesCommand = new ClearErrorCodesCommand();
-            engineController.runCommand(clearErrorCodesCommand, new EngineController.EngineListener() {
+            engineController.addCommandToQueue(clearErrorCodesCommand, new EngineController.CommandListener() {
                 @Override
                 public void onDataRefresh() {
                     System.out.println("Trouble codes cleared!");
                     codesCards.clear();
                     refreshList();
                     getTroubleCodes();
+                }
+
+                @Override
+                public void onNoData(EngineCommand engineCommand) {
+
                 }
             });
         }
@@ -110,13 +116,21 @@ public class TroubleCodesFragment extends BaseFragment {
             getErrorsDemoThread();
         } else {
             final GetErrorCodesCommand getErrorCodesCommand = new GetErrorCodesCommand();
-            engineController.runCommand(getErrorCodesCommand, new EngineController.EngineListener() {
+            engineController.addCommandToQueue(getErrorCodesCommand, new EngineController.CommandListener() {
                 @Override
                 public void onDataRefresh() {
                     hideInfo();
                     System.out.println("Error codes: " + getErrorCodesCommand.getFormattedResult());
                     showRefreshButton();
                 }
+
+                @Override
+                public void onNoData(EngineCommand engineCommand) {
+                    codesCards.clear();
+                    refreshList();
+                    showInfo(getString(R.string.engine_trouble_codes_not_found));
+                }
+
             });
         }
 

@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 

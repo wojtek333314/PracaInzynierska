@@ -10,7 +10,6 @@ public class ByteHelper {
         int pos = 0;
         for (Integer integer : buffer) {
             value += Helper.hexToBinary(Integer.toHexString(integer));
-            System.out.println(Helper.hexToBinary(Integer.toHexString(integer)));
         }
         boolean result[] = new boolean[value.length()];
 

@@ -64,8 +64,6 @@
 
         <activity android:name=".ui.recording.RecordActivity_"/>
 
-        <service android:name=".assistance.services.SpeechToTextService"/>
-
         <receiver
             android:name=".assistance.services.SmsReceiver"
             android:enabled="true"

@@ -28,9 +28,8 @@ import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.ChartCard;
 
 @EFragment(R.layout.pids_list_fragment)
-public class PidsListFragment extends Fragment implements EngineController.EngineListener {
-    private final static int MAX_TIME_VALUE_MS = 10000;
-    private final static int SEEK_BAR_STEP = 500;
+public class PidsListFragment extends Fragment implements EngineController.CommandListener {
+    private final static int MAX_TIME_VALUE_MS = 2500;
 
     @ViewById
     BackgroundView backgroundView;
@@ -67,7 +66,8 @@ public class PidsListFragment extends Fragment implements EngineController.Engin
 
     @UiThread
     void initPidsList() {
-        for (EngineCommand engineCommand : ((PidsListActivity) getActivity()).getEngineController().getMode1Controller().getOnlyAvailableEngineCommands()) {
+        for (EngineCommand engineCommand : ((PidsListActivity) getActivity()).getEngineController()
+                .getEngineCommandsController().getOnlyAvailableEngineCommands()) {
             ChartCard chartCard = new ChartCard(getActivity(), new ChartModel(engineCommand));
             cardsList.add(chartCard);
         }
@@ -111,16 +111,12 @@ public class PidsListFragment extends Fragment implements EngineController.Engin
 
     private void initTimeBar() {
         timeBar.setMax(MAX_TIME_VALUE_MS);
-        timeBar.incrementProgressBy(SEEK_BAR_STEP);
         timeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress < 100) {
-                    timeBarValue.setText(getString(R.string.real_time));
-                } else {
-                    timeBarValue.setText(String.format("%.2f%s", ((float) progress / 1000), "s"));
-                }
-                EngineController.UPDATE_INTERVAL = progress;
+                timeBarValue.setText(String.format("%.2f%s", ((float) progress / 1000)
+                        + ((float) EngineController.MIN_UPDATE_INTERVAL / 1000), "s"));
+                EngineController.UPDATE_INTERVAL = progress + EngineController.MIN_UPDATE_INTERVAL;
             }
 
             @Override
@@ -133,6 +129,8 @@ public class PidsListFragment extends Fragment implements EngineController.Engin
 
             }
         });
+        timeBarValue.setText(String.format("%.2f%s", ((float) timeBar.getProgress() / 1000)
+                + ((float) EngineController.MIN_UPDATE_INTERVAL / 1000), "s"));
     }
 
     @Override
@@ -143,6 +141,11 @@ public class PidsListFragment extends Fragment implements EngineController.Engin
             refreshPidsData();
             refreshList();
         }
+    }
+
+    @Override
+    public void onNoData(EngineCommand engineCommand) {
+
     }
 
     @Click(R.id.troubleCodesButton)

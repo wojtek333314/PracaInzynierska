@@ -1,17 +1,17 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class EngineRPM extends EngineCommand {
-    public EngineRPM() {
-        super(1, 12, EngineCommand.VisibilityMode.CHART_VIEW);
-        setDescription("Engine RPM");
-        setUnit("rpm");
+public class VehicleSpeed extends EngineCommand {
+    public VehicleSpeed() {
+        super(1, 13, VisibilityMode.CHART_VIEW);
+        setDescription("Vehicle Speed");
+        setUnit("km/h");
     }
 
     @Override
     protected void performCalculations() {
-        addValue(Float.toString((buffer.get(2) * 256 + buffer.get(3)) / 4));
+        addValue(Float.toString(buffer.get(2)));
     }
 
     @Override

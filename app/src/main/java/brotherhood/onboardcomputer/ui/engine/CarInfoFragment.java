@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.engine.ecuCommands.lowLevelApi.DeviceDescription;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.ControleModuleVoltage;
+import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.ControleModuleVoltage;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode9.Vin;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.models.ChartModel;
@@ -28,7 +28,7 @@ import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.NormalViewCard;
 
 @EFragment(R.layout.car_info_fragment)
-public class CarInfoFragment extends BaseFragment implements EngineController.EngineListener {
+public class CarInfoFragment extends BaseFragment {
 
     @ViewById
     RecyclerView recyclerView;
@@ -45,7 +45,6 @@ public class CarInfoFragment extends BaseFragment implements EngineController.En
 
     private boolean dataIsCollected;
     private int dataCollectedCount;
-    private DeviceDescription adapterDescription;
 
     @AfterViews
     public void initViews() {
@@ -66,15 +65,12 @@ public class CarInfoFragment extends BaseFragment implements EngineController.En
     private void initCards() {
         controleModuleVoltage = new ControleModuleVoltage();
         vinCommand = new Vin();
-        adapterDescription = new DeviceDescription();
 
         cards.add(new NormalViewCard(getContext(), new ChartModel(controleModuleVoltage)));
         cards.add(new NormalViewCard(getContext(), new ChartModel(vinCommand)));
-        cards.add(new NormalViewCard(getContext(), new ChartModel(adapterDescription)));
         if (EngineController.DEMO) {
             controleModuleVoltage.addValue(String.valueOf(random.nextFloat() + 5));
             vinCommand.addValue("D0E0M0O1V1I1N123456");
-            adapterDescription.addValue("Demo Device, version: 1.3.21");
             hideInfo();
         } else {
             recyclerView.setVisibility(View.GONE);
@@ -98,12 +94,14 @@ public class CarInfoFragment extends BaseFragment implements EngineController.En
         adapter.notifyDataSetChanged();
     }
 
-    private void showInfo(String string) {
+    @UiThread
+    public void showInfo(String string) {
         carInfoMessage.setText(string);
         carInfoMessage.setVisibility(View.VISIBLE);
     }
 
-    private void hideInfo() {
+    @UiThread
+    public void hideInfo() {
         carInfoMessage.setVisibility(View.GONE);
         YoYo.with(Techniques.BounceInDown).duration(500).playOn(recyclerView);
     }
@@ -113,26 +111,39 @@ public class CarInfoFragment extends BaseFragment implements EngineController.En
         return this;
     }
 
-    @Override
+    @UiThread
     public void onDataRefresh() {
         if (!EngineController.DEMO && !dataIsCollected && isFragmentActive()) {
-            engineController.runCommand(controleModuleVoltage, new EngineController.EngineListener() {
+
+            if (engineController.getEngineCommandsController().checkIsCommandAvailable(controleModuleVoltage)) {
+                engineController.addCommandToQueue(controleModuleVoltage, new EngineController.CommandListener() {
+                    @Override
+                    public void onDataRefresh() {
+                        onDataCollected();
+                    }
+
+                    @Override
+                    public void onNoData(EngineCommand engineCommand) {
+
+                    }
+                });
+            }
+
+            engineController.addCommandToQueue(vinCommand, new EngineController.CommandListener() {
                 @Override
                 public void onDataRefresh() {
                     onDataCollected();
                 }
-            });
 
-            engineController.runCommand(vinCommand, new EngineController.EngineListener() {
                 @Override
-                public void onDataRefresh() {
-                    onDataCollected();
+                public void onNoData(EngineCommand engineCommand) {
                 }
             });
         }
     }
 
-    private void onDataCollected() {
+    @UiThread
+    public void onDataCollected() {
         dataCollectedCount++;
         if (dataCollectedCount == (cards.size() - 1)) {
             dataIsCollected = true;

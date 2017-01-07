@@ -14,10 +14,10 @@ public abstract class EngineCommand extends ObdCommand {
     private boolean isSupported;
     private Entry[] chartEntries;
 
-    public EngineCommand(Integer mode, Integer pid, VisibilityMode visibilityMode) {
-        super(convertModeAndPidToCommand(mode, pid));
+    public EngineCommand(Integer mode, Integer pidDecimal, VisibilityMode visibilityMode) {
+        super(convertModeAndPidToCommand(mode, pidDecimal));
         this.mode = mode;
-        this.pid = pid;
+        this.pid = pidDecimal;
         this.values = new String[VALUES_BUFFER_SIZE];
         this.chartEntries = new Entry[VALUES_BUFFER_SIZE];
         this.visibilityMode = visibilityMode;

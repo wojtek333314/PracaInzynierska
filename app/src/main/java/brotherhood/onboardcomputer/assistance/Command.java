@@ -5,8 +5,6 @@ import android.speech.tts.TextToSpeech;
 
 import java.util.Random;
 
-import brotherhood.onboardcomputer.assistance.services.SpeechToTextService;
-
 public abstract class Command {
     protected static Random random = new Random();
     protected String[] runWords;
@@ -15,11 +13,6 @@ public abstract class Command {
     protected TextToSpeech speaker;
     private String wordAfterRunWords = "";
     private Context context;
-
-    public Command(SpeechToTextService speechToTextService) {
-        this.speaker = speechToTextService.getSpeaker();
-        initWords();
-    }
 
     public Command(TextToSpeech speaker) {
         this.speaker = speaker;

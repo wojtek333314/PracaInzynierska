@@ -26,6 +26,8 @@ public class Vin extends EngineCommand {
             workingData = result.replaceAll("49020.", "");
         }
         vin = convertHexToString(workingData).replaceAll("[\u0000-\u001f]", "");
+        System.out.println("VIN:"+vin);
+        addValue(vin);
     }
 
     @Override

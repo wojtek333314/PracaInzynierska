@@ -1,17 +1,18 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class EngineLoad extends EngineCommand {
-    public EngineLoad() {
-        super(1, 4, EngineCommand.VisibilityMode.CHART_VIEW);
-        setDescription("Engine load");
-        setUnit("%");
+public class RuntimeSinceEngineStart extends EngineCommand {
+
+    public RuntimeSinceEngineStart() {
+        super(1, 31, VisibilityMode.NORMAL_VIEW);
+        setDescription("Runtime Since Engine Start");
+        setUnit("sec.");
     }
 
     @Override
     protected void performCalculations() {
-        addValue(Float.toString(buffer.get(2) / 2.55f));
+        addValue(Float.toString((buffer.get(2) * 256) + buffer.get(3)));
     }
 
     @Override

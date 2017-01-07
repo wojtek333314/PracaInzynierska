@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
@@ -6,7 +6,7 @@ public class ControleModuleVoltage extends EngineCommand {
     private float voltage;
 
     public ControleModuleVoltage() {
-        super(1, 42, VisibilityMode.NORMAL_VIEW);
+        super(1, 66, VisibilityMode.NORMAL_VIEW);
         setDescription("Controle Module Voltage");
         setUnit("V");
     }
@@ -16,6 +16,7 @@ public class ControleModuleVoltage extends EngineCommand {
         int a = buffer.get(2);
         int b = buffer.get(3);
         voltage = (a * 256 + b) / 1000;
+        addValue(String.valueOf(voltage));
     }
 
     @Override

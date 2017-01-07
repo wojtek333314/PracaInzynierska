@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode1.interfaces.CommandSupportedInterface;
@@ -8,7 +8,7 @@ public class PidsSupported21_40  extends EngineCommand implements CommandSupport
     private boolean pidsAvailability[];
 
     public PidsSupported21_40() {
-        super(1, 20, VisibilityMode.NONE);
+        super(1, 32, VisibilityMode.NONE);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class PidsSupported21_40  extends EngineCommand implements CommandSupport
 
     @Override
     public boolean checkIsCommandSupported(EngineCommand engineCommand) {
-        return engineCommand.getPid() > 32 && pidsAvailability[Integer.parseInt(Integer.toString(engineCommand.getPid()), 16) - 32];
+        return engineCommand.getPid() >= 32 && pidsAvailability[engineCommand.getPid() - 32];
     }
 }

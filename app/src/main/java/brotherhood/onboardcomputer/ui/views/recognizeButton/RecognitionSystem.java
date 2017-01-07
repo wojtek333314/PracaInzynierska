@@ -9,14 +9,13 @@ import java.util.Locale;
 
 import brotherhood.onboardcomputer.assistance.Command;
 import brotherhood.onboardcomputer.assistance.commands.CallCommand;
-import brotherhood.onboardcomputer.assistance.commands.CloseAppCommand;
 import brotherhood.onboardcomputer.assistance.commands.NavigationCommand;
 import brotherhood.onboardcomputer.assistance.commands.PositionInformCommand;
-import brotherhood.onboardcomputer.assistance.commands.SearchDataCommand;
 import brotherhood.onboardcomputer.assistance.commands.SmsCommand;
 
 public class RecognitionSystem {
     public static final String LOCALE_LANGUAGE = "pl";
+    public static final String STRING_ACTION = "stringAction";
 
     private ArrayList<Command> commands = new ArrayList<>();
     private TextToSpeech speaker;
@@ -34,8 +33,6 @@ public class RecognitionSystem {
 
     private void initCommands() {
         commands.add(new PositionInformCommand(speaker).setContext(getContext()));
-        commands.add(new SearchDataCommand(speaker));
-        commands.add(new CloseAppCommand(speaker).setContext(getContext()));
         commands.add(new NavigationCommand(speaker).setContext(getContext()));
         commands.add(new SmsCommand(speaker).setContext(getContext()));
         commands.add(new CallCommand(speaker).setContext(getContext()));

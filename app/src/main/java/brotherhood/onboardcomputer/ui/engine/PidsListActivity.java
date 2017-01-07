@@ -10,6 +10,7 @@ import org.androidannotations.annotations.ViewById;
 import java.io.IOException;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 
@@ -21,7 +22,7 @@ public class PidsListActivity extends BaseActivity {
     FrameLayout fragmentsContainer;
 
     private EngineController engineController;
-    private EngineController.EngineListener engineListener;
+    private EngineController.CommandListener commandListener;
     private PidsListFragment pidsListFragment;
     private TroubleCodesFragment troubleCodesFragment;
     private CarInfoFragment carInfoFragment;
@@ -75,12 +76,17 @@ public class PidsListActivity extends BaseActivity {
     }
 
     private void initEngineListener() {
-        engineListener = new EngineController.EngineListener() {
+        commandListener = new EngineController.CommandListener() {
             @Override
             public void onDataRefresh() {
                 pidsListFragment.onDataRefresh();
                 carInfoFragment.onDataRefresh();
                 chartsRecorderFragment.onDataRefresh();
+            }
+
+            @Override
+            public void onNoData(EngineCommand engineCommand) {
+
             }
         };
     }
@@ -91,7 +97,7 @@ public class PidsListActivity extends BaseActivity {
             if (getIntent().hasExtra(DEVICE_ADDRESS_KEY)) {
                 engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
             }
-            engineController = new EngineController(engineBluetoothAddress, engineListener);
+            engineController = new EngineController(engineBluetoothAddress, commandListener);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

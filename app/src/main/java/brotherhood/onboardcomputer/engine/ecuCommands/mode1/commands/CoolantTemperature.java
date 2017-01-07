@@ -1,17 +1,18 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class VehicleSpeed extends EngineCommand {
-    public VehicleSpeed() {
-        super(1, 13, VisibilityMode.CHART_VIEW);
-        setDescription("Vehicle Speed");
-        setUnit("km/h");
+public class CoolantTemperature extends EngineCommand {
+
+    public CoolantTemperature() {
+        super(1, 5, VisibilityMode.CHART_VIEW);
+        setDescription("Coolant temperature");
+        setUnit("°C");
     }
 
     @Override
     protected void performCalculations() {
-        addValue(Float.toString(buffer.get(2)));
+        addValue(Integer.toString(buffer.get(2) - 40));
     }
 
     @Override

@@ -23,7 +23,6 @@ public class NavigationCommand extends Command {
 
     @Override
     protected void onInput(String sentence, boolean firstRun) {
-        System.out.println("ss:" + getSentenceAfterRunWords());
         if (getSentenceAfterRunWords() != null || !getSentenceAfterRunWords().equals("")) {
             speak("Uruchamiam nawigację do " + getSentenceAfterRunWords());
         } else {

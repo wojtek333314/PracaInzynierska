@@ -61,9 +61,7 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
             name.setText(data.getEngineCommand().getDescription());
         }
 
-        status.setImageDrawable(data.getEngineCommand().isSupported() ?
-                getResources().getDrawable(android.R.drawable.presence_online) :
-                getResources().getDrawable(android.R.drawable.presence_offline));
+        status.setVisibility(INVISIBLE);
         temporaryValue.setText(String.format("%s %s %s", context.getString(R.string.all_current_value),
                 data.getEngineCommand().getLastValue(), data.getEngineCommand().getUnit()));
         rippleLayout.setOnClickListener(onClickListener);
@@ -81,7 +79,7 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
 
     @Override
     public Type getType() {
-        return Type.CHART_CARD;
+        return Type.NORMAL_VIEW_CARD;
     }
 
     @Override

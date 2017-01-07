@@ -1,7 +1,7 @@
 package brotherhood.onboardcomputer.connection.enums;
 
 
-import brotherhood.onboardcomputer.ui.views.recognizeButton.RecognizeButton;
+import brotherhood.onboardcomputer.ui.views.recognizeButton.RecognitionSystem;
 
 public enum ServiceType {
     GET_WIKIPEDIA_DATA,
@@ -11,7 +11,7 @@ public enum ServiceType {
         switch (serviceType) {
 
             case GET_WIKIPEDIA_DATA:
-                return "https://" + RecognizeButton.LOCALE_LANGUAGE
+                return "https://" + RecognitionSystem.LOCALE_LANGUAGE
                         + ".wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&";
             case GET_DUCKDUCK_GO_DATA:
                 return "http://api.duckduckgo.com/?format=json";

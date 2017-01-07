@@ -1,6 +1,5 @@
 package brotherhood.onboardcomputer.ui.devicesList;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -17,13 +16,14 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.ui.engine.PidsListActivity;
 import brotherhood.onboardcomputer.ui.engine.PidsListFragment_;
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 
 @EActivity(R.layout.choose_bluetooth)
-public class DevicesListActivity extends Activity {
+public class DevicesListActivity extends BaseActivity {
 
     @ViewById
     RadioGroup radioGroup;

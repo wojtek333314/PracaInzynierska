@@ -28,6 +28,16 @@ public abstract class EngineCommand extends ObdCommand {
         }
     }
 
+    public EngineCommand(String rawCommand){
+        super(rawCommand);
+        this.values = new String[VALUES_BUFFER_SIZE];
+        this.chartEntries = new Entry[VALUES_BUFFER_SIZE];
+        for (int i = 0; i < chartEntries.length; i++) {
+            chartEntries[i] = new Entry();
+            values[i] = "0";
+        }
+    }
+
     public String getDescription() {
         return description;
     }
@@ -84,11 +94,14 @@ public abstract class EngineCommand extends ObdCommand {
         values[values.length - 1] = value;
 
         int i = 0;
-        for (Entry entry : chartEntries) {
-            entry.setY(Float.parseFloat(values[i]));
-            entry.setX(i);
-            i++;
+        if (getVisibilityMode() == VisibilityMode.CHART_VIEW) {
+            for (Entry entry : chartEntries) {
+                entry.setY(Float.parseFloat(values[i]));
+                entry.setX(i);
+                i++;
+            }
         }
+
     }
 
     private static String convertModeAndPidToCommand(Integer mode, Integer pid) {

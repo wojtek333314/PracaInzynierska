@@ -1,7 +1,6 @@
 package brotherhood.onboardcomputer.ui.engine;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.widget.FrameLayout;
 
 import org.androidannotations.annotations.AfterViews;
@@ -12,9 +11,10 @@ import java.io.IOException;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
+import brotherhood.onboardcomputer.ui.BaseActivity;
 
 @EActivity(R.layout.pids_list_activity)
-public class PidsListActivity extends FragmentActivity {
+public class PidsListActivity extends BaseActivity {
     public static final String DEVICE_ADDRESS_KEY = "address";
 
     @ViewById
@@ -24,7 +24,9 @@ public class PidsListActivity extends FragmentActivity {
     private EngineController.EngineListener engineListener;
     private PidsListFragment pidsListFragment;
     private TroubleCodesFragment troubleCodesFragment;
+    private CarInfoFragment carInfoFragment;
     private Fragment currentFragment;
+    private ChartsRecorderFragment chartsRecorderFragment;
 
     @AfterViews
     void initialize() {
@@ -40,6 +42,10 @@ public class PidsListActivity extends FragmentActivity {
 
     public void swapToTroubleCodesFragment() {
         changeFragment(troubleCodesFragment);
+    }
+
+    public void swapToCarInfoFragment() {
+        changeFragment(carInfoFragment);
     }
 
     @Override
@@ -62,6 +68,9 @@ public class PidsListActivity extends FragmentActivity {
     private void initFragments() {
         pidsListFragment = PidsListFragment_.builder().build();
         troubleCodesFragment = TroubleCodesFragment_.builder().build();
+        carInfoFragment = CarInfoFragment_.builder().build();
+        chartsRecorderFragment = ChartsRecorderFragment_.builder().build();
+        carInfoFragment.setEngineController(engineController);
         troubleCodesFragment.setEngineController(engineController);
     }
 
@@ -70,6 +79,8 @@ public class PidsListActivity extends FragmentActivity {
             @Override
             public void onDataRefresh() {
                 pidsListFragment.onDataRefresh();
+                carInfoFragment.onDataRefresh();
+                chartsRecorderFragment.onDataRefresh();
             }
         };
     }
@@ -80,7 +91,7 @@ public class PidsListActivity extends FragmentActivity {
             if (getIntent().hasExtra(DEVICE_ADDRESS_KEY)) {
                 engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
             }
-            engineController = new EngineController(this, engineBluetoothAddress, engineListener);
+            engineController = new EngineController(engineBluetoothAddress, engineListener);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -94,5 +105,9 @@ public class PidsListActivity extends FragmentActivity {
     public void onPause() {
         engineController.destroy();
         super.onPause();
+    }
+
+    public void swapToChartsRecorderFragment() {
+        changeFragment(chartsRecorderFragment);
     }
 }

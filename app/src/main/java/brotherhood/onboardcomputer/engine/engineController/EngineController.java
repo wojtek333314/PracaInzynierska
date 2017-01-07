@@ -3,8 +3,8 @@ package brotherhood.onboardcomputer.engine.engineController;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 
+import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -21,11 +21,11 @@ import brotherhood.onboardcomputer.engine.ecuCommands.mode1.Mode1Controller;
 
 public class EngineController {
     public static boolean DEMO = false;
-    public static int UPDATE_INTERVAL = 1000;
+    public static int UPDATE_INTERVAL = 1001;
     private static final String DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    private static final int MIN_UPDATE_INTERVAL = 90;
+    private static final int MIN_UPDATE_INTERVAL = 250;
+    private BluetoothSocket socket = null;
 
-    private Context context;
     private Random random = new Random();
     private EngineListener engineListener;
 
@@ -33,12 +33,11 @@ public class EngineController {
     private boolean pidsSupportedChecked;
     private Mode1Controller mode1Controller;
 
-    public EngineController(Context context, String deviceAddress, EngineListener engineListener) throws IOException, InterruptedException {
-        this.context = context;
+    public EngineController(String deviceAddress, EngineListener engineListener) throws IOException, InterruptedException {
         this.engineListener = engineListener;
         this.mode1Controller = new Mode1Controller();
         if (DEMO) {
-            initTimer(null);
+            initTimer();
             return;
         }
 
@@ -51,10 +50,11 @@ public class EngineController {
             socket.connect();
             initializeOBDconnection(socket);
         }
-        initTimer(socket);
+        this.socket = socket;
+        initTimer();
     }
 
-    private void initTimer(final BluetoothSocket socket) {
+    private void initTimer() {
         checkSupportedCommands(socket);
         Thread timer = new Thread(new Runnable() {
             @Override
@@ -100,6 +100,7 @@ public class EngineController {
         System.out.println("check supported command finished");
     }
 
+
     private void updatePids(BluetoothSocket socket) {
         try {
             if (DEMO) {
@@ -127,6 +128,15 @@ public class EngineController {
                 engineListener.onDataRefresh();
             }
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void runCommand(ObdCommand engineCommand , EngineListener engineListener) {
+        try {
+            engineCommand.run(socket.getInputStream(), socket.getOutputStream());
+            engineListener.onDataRefresh();
+        }catch (NullPointerException | InterruptedException | IOException e){
             e.printStackTrace();
         }
     }

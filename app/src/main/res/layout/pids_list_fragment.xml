@@ -19,7 +19,7 @@
         android:background="@android:color/transparent"
         android:layout_marginLeft="@dimen/spacing_normal"
         android:layout_marginRight="@dimen/spacing_normal"
-        android:layout_above="@+id/linearLayout2"
+        android:layout_above="@+id/engineOptionsLayout"
         android:layout_below="@+id/topDivider"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"/>
@@ -69,10 +69,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/linearLayout2"
+        android:id="@+id/engineOptionsLayout"
         android:gravity="center_horizontal"
         android:padding="@dimen/spacing_small"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        android:visibility="gone">
 
         <LinearLayout
             android:orientation="vertical"
@@ -85,37 +86,7 @@
             <ImageView
                 android:layout_width="@dimen/round_button_size"
                 android:layout_height="@dimen/round_button_size"
-                android:id="@+id/engineTestsButton"
-                android:background="@drawable/round_button"
-                android:src="@drawable/ic_assignment_turned_in_white_24px"
-                android:padding="@dimen/spacing_normal"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/engine_tests"
-                android:id="@+id/textView4"
-                android:gravity="center_vertical|center_horizontal"
-                android:padding="@dimen/spacing_small"
-                android:layout_margin="@dimen/spacing_small"
-                android:textSize="@dimen/font_small"
-                android:background="@color/transparent"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_weight="1"
-            android:background="@color/transparent">
-
-            <ImageView
-                android:layout_width="@dimen/round_button_size"
-                android:layout_height="@dimen/round_button_size"
-                android:id="@+id/compareWithOthersButton"
+                android:id="@+id/chartsButton"
                 android:background="@drawable/round_button"
                 android:src="@drawable/ic_assignment_turned_in_white_24dp"
                 android:padding="@dimen/spacing_normal"
@@ -125,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/database_compare"
+                android:text="@string/charts"
                 android:id="@+id/textView5"
                 android:gravity="center_vertical|center_horizontal"
                 android:padding="@dimen/spacing_small"
@@ -165,13 +136,43 @@
                 android:background="@color/transparent"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/transparent">
+
+            <ImageView
+                android:layout_width="@dimen/round_button_size"
+                android:layout_height="@dimen/round_button_size"
+                android:id="@+id/carInfoButton"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_info_outline_white_24px"
+                android:padding="@dimen/spacing_normal"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/engine_car_info"
+                android:id="@+id/textView8"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/spacing_small"
+                android:layout_margin="@dimen/spacing_small"
+                android:textSize="@dimen/font_small"
+                android:background="@color/transparent"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/linearLayout2"
+        android:layout_above="@+id/engineOptionsLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@color/colorAccentRed"
@@ -188,4 +189,13 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/timeBar"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/all.collecting.data"
+        android:id="@+id/loadingInfo"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

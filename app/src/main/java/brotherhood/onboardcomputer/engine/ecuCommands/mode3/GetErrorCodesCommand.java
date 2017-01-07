@@ -1,18 +1,17 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.trubleCodes;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode3;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class TroubleCodes extends EngineCommand {
-
+public class GetErrorCodesCommand extends EngineCommand {
     protected final static char[] DTC_PREFIX = {'P', 'C', 'B', 'U'};
     protected final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     protected StringBuilder result = null;
 
-    public TroubleCodes() {
-        super(3, null, VisibilityMode.NONE);
+    public GetErrorCodesCommand() {
+        super(3, null, EngineCommand.VisibilityMode.NONE);
         result = new StringBuilder();
     }
 

@@ -16,6 +16,16 @@
     <string name="database_compare">Compare with same cars</string>
     <string name="engine_trouble_codes">Trouble codes</string>
     <string name="trouble_list_delete">Delete all errors</string>
+    <string name="engine_trouble_codes_searching">Searching trouble codes</string>
+    <string name="engine_trouble_codes_not_found">Trouble codes not found</string>
+    <string name="trouble_list_refresh">Refresh</string>
+    <string name="engine_car_info">Car info</string>
+    <string name="car_info_please_refresh">No informations</string>
+    <string name="all.collecting.data">Collecting data</string>
+    <string name="all_connection_error">Connection error</string>
+    <string name="all_listening">I am listening, please give me a command!</string>
+    <string name="all_recognition_no_match">No match of command</string>
+    <string name="charts">Charts recorder</string>
     <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>

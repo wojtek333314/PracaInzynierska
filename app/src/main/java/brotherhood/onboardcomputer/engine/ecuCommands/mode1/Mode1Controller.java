@@ -10,7 +10,7 @@ public class Mode1Controller {
     private PidsSupported21_40 pidsSupported21_40;
     private EngineCommand[] engineCommands = new EngineCommand[]{
             new CoolantTemperature(), new EngineLoad(), new EngineRPM(), new FuelPressure(), new RuntimeSinceEngineStart(),
-            new ThrottlePosition(), new VehicleSpeed()
+            new ThrottlePosition(), new VehicleSpeed(), new MafAirflowRate()
     };
 
     public Mode1Controller() {

@@ -1,12 +1,11 @@
 package brotherhood.onboardcomputer.engine.ecuCommands.mode4;
 
-import com.github.pires.obd.commands.ObdCommand;
+import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class ClearErrorCodesCommand extends ObdCommand {
-
+public class ClearErrorCodesCommand extends EngineCommand {
 
     public ClearErrorCodesCommand() {
-        super("04");
+        super(4, 0, VisibilityMode.NONE);
     }
 
     @Override

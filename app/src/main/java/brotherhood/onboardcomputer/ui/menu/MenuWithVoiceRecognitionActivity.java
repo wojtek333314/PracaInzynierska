@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,13 +26,14 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.utils.Helper;
-import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.assistance.enums.BroadcastMessageType;
 import brotherhood.onboardcomputer.assistance.services.SpeechToTextService;
+import brotherhood.onboardcomputer.ui.BaseActivity;
+import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
+import brotherhood.onboardcomputer.utils.Helper;
 
 @EActivity(R.layout.activity_menu)
-public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
+public class MenuWithVoiceRecognitionActivity extends BaseActivity {
     public static final String STRING_ACTION = "string";
 
     @ViewById(R.id.centerMenuButton)
@@ -50,7 +50,7 @@ public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
 
     private FloatingActionMenu actionMenu;
     private boolean animationThreadRun = true;
-    private Messenger mServiceMessenger;
+    private Messenger serviceMessenger;
 
     private BroadcastReceiver serviceReceiver = new BroadcastReceiver() {
         @Override
@@ -78,12 +78,12 @@ public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mServiceMessenger = new Messenger(service);
+            serviceMessenger = new Messenger(service);
             Message msg = new Message();
             msg.what = SpeechToTextService.MSG_RECOGNIZER_START_LISTENING;
 
             try {
-                mServiceMessenger.send(msg);
+                serviceMessenger.send(msg);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -91,7 +91,7 @@ public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mServiceMessenger = null;
+            serviceMessenger = null;
         }
 
     }; // serviceConnection
@@ -138,9 +138,9 @@ public class MenuWithVoiceRecognitionActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mServiceMessenger != null) {
+        if (serviceMessenger != null) {
             unbindService(serviceConnection);
-            mServiceMessenger = null;
+            serviceMessenger = null;
         }
     }
 

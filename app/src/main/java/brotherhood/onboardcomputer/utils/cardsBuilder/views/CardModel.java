@@ -21,7 +21,7 @@ public interface CardModel<D> {
     enum Type {
         CHART_CARD(0),
         PHONE_CONTACT(1),
-        TROUBLE_CODE_CARD(2);
+        TROUBLE_CODE_CARD(2), NORMAL_VIEW_CARD(3);
 
 
         private final int value;
@@ -38,6 +38,8 @@ public interface CardModel<D> {
                     return new PhoneContactCard(context, (String) model);
                 case TROUBLE_CODE_CARD:
                     return new TroubleCodeCard(context, (TroubleCodeModel) model);
+                case NORMAL_VIEW_CARD:
+                    return new NormalViewCard(context, (ChartModel) model);
             }
             return null;
         }

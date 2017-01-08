@@ -32,7 +32,7 @@ public class ContactsUtil {
 
     public static HashMap<String, String> getContactNameByNumber(Context context, String number) {
         HashMap<String, String> result = new HashMap<>();
-        number = number.replaceAll("\\s+", "").toLowerCase();
+        number = number.replaceAll("\\s+", "").replaceAll("-", "").replaceAll("\\+", "").toLowerCase();
         HashMap<String, String> allContacts = getAllContacts(context);
         for (String string : allContacts.keySet()) {
             if (string.contains(number) || string.equals(number)) {

@@ -5,8 +5,7 @@ import android.speech.tts.TextToSpeech;
 import brotherhood.onboardcomputer.assistance.Command;
 
 public class ConfirmCommand extends Command {
-    private final static String CONFIRM_SENTENCES[] = new String[]{"tak"};
-    private final static String DISAGREE_SENTENCES[] = new String[]{"nie"};
+    private final static String CONFIRM_SENTENCES[] = new String[]{"tak", "nie"};
 
     private ConfirmListener confirmListener;
 
@@ -16,23 +15,27 @@ public class ConfirmCommand extends Command {
     }
 
     @Override
+    protected void onStopWordRecognized() {
+
+    }
+
+    @Override
     protected void initWords() {
         runWords = CONFIRM_SENTENCES;
-        stopWords = DISAGREE_SENTENCES;
     }
 
     @Override
-    protected void onInput(String sentence, boolean firstRun) {
-        confirmListener.onConfirm();
-    }
-
-    @Override
-    protected void cancel() {
-        confirmListener.onDisagree();
+    protected void onCommandRecognized(String sentence) {
+        if (sentence.contains(CONFIRM_SENTENCES[0])) {
+            confirmListener.onConfirm();
+        } else if (sentence.contains(CONFIRM_SENTENCES[1])) {
+            confirmListener.onConfirm();
+        }
     }
 
     public interface ConfirmListener {
         void onConfirm();
+
         void onDisagree();
     }
 }

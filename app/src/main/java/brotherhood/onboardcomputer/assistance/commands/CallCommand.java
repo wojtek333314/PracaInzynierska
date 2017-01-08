@@ -20,24 +20,28 @@ public class CallCommand extends Command {
     }
 
     @Override
+    protected void onStopWordRecognized() {
+
+    }
+
+    @Override
     protected void initWords() {
         runWords = CALL_SENTENCES;
     }
 
     @Override
-    protected void onInput(String sentence, boolean firstRun) {
+    protected void onCommandRecognized(String sentence) {
         if (waitForConfirmSpecificContact) {
             return;
         }
         HashMap<String, String> searchedNumbers = ContactsUtil.getContactNumberByName(getContext(), getSentenceAfterRunWords());
         if (searchedNumbers == null || searchedNumbers.size() == 0) {
             speak("Nie ma takiego kontaktu w pamięci telefonu");
-            reset();
             return;
         }
 
         if (searchedNumbers.size() > 1) {
-            PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
+            PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext().getApplicationContext()
                     , new PhoneContactChooseDialog.OnContactChooseListener() {
                 @Override
                 public void onContactChoose(String contactName) {
@@ -59,6 +63,8 @@ public class CallCommand extends Command {
     }
 
     private void callTo(String number) {
+        number = number.replaceAll("-", "");
+        number = number.replaceAll("\\+", "");
         if (number.length() > 9) {
             number = "+" + number;
         }
@@ -66,12 +72,6 @@ public class CallCommand extends Command {
         intent.setData(Uri.parse("tel:" + number));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getContext().startActivity(intent);
-        reset();
-    }
-
-    @Override
-    protected void cancel() {
-
     }
 
 

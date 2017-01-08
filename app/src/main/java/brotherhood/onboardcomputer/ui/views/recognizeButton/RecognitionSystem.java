@@ -11,6 +11,7 @@ import brotherhood.onboardcomputer.assistance.Command;
 import brotherhood.onboardcomputer.assistance.commands.CallCommand;
 import brotherhood.onboardcomputer.assistance.commands.NavigationCommand;
 import brotherhood.onboardcomputer.assistance.commands.PositionInformCommand;
+import brotherhood.onboardcomputer.assistance.commands.ReplySmsCommand;
 import brotherhood.onboardcomputer.assistance.commands.SmsCommand;
 
 public class RecognitionSystem {
@@ -36,6 +37,7 @@ public class RecognitionSystem {
         commands.add(new NavigationCommand(speaker).setContext(getContext()));
         commands.add(new SmsCommand(speaker).setContext(getContext()));
         commands.add(new CallCommand(speaker).setContext(getContext()));
+        commands.add(new ReplySmsCommand(speaker).setContext(getContext()));
     }
 
     public Context getContext() {

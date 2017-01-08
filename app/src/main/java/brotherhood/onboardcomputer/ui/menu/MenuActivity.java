@@ -53,6 +53,7 @@ public class MenuActivity extends BaseActivity {
     @ViewById
     BackgroundView backgroundView;
 
+    private SpeechRecognizer speechRecognizer;
     private RecognitionSystem recognitionSystem;
     private FloatingActionMenu actionMenu;
     private SubActionButton demoButton;
@@ -60,7 +61,6 @@ public class MenuActivity extends BaseActivity {
     private boolean animationThreadRun = true;
     private RecognitionListener speechRecognitionListener;
     private Intent speechRecognizerIntent;
-    private SpeechRecognizer speechRecognizer;
     private android.support.design.widget.FloatingActionButton floatingActionButton;
 
     @AfterViews

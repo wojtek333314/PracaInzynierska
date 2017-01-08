@@ -17,12 +17,17 @@ public class NavigationCommand extends Command {
     }
 
     @Override
+    protected void onStopWordRecognized() {
+
+    }
+
+    @Override
     protected void initWords() {
         runWords = connectArrays(getPermutedArray(Words.START_COMMANDS, "nawigację"), START_NAVIGATION);
     }
 
     @Override
-    protected void onInput(String sentence, boolean firstRun) {
+    protected void onCommandRecognized(String sentence) {
         if (getSentenceAfterRunWords() != null || !getSentenceAfterRunWords().equals("")) {
             speak("Uruchamiam nawigację do " + getSentenceAfterRunWords());
         } else {
@@ -35,8 +40,4 @@ public class NavigationCommand extends Command {
         getContext().startActivity(intent);
     }
 
-    @Override
-    protected void cancel() {
-
-    }
 }

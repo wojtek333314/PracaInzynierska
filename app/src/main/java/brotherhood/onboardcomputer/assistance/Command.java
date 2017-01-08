@@ -3,37 +3,38 @@ package brotherhood.onboardcomputer.assistance;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
-import java.util.Random;
+import brotherhood.onboardcomputer.assistance.commands.ConfirmCommand;
 
 public abstract class Command {
-    protected static Random random = new Random();
     protected String[] runWords;
     protected String[] stopWords;
-    protected boolean isRunning;
     protected TextToSpeech speaker;
     private String wordAfterRunWords = "";
     private Context context;
+    private ConfirmCommand confirmCommand;
 
     public Command(TextToSpeech speaker) {
         this.speaker = speaker;
         initWords();
     }
 
+    public void registerConfirmCommand(ConfirmCommand confirmCommand) {
+        this.confirmCommand = confirmCommand;
+    }
+
     public void process(String sentence) {
-        if (!isRunning) {
-            if (recognizeStartCommand(sentence)) {
-                onInput(sentence, true);
-                isRunning = true;
-            }
-        } else {
-            if (recognizeStopCommand(sentence)) {
-                cancel();
-                isRunning = false;
-            }
-            recognizeStartCommand(sentence); //refresh wordAfterRunWords
-            onInput(sentence, false);
+        if (confirmCommand != null) {
+            confirmCommand.process(sentence);
+            this.confirmCommand = null;
+        }
+        if (recognizeStartCommand(sentence)) {
+            onCommandRecognized(sentence);
+        } else if (recognizeStopCommand(sentence)) {
+            onStopWordRecognized();
         }
     }
+
+    protected abstract void onStopWordRecognized();
 
     protected boolean recognizeStartCommand(String sentence) {
         if (runWords != null)
@@ -85,15 +86,9 @@ public abstract class Command {
         return false;
     }
 
-    protected void reset(){
-        isRunning = false;
-    }
-
     protected abstract void initWords();
 
-    protected abstract void onInput(String sentence, boolean firstRun);
-
-    protected abstract void cancel();
+    protected abstract void onCommandRecognized(String sentence);
 
     public void speak(String textToSpeak) {
         if (textToSpeak != null)
@@ -123,7 +118,6 @@ public abstract class Command {
             }
         }).start();
         speak(textToSpeak);
-
     }
 
     protected String[] connectArrays(String[]... arrays) {

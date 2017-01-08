@@ -29,6 +29,11 @@ public class PositionInformCommand extends Command {
     }
 
     @Override
+    protected void onStopWordRecognized() {
+
+    }
+
+    @Override
     public Command setContext(Context context) {
         return super.setContext(context);
     }
@@ -39,36 +44,32 @@ public class PositionInformCommand extends Command {
     }
 
     @Override
-    protected void onInput(String sentence, boolean firstRun) {
-        if (firstRun) {
+    protected void onCommandRecognized(String sentence) {
+        HashMap<String, String> searchedNumbers = ContactsUtil.getContactNumberByName(getContext(), getSentenceAfterRunWords());
+        if (searchedNumbers == null || searchedNumbers.size() == 0) {
+            speak("Nie ma takiego kontaktu w pamięci telefonu");
+            return;
+        }
 
-            HashMap<String, String> searchedNumbers = ContactsUtil.getContactNumberByName(getContext(), getSentenceAfterRunWords());
-            if (searchedNumbers == null || searchedNumbers.size() == 0) {
-                speak("Nie ma takiego kontaktu w pamięci telefonu");
-                reset();
-                return;
-            }
-
-            if (searchedNumbers.size() > 1) {
-                PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
-                        , new PhoneContactChooseDialog.OnContactChooseListener() {
-                    @Override
-                    public void onContactChoose(String contactName) {
-                        HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
-                        for (String key : allContacts.keySet()) {
-                            if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
-                                getNavigationAndSendMessage(key);
-                                return;
-                            }
+        if (searchedNumbers.size() > 1) {
+            PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
+                    , new PhoneContactChooseDialog.OnContactChooseListener() {
+                @Override
+                public void onContactChoose(String contactName) {
+                    HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
+                    for (String key : allContacts.keySet()) {
+                        if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
+                            getNavigationAndSendMessage(key);
+                            return;
                         }
                     }
-                });
-                contactChooseDialog.show(searchedNumbers);
-                return;
-            }
-            Map.Entry<String, String> entry = searchedNumbers.entrySet().iterator().next();
-            getNavigationAndSendMessage(entry.getKey());
+                }
+            });
+            contactChooseDialog.show(searchedNumbers);
+            return;
         }
+        Map.Entry<String, String> entry = searchedNumbers.entrySet().iterator().next();
+        getNavigationAndSendMessage(entry.getKey());
     }
 
     private void getNavigationAndSendMessage(String number) {
@@ -102,12 +103,7 @@ public class PositionInformCommand extends Command {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            reset();
         }
     }
 
-    @Override
-    protected void cancel() {
-
-    }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class PhoneContactChooseDialog extends Dialog {
 
     public PhoneContactChooseDialog(Context context, OnContactChooseListener onContactChooseListener) {
         super(context);
+        getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         onConstructor(context);
         this.onContactChooseListener = onContactChooseListener;
     }

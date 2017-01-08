@@ -20,6 +20,11 @@ public class SmsCommand extends Command {
         SmsReceiver.command = this;
     }
 
+    @Override
+    protected void onStopWordRecognized() {
+
+    }
+
 
     @Override
     protected void initWords() {
@@ -27,9 +32,8 @@ public class SmsCommand extends Command {
     }
 
     @Override
-    protected void onInput(String sentence, boolean firstRun) {
+    protected void onCommandRecognized(String sentence) {
         if (!getSentenceAfterRunWords().contains(contentSentence)) {
-            reset();
             return;
         }
         String contactName = getSentenceAfterRunWords().substring(0, getSentenceAfterRunWords().indexOf(contentSentence));
@@ -37,7 +41,6 @@ public class SmsCommand extends Command {
         HashMap<String, String> contacts = ContactsUtil.getContactNumberByName(getContext(), contactName);
         if (contacts.size() == 0) {
             speak("Brak takiego kontaktu");
-            reset();
         } else if (contacts.size() > 1) {
             speak("Wybierz kontakt");
             PhoneContactChooseDialog contactChooseDialog = new PhoneContactChooseDialog(getContext()
@@ -57,12 +60,9 @@ public class SmsCommand extends Command {
         } else {
             speak("Wysyłam wiadomość");
             Map.Entry<String, String> entry = contacts.entrySet().iterator().next();
+            System.out.println(entry.getKey());
             ContactsUtil.sendSMS(SmsCommand.this, entry.getKey(), message);
         }
     }
 
-    @Override
-    protected void cancel() {
-
-    }
 }

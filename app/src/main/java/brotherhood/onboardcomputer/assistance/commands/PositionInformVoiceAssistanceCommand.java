@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.services.GPSTracker;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class PositionInformCommand extends Command {
+public class PositionInformVoiceAssistanceCommand extends VoiceAssistanceCommand {
     private static final String[] SEND = new String[]{"wyslij", "wyślij"};
     private static final String[] POSITION = new String[]{"moja pozycje do", "moja pozycja", "moją pozycję do",
             "moją lokalizację do", "pozycję do", "lokalizację do"};
     private String number;
     private GPSTracker gpsTracker;
 
-    public PositionInformCommand(TextToSpeech speaker) {
+    public PositionInformVoiceAssistanceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 
@@ -34,7 +34,7 @@ public class PositionInformCommand extends Command {
     }
 
     @Override
-    public Command setContext(Context context) {
+    public VoiceAssistanceCommand setContext(Context context) {
         return super.setContext(context);
     }
 

@@ -5,19 +5,19 @@ import android.speech.tts.TextToSpeech;
 import java.util.HashMap;
 import java.util.Map;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.services.SmsReceiver;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.assistance.util.Words;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class SmsCommand extends Command {
+public class SmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
     private final static String[] SMS_SENTENCE = new String[]{"sms do", "do", "wiadomość do"};
     private final static String contentSentence = "o treści";
 
-    public SmsCommand(TextToSpeech speaker) {
+    public SmsVoiceAssistanceCommand(TextToSpeech speaker) {
         super(speaker);
-        SmsReceiver.command = this;
+        SmsReceiver.voiceAssistanceCommand = this;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SmsCommand extends Command {
                     HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
                     for (String key : allContacts.keySet()) {
                         if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
-                            ContactsUtil.sendSMS(SmsCommand.this, key, message);
+                            ContactsUtil.sendSMS(SmsVoiceAssistanceCommand.this, key, message);
                             return;
                         }
                     }
@@ -61,7 +61,7 @@ public class SmsCommand extends Command {
             speak("Wysyłam wiadomość");
             Map.Entry<String, String> entry = contacts.entrySet().iterator().next();
             System.out.println(entry.getKey());
-            ContactsUtil.sendSMS(SmsCommand.this, entry.getKey(), message);
+            ContactsUtil.sendSMS(SmsVoiceAssistanceCommand.this, entry.getKey(), message);
         }
     }
 

@@ -7,15 +7,15 @@ import android.speech.tts.TextToSpeech;
 import java.util.HashMap;
 import java.util.Map;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class CallCommand extends Command {
+public class CallVoiceAssistanceCommand extends VoiceAssistanceCommand {
     private final static String[] CALL_SENTENCES = new String[]{"zadzwoń do", "zatelefonuj do", "dzwoń do", "nawiąż połączenie z"};
     private boolean waitForConfirmSpecificContact;
 
-    public CallCommand(TextToSpeech speaker) {
+    public CallVoiceAssistanceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 

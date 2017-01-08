@@ -12,7 +12,7 @@ import android.telephony.SmsManager;
 
 import java.util.HashMap;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.utils.Helper;
 
 public class ContactsUtil {
@@ -58,20 +58,20 @@ public class ContactsUtil {
         return allContacts;
     }
 
-    public static void sendSMS(final Command command, String phoneNumber, String message) {
+    public static void sendSMS(final VoiceAssistanceCommand voiceAssistanceCommand, String phoneNumber, String message) {
         String SENT = "SMS_SENT_ACTION";
         String DELIVERED = "SMS_DELIVERED_ACTION";
 
         SmsManager sms = SmsManager.getDefault();
         PendingIntent sentPI = PendingIntent.getBroadcast(
-                command.getContext().getApplicationContext(), 0, new Intent(SENT),
+                voiceAssistanceCommand.getContext().getApplicationContext(), 0, new Intent(SENT),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         Intent deliveryIntent = new Intent(DELIVERED);
         PendingIntent deliverPI = PendingIntent.getBroadcast(
-                command.getContext().getApplicationContext(), 0, deliveryIntent,
+                voiceAssistanceCommand.getContext().getApplicationContext(), 0, deliveryIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        command.getContext().registerReceiver(new BroadcastReceiver() {
+        voiceAssistanceCommand.getContext().registerReceiver(new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -101,10 +101,10 @@ public class ContactsUtil {
 
         }, new IntentFilter(SENT));
 
-        command.getContext().registerReceiver(new BroadcastReceiver() {
+        voiceAssistanceCommand.getContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                command.speak("Wiadomość dostarczono");
+                voiceAssistanceCommand.speak("Wiadomość dostarczono");
             }
         }, new IntentFilter(DELIVERED));
 

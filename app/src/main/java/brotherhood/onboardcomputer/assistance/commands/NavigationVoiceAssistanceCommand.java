@@ -4,15 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.speech.tts.TextToSpeech;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.Words;
 
-public class NavigationCommand extends Command {
+public class NavigationVoiceAssistanceCommand extends VoiceAssistanceCommand {
     private static final String[] START_NAVIGATION
             = new String[]{"nawiguj do", "nawigacja do", "nawigacja", "nawiguj do", "prowadź do"};
 
 
-    public NavigationCommand(TextToSpeech speaker) {
+    public NavigationVoiceAssistanceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 

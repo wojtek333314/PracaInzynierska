@@ -2,14 +2,14 @@ package brotherhood.onboardcomputer.assistance.commands;
 
 import android.speech.tts.TextToSpeech;
 
-import brotherhood.onboardcomputer.assistance.Command;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 
-public class ConfirmCommand extends Command {
+public class ConfirmVoiceAssistanceCommand extends VoiceAssistanceCommand {
     private final static String CONFIRM_SENTENCES[] = new String[]{"tak", "nie"};
 
     private ConfirmListener confirmListener;
 
-    public ConfirmCommand(TextToSpeech speaker, ConfirmListener confirmListener) {
+    public ConfirmVoiceAssistanceCommand(TextToSpeech speaker, ConfirmListener confirmListener) {
         super(speaker);
         this.confirmListener = confirmListener;
     }

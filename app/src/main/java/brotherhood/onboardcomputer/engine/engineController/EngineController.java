@@ -101,7 +101,7 @@ public class EngineController {
         }
         engineCommandsController.updatePidsAvailability();
         pidsSupportedChecked = true;
-        System.out.println("check supported command finished");
+        System.out.println("check supported voiceAssistanceCommand finished");
     }
 
 

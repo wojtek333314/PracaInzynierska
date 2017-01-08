@@ -8,15 +8,15 @@ import android.telephony.SmsMessage;
 
 import java.util.HashMap;
 
-import brotherhood.onboardcomputer.assistance.Command;
-import brotherhood.onboardcomputer.assistance.commands.ConfirmCommand;
-import brotherhood.onboardcomputer.assistance.commands.ReplySmsCommand;
+import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceAssistanceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ReplySmsVoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 
 public class SmsReceiver extends BroadcastReceiver {
 
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    public static Command command;
+    public static VoiceAssistanceCommand voiceAssistanceCommand;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -49,14 +49,14 @@ public class SmsReceiver extends BroadcastReceiver {
                         counter++;
                     }
                 }
-                HashMap senderName = ContactsUtil.getContactNameByNumber(command.getContext(), sender);
-                command.speak("Otrzymałeś wiadomość od:"
+                HashMap senderName = ContactsUtil.getContactNameByNumber(voiceAssistanceCommand.getContext(), sender);
+                voiceAssistanceCommand.speak("Otrzymałeś wiadomość od:"
                         + (senderName.keySet().size() > 0 ? senderName.get(senderName.keySet().iterator().next()) : sender) + ".Odczytać?");
-                ReplySmsCommand.lastSenderNumber = sender;
-                command.registerConfirmCommand(new ConfirmCommand(null, new ConfirmCommand.ConfirmListener() {
+                ReplySmsVoiceAssistanceCommand.lastSenderNumber = sender;
+                voiceAssistanceCommand.registerConfirmCommand(new ConfirmVoiceAssistanceCommand(null, new ConfirmVoiceAssistanceCommand.ConfirmListener() {
                     @Override
                     public void onConfirm() {
-                        command.speak(message);
+                        voiceAssistanceCommand.speak(message);
                     }
 
                     @Override

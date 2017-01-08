@@ -3,22 +3,22 @@ package brotherhood.onboardcomputer.assistance;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
-import brotherhood.onboardcomputer.assistance.commands.ConfirmCommand;
+import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceAssistanceCommand;
 
-public abstract class Command {
+public abstract class VoiceAssistanceCommand {
     protected String[] runWords;
     protected String[] stopWords;
     protected TextToSpeech speaker;
     private String wordAfterRunWords = "";
     private Context context;
-    private ConfirmCommand confirmCommand;
+    private ConfirmVoiceAssistanceCommand confirmCommand;
 
-    public Command(TextToSpeech speaker) {
+    public VoiceAssistanceCommand(TextToSpeech speaker) {
         this.speaker = speaker;
         initWords();
     }
 
-    public void registerConfirmCommand(ConfirmCommand confirmCommand) {
+    public void registerConfirmCommand(ConfirmVoiceAssistanceCommand confirmCommand) {
         this.confirmCommand = confirmCommand;
     }
 
@@ -63,7 +63,7 @@ public abstract class Command {
         return context;
     }
 
-    public Command setContext(Context context) {
+    public VoiceAssistanceCommand setContext(Context context) {
         this.context = context;
         return this;
     }

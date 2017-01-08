@@ -1,5 +1,6 @@
 package brotherhood.onboardcomputer.ui.menu;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
@@ -9,6 +10,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.ui.devicesList.DevicesListActivity_;
 import brotherhood.onboardcomputer.ui.engine.PidsListActivity_;
-import brotherhood.onboardcomputer.ui.recording.RecordActivity_;
+import brotherhood.onboardcomputer.ui.recording.VideoRecoderService;
 import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.ui.views.recognizeButton.RecognitionSystem;
 import brotherhood.onboardcomputer.utils.Helper;
@@ -62,9 +64,12 @@ public class MenuActivity extends BaseActivity {
     private RecognitionListener speechRecognitionListener;
     private Intent speechRecognizerIntent;
     private android.support.design.widget.FloatingActionButton floatingActionButton;
+    private Intent cameraRecordIntent;
+    private SubActionButton cameraButton;
 
     @AfterViews
     void afterView() {
+        initCameraRecordIntent();
         initRecognizeListener();
         initRecognizeIntent();
         initSpeechRecognizer();
@@ -72,6 +77,10 @@ public class MenuActivity extends BaseActivity {
         createCircleMenu();
         initMenuAnimationThreads();
         createAppFab();
+    }
+
+    private void initCameraRecordIntent() {
+        cameraRecordIntent = new Intent(this, VideoRecoderService.class);
     }
 
     private void initSpeechRecognizer() {
@@ -103,7 +112,7 @@ public class MenuActivity extends BaseActivity {
                 bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
                     @Override
                     public void onBubbleRemoved(BubbleLayout bubble) {
-                    //    bubblesManager.removeBubble(bubble);
+                        //    bubblesManager.removeBubble(bubble);
                     }
                 });
                 floatingActionButton = (FloatingActionButton) bubbleView.findViewById(R.id.fab);
@@ -159,7 +168,12 @@ public class MenuActivity extends BaseActivity {
                 onDemoButtonClick();
             }
         });
-
+        cameraButton = createMenuButton(R.drawable.ic_videocam_black_24dp, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCameraButtonClick();
+            }
+        });
         actionMenu = new FloatingActionMenu.Builder(this)
                 .setRadius(90)
                 .setStartAngle(180)
@@ -170,12 +184,7 @@ public class MenuActivity extends BaseActivity {
                         onEngineClick();
                     }
                 }))
-                .addSubActionView(createMenuButton(R.drawable.ic_videocam_black_24dp, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onCameraButtonClick();
-                    }
-                }))
+                .addSubActionView(cameraButton)
                 .addSubActionView(demoButton)
                 .setRadius(Helper.dpToPx(this, 80))
                 .attachTo(centerActionButton)
@@ -189,6 +198,7 @@ public class MenuActivity extends BaseActivity {
         } else {
             EngineController.DEMO = true;
             ((ImageView) demoButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.demo_on));
+            Toast.makeText(this, getString(R.string.demoModeOn), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -219,7 +229,25 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void onCameraButtonClick() {
-        startActivity(new Intent(this, RecordActivity_.class));
+        if (!VideoRecoderService.isRecording) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogTheme);
+            dialog.setMessage("Video is recording to file with current date name in INTERFACE_VIDEOS directory." +
+                    "\n" +
+                    "Tap recording icon again to stop recording.");
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startService(cameraRecordIntent);
+                    ((ImageView) cameraButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.recording));
+                }
+            });
+            dialog.setInverseBackgroundForced(true);
+            dialog.setCancelable(true);
+            dialog.create().show();
+        } else {
+            stopService(cameraRecordIntent);
+            ((ImageView) cameraButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
+        }
     }
 
     private boolean checkBluetooth() {

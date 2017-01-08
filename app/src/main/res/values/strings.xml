@@ -26,6 +26,7 @@
     <string name="all_listening">I am listening, please give me a voiceAssistanceCommand!</string>
     <string name="all_recognition_no_match">No match of voiceAssistanceCommand</string>
     <string name="charts">Charts recorder</string>
+    <string name="demoModeOn">Demo mode on, you can see engine options now</string>
     <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>

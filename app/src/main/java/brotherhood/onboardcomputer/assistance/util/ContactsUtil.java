@@ -35,13 +35,15 @@ public class ContactsUtil {
         number = number.replaceAll("\\s+", "").replaceAll("-", "").replaceAll("\\+", "").toLowerCase();
         HashMap<String, String> allContacts = getAllContacts(context);
         for (String string : allContacts.keySet()) {
-            if (string.contains(number) || string.equals(number)) {
+            String formattedString = string.replaceAll("\\s+", "").replaceAll("-", "").replaceAll("\\+", "").toLowerCase();
+            if (formattedString.contains(number) || number.contains(formattedString) || formattedString.equals(number)) {
                 result.put(string, allContacts.get(string));
             }
         }
         return result;
     }
 
+    //key - number, value - name
     public static HashMap<String, String> getAllContacts(Context context) {
         HashMap<String, String> allContacts = new HashMap<>();
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);

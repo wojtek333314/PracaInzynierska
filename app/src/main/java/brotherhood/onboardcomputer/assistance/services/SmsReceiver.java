@@ -50,7 +50,8 @@ public class SmsReceiver extends BroadcastReceiver {
                     }
                 }
                 HashMap senderName = ContactsUtil.getContactNameByNumber(command.getContext(), sender);
-                command.speak("Otrzymałeś wiadomość od:" + (senderName.keySet().size() > 0 ? senderName : sender) + ".Odczytać?");
+                command.speak("Otrzymałeś wiadomość od:"
+                        + (senderName.keySet().size() > 0 ? senderName.get(senderName.keySet().iterator().next()) : sender) + ".Odczytać?");
                 ReplySmsCommand.lastSenderNumber = sender;
                 command.registerConfirmCommand(new ConfirmCommand(null, new ConfirmCommand.ConfirmListener() {
                     @Override

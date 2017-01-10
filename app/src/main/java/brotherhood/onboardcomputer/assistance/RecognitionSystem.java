@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.ui.views.recognizeButton;
+package brotherhood.onboardcomputer.assistance;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
@@ -7,7 +7,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.commands.CallVoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.commands.NavigationVoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.commands.PositionInformVoiceAssistanceCommand;
@@ -16,7 +15,6 @@ import brotherhood.onboardcomputer.assistance.commands.SmsVoiceAssistanceCommand
 
 public class RecognitionSystem {
     public static final String LOCALE_LANGUAGE = "pl";
-    public static final String STRING_ACTION = "stringAction";
 
     private ArrayList<VoiceAssistanceCommand> voiceAssistanceCommands = new ArrayList<>();
     private TextToSpeech speaker;

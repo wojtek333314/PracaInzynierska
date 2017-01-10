@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.models.SelectablePidModel;
 import brotherhood.onboardcomputer.models.TroubleCodeModel;
 
 
@@ -21,7 +22,7 @@ public interface CardModel<D> {
     enum Type {
         CHART_CARD(0),
         PHONE_CONTACT(1),
-        TROUBLE_CODE_CARD(2), NORMAL_VIEW_CARD(3);
+        TROUBLE_CODE_CARD(2), NORMAL_VIEW_CARD(3), SELECTABLE_CARD(4);
 
 
         private final int value;
@@ -40,6 +41,8 @@ public interface CardModel<D> {
                     return new TroubleCodeCard(context, (TroubleCodeModel) model);
                 case NORMAL_VIEW_CARD:
                     return new NormalViewCard(context, (ChartModel) model);
+                case SELECTABLE_CARD:
+                    return new SelectablePidCard(context, (SelectablePidModel) model);
             }
             return null;
         }

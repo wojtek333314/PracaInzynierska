@@ -24,18 +24,18 @@
                 android:id="@+id/imageView_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textViewName"
+                android:layout_alignBottom="@+id/pidName"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignTop="@+id/textViewName"
+                android:layout_alignTop="@+id/pidName"
                 android:src="@android:drawable/presence_online"
                 android:paddingLeft="@dimen/spacing_normal"
                 android:paddingRight="@dimen/spacing_normal"
                 android:visibility="invisible"/>
 
             <TextView
-                android:id="@+id/textViewName"
+                android:id="@+id/pidName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -56,7 +56,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Small Text"
                 android:id="@+id/textViewTemporaryValue"
-                android:layout_below="@+id/textViewName"
+                android:layout_below="@+id/pidName"
                 android:paddingLeft="@dimen/spacing_normal"
                 android:paddingRight="@dimen/spacing_normal"/>
         </RelativeLayout>

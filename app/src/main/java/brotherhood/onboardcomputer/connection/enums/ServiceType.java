@@ -1,7 +1,7 @@
 package brotherhood.onboardcomputer.connection.enums;
 
 
-import brotherhood.onboardcomputer.ui.views.recognizeButton.RecognitionSystem;
+import brotherhood.onboardcomputer.assistance.RecognitionSystem;
 
 public enum ServiceType {
     GET_WIKIPEDIA_DATA,

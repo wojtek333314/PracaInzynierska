@@ -64,12 +64,12 @@ public class VideoRecoderService extends Service implements SurfaceHolder.Callba
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
 
-        File directory = new File(Environment.getExternalStorageDirectory() + "/INTERFACE_VIDEOS");
+        File directory = new File(Environment.getExternalStorageDirectory() + "/CarInterface/Video/");
         if (!directory.exists()) {
             directory.mkdir();
         }
         mediaRecorder.setOutputFile(
-                Environment.getExternalStorageDirectory() + "/INTERFACE_VIDEOS/" +
+                Environment.getExternalStorageDirectory() + "/CarInterface/Video/" +
                         DateFormat.format("yyyy-MM-dd_kk-mm-ss", new Date().getTime()) +
                         ".mp4"
         );

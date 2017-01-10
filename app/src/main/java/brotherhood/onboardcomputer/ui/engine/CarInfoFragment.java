@@ -40,6 +40,7 @@ public class CarInfoFragment extends BaseFragment {
     private ArrayList<CardModel> cards;
     private CardsRecyclerViewAdapter adapter;
     private ControleModuleVoltage controleModuleVoltage;
+    private NormalViewCard voltageCard;
     private Vin vinCommand;
     private Random random = new Random();
 
@@ -65,8 +66,8 @@ public class CarInfoFragment extends BaseFragment {
     private void initCards() {
         controleModuleVoltage = new ControleModuleVoltage();
         vinCommand = new Vin();
-
-        cards.add(new NormalViewCard(getContext(), new ChartModel(controleModuleVoltage)));
+        voltageCard = new NormalViewCard(getContext(), new ChartModel(controleModuleVoltage));
+        cards.add(voltageCard);
         cards.add(new NormalViewCard(getContext(), new ChartModel(vinCommand)));
         if (EngineController.DEMO) {
             controleModuleVoltage.addValue(String.valueOf(random.nextFloat() + 5));
@@ -115,6 +116,17 @@ public class CarInfoFragment extends BaseFragment {
     public void onDataRefresh() {
         if (!EngineController.DEMO && !dataIsCollected && isFragmentActive()) {
 
+            engineController.addCommandToQueue(vinCommand, new EngineController.CommandListener() {
+                @Override
+                public void onDataRefresh() {
+                    onDataCollected();
+                }
+
+                @Override
+                public void onNoData(EngineCommand engineCommand) {
+                }
+            });
+
             if (engineController.getEngineCommandsController().checkIsCommandAvailable(controleModuleVoltage)) {
                 engineController.addCommandToQueue(controleModuleVoltage, new EngineController.CommandListener() {
                     @Override
@@ -127,28 +139,16 @@ public class CarInfoFragment extends BaseFragment {
 
                     }
                 });
+            } else {
+                cards.remove(voltageCard);
             }
-
-            engineController.addCommandToQueue(vinCommand, new EngineController.CommandListener() {
-                @Override
-                public void onDataRefresh() {
-                    onDataCollected();
-                }
-
-                @Override
-                public void onNoData(EngineCommand engineCommand) {
-                }
-            });
         }
     }
 
     @UiThread
     public void onDataCollected() {
-        dataCollectedCount++;
-        if (dataCollectedCount == (cards.size() - 1)) {
-            dataIsCollected = true;
-            hideInfo();
-            recyclerView.setVisibility(View.VISIBLE);
-        }
+        dataIsCollected = true;
+        hideInfo();
+        recyclerView.setVisibility(View.VISIBLE);
     }
 }

@@ -52,7 +52,11 @@ public class PidsListActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (currentFragment.equals(pidsListFragment)) {
-            super.onBackPressed();
+            if (chartsRecorderFragment.isRecording()) {
+                showDialog(getString(R.string.stop_recording), null);
+            } else {
+                super.onBackPressed();
+            }
         } else {
             swapToPidsListFragment();
         }
@@ -71,6 +75,7 @@ public class PidsListActivity extends BaseActivity {
         troubleCodesFragment = TroubleCodesFragment_.builder().build();
         carInfoFragment = CarInfoFragment_.builder().build();
         chartsRecorderFragment = ChartsRecorderFragment_.builder().build();
+        chartsRecorderFragment.setEngineController(engineController);
         carInfoFragment.setEngineController(engineController);
         troubleCodesFragment.setEngineController(engineController);
     }

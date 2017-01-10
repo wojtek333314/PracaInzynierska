@@ -27,6 +27,13 @@
     <string name="all_recognition_no_match">No match of voiceAssistanceCommand</string>
     <string name="charts">Charts recorder</string>
     <string name="demoModeOn">Demo mode on, you can see engine options now</string>
+    <string name="cannot_recognize">Cannot recognize speech when video is recording!</string>
+    <string name="all_select_pids">Select pids and click button to start saving logs to file. You can open this file in Excel and show it for your car mechanic.</string>
+    <string name="all_start_recording">Start recording</string>
+    <string name="all_stop_recording">Stop recording</string>
+    <string name="data_is_recording">Data is recording to file:</string>
+    <string name="recording_stop_message">Recording successfull. Data is stored in file: %s</string>
+    <string name="stop_recording">Please, stop Charts Recorder until exit!</string>
     <array name="pids_descriptions_mode1">
         <item>PIDs supported</item>
         <item>Monitor status since DTCs cleared. (Includes malfunction indicator lamp (MIL) status and number of DTCs.)</item>

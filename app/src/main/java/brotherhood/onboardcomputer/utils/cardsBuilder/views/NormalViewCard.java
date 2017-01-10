@@ -31,7 +31,7 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
             view = layoutInflater.inflate(R.layout.normal_card, this, true);
         }
 
-        name = (TextView) view.findViewById(R.id.textViewName);
+        name = (TextView) view.findViewById(R.id.pidName);
         status = (ImageView) view.findViewById(R.id.imageView_status);
         rippleLayout = (MaterialRippleLayout) view.findViewById(R.id.ripple);
         temporaryValue = (TextView) view.findViewById(R.id.textViewTemporaryValue);

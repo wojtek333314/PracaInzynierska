@@ -51,6 +51,5 @@ dependencies {
     compile 'co.lujun:lmbluetoothsdk:1.0.2'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.0-beta1'
     compile 'me.grantland:autofittextview:0.2.+'
-    compile files('libs/mxparser.jar')
-
+    compile files('libs/jxl.jar')
 }

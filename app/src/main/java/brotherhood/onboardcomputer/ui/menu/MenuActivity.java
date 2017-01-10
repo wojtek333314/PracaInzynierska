@@ -1,5 +1,7 @@
 package brotherhood.onboardcomputer.ui.menu;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,7 +12,6 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,13 +33,13 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
+import brotherhood.onboardcomputer.assistance.RecognitionSystem;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.ui.devicesList.DevicesListActivity_;
 import brotherhood.onboardcomputer.ui.engine.PidsListActivity_;
 import brotherhood.onboardcomputer.ui.recording.VideoRecoderService;
 import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
-import brotherhood.onboardcomputer.ui.views.recognizeButton.RecognitionSystem;
 import brotherhood.onboardcomputer.utils.Helper;
 
 @EActivity(R.layout.activity_menu)
@@ -119,6 +120,15 @@ public class MenuActivity extends BaseActivity {
                 bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
                     @Override
                     public void onBubbleClick(BubbleLayout bubble) {
+                        if (VideoRecoderService.isRecording) {
+                            showDialog(getString(R.string.cannot_recognize), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            return;
+                        }
                         speechRecognizer.startListening(speechRecognizerIntent);
                     }
                 });
@@ -230,20 +240,15 @@ public class MenuActivity extends BaseActivity {
 
     private void onCameraButtonClick() {
         if (!VideoRecoderService.isRecording) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogTheme);
-            dialog.setMessage("Video is recording to file with current date name in INTERFACE_VIDEOS directory." +
+            showDialog("Video is recording to file with current date name in INTERFACE_VIDEOS directory." +
                     "\n" +
-                    "Tap recording icon again to stop recording.");
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    "Tap recording icon again to stop recording.", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startService(cameraRecordIntent);
                     ((ImageView) cameraButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.recording));
                 }
             });
-            dialog.setInverseBackgroundForced(true);
-            dialog.setCancelable(true);
-            dialog.create().show();
         } else {
             stopService(cameraRecordIntent);
             ((ImageView) cameraButton.getTag()).setImageDrawable(getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
@@ -308,6 +313,7 @@ public class MenuActivity extends BaseActivity {
 
             @Override
             public void onError(int error) {
+                System.out.println(error);
                 switch (error) {
                     case SpeechRecognizer.ERROR_NO_MATCH:
                         Toast.makeText(getApplicationContext(), getString(R.string.all_recognition_no_match), Toast.LENGTH_SHORT).show();
@@ -336,5 +342,15 @@ public class MenuActivity extends BaseActivity {
 
             }
         };
+    }
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

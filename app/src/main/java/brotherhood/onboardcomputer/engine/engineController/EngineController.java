@@ -12,6 +12,8 @@ import com.github.pires.obd.enums.ObdProtocols;
 import com.github.pires.obd.exceptions.NoDataException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -50,7 +52,29 @@ public class EngineController {
         BluetoothSocket socket;
         socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
         if (socket != null) {
-            socket.connect();
+            try {
+                socket.connect();
+            }catch (IOException e){
+                Class<?> clazz = socket.getRemoteDevice().getClass();
+                Class<?>[] paramTypes = new Class<?>[] {Integer.TYPE};
+
+                Method m = null;
+                try {
+                    m = clazz.getMethod("createRfcommSocket", paramTypes);
+
+                Object[] params = new Object[] {Integer.valueOf(1)};
+                BluetoothSocket tmpSocket = socket;
+                socket = (BluetoothSocket) m.invoke(tmpSocket.getRemoteDevice(), params);
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                }
+                socket.connect();
+
+            }
             initializeOBDconnection(socket);
         }
         this.socket = socket;
@@ -68,7 +92,6 @@ public class EngineController {
                             UPDATE_INTERVAL = MIN_UPDATE_INTERVAL;
                         }
                         Thread.sleep(UPDATE_INTERVAL);
-                        System.out.println("sleep:"+UPDATE_INTERVAL);
                         if (canCollectData()) {
                             updatePids(socket);
                         }
@@ -93,6 +116,7 @@ public class EngineController {
             try {
                 engineCommandsController.getPidsSupported01_20().run(socket.getInputStream(), socket.getOutputStream());
                 engineCommandsController.getPidsSupported21_40().run(socket.getInputStream(), socket.getOutputStream());
+                engineCommandsController.getPidsSupported41_60().run(socket.getInputStream(), socket.getOutputStream());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,6 +130,8 @@ public class EngineController {
 
 
     private void updatePids(BluetoothSocket socket) {
+        long time = System.currentTimeMillis();
+        System.out.println("try update");
         if (collectingData) {
             return;
         }
@@ -117,7 +143,6 @@ public class EngineController {
                     engineCommand.addValue(String.valueOf(demoValue));
                 }
             } else {
-                System.out.println("updating pids count:" + engineCommandsController.getOnlyAvailableEngineCommands().length);
                 for (EngineCommand engineCommand : engineCommandsController.getOnlyAvailableEngineCommands()) {
                     try {
                         engineCommand.run(socket.getInputStream(), socket.getOutputStream());
@@ -136,12 +161,10 @@ public class EngineController {
             e.printStackTrace();
         }
         collectingData = false;
+        System.out.println("end update" + (time - System.currentTimeMillis()));
     }
 
     private void updateAdditionalPids() throws IOException, InterruptedException {
-        if (collectingData) {
-            return;
-        }
         for (CommandListener commandListenerKey : additionalQueue.keySet()) {
             try {
                 additionalQueue.get(commandListenerKey).run(socket.getInputStream(), socket.getOutputStream());
@@ -151,6 +174,7 @@ public class EngineController {
                 commandListenerKey.onNoData(additionalQueue.get(commandListenerKey));
             }
         }
+        additionalQueue.clear();
     }
 
     public void addCommandToQueue(EngineCommand engineCommand, CommandListener commandListener) {

@@ -38,7 +38,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
             view = layoutInflater.inflate(R.layout.chart_card, this, true);
         }
 
-        name = (TextView) view.findViewById(R.id.textViewName);
+        name = (TextView) view.findViewById(R.id.pidName);
         status = (ImageView) view.findViewById(R.id.imageView_status);
         lineChartView = (LineChart) view.findViewById(R.id.lineChart);
         rippleLayout = (MaterialRippleLayout) view.findViewById(R.id.ripple);

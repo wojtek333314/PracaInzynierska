@@ -3,10 +3,12 @@ package brotherhood.onboardcomputer.assistance.util;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 
@@ -109,5 +111,10 @@ public class ContactsUtil {
         }, new IntentFilter(DELIVERED));
 
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliverPI);
+        ContentValues values = new ContentValues();
+        values.put("address", phoneNumber);
+        values.put("body", message );
+        values.put("date", System.currentTimeMillis() );
+        voiceAssistanceCommand.getContext().getContentResolver().insert(Uri.parse("content://sms/sent"), values);
     }
 }

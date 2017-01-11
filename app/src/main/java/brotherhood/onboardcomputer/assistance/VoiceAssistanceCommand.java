@@ -91,33 +91,9 @@ public abstract class VoiceAssistanceCommand {
     protected abstract void onCommandRecognized(String sentence);
 
     public void speak(String textToSpeak) {
-        if (textToSpeak != null)
-            speaker.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
-    }
-
-    protected void speak(String textToSpeak, final SpeakListener speakListener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean working = true;
-                boolean isSpeaking = false;
-                while (working) {
-                    if (!isSpeaking && speaker.isSpeaking())
-                        isSpeaking = speaker.isSpeaking();
-                    else if (isSpeaking && !speaker.isSpeaking()) {
-                        isSpeaking = false;
-                        working = false;
-                        speakListener.onFinish();
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-        speak(textToSpeak);
+        if (textToSpeak != null) {
+            speaker.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 
     protected String[] connectArrays(String[]... arrays) {
@@ -158,9 +134,5 @@ public abstract class VoiceAssistanceCommand {
             }
         }
         return result;
-    }
-
-    public interface SpeakListener {
-        void onFinish();
     }
 }

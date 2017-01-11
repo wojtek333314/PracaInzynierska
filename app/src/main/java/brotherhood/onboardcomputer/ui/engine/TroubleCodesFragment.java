@@ -23,7 +23,7 @@ import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode3.GetErrorCodesCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode4.ClearErrorCodesCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
-import brotherhood.onboardcomputer.models.TroubleCodeModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.TroubleCodeCardModel;
 import brotherhood.onboardcomputer.ui.BaseFragment;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
@@ -140,7 +140,7 @@ public class TroubleCodesFragment extends BaseFragment {
     void getErrorsDemoThread() {
         final ArrayList<CardModel> preparedCards = new ArrayList<>();
         for (int i = 0; i < new Random().nextInt(10) + 1; i++) {
-            preparedCards.add(new TroubleCodeCard(getContext(), new TroubleCodeModel("DemoTrouble P000" + (i + 1))));
+            preparedCards.add(new TroubleCodeCard(getContext(), new TroubleCodeCardModel("DemoTrouble P000" + (i + 1))));
         }
         new Thread(new Runnable() {
             @Override

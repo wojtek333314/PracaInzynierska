@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
-import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
 import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
-import brotherhood.onboardcomputer.utils.cardsBuilder.views.ChartCard;
+import brotherhood.onboardcomputer.utils.cardsBuilder.views.PidChartCard;
 
 @EFragment(R.layout.pids_list_fragment)
 public class PidsListFragment extends Fragment implements EngineController.CommandListener {
@@ -68,8 +68,8 @@ public class PidsListFragment extends Fragment implements EngineController.Comma
     void initPidsList() {
         for (EngineCommand engineCommand : ((PidsListActivity) getActivity()).getEngineController()
                 .getEngineCommandsController().getOnlyAvailableEngineCommands()) {
-            ChartCard chartCard = new ChartCard(getActivity(), new ChartModel(engineCommand));
-            cardsList.add(chartCard);
+            PidChartCard pidChartCard = new PidChartCard(getActivity(), new ChartCardModel(engineCommand));
+            cardsList.add(pidChartCard);
         }
         availablePidsAddedToAdapter = true;
         showEngineOptions();

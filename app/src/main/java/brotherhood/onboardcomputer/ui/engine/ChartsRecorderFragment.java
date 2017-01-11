@@ -25,9 +25,9 @@ import java.util.Locale;
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
-import brotherhood.onboardcomputer.models.RecordPidModel;
-import brotherhood.onboardcomputer.models.RecordPidValue;
-import brotherhood.onboardcomputer.models.SelectablePidModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.RecordPidModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.RecordPidValue;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.SelectablePidCardModel;
 import brotherhood.onboardcomputer.ui.BaseFragment;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
@@ -74,7 +74,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
         }
         pids = new ArrayList<>();
         for (EngineCommand availableCommand : engineController.getEngineCommandsController().getOnlyAvailableEngineCommands()) {
-            pids.add(new SelectablePidCard(getActivity(), new SelectablePidModel(availableCommand, false)));
+            pids.add(new SelectablePidCard(getActivity(), new SelectablePidCardModel(availableCommand, false)));
         }
         recreateRecyclerView();
     }

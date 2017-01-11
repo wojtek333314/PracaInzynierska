@@ -3,9 +3,9 @@ package brotherhood.onboardcomputer.utils.cardsBuilder.views;
 import android.content.Context;
 import android.view.View;
 
-import brotherhood.onboardcomputer.models.ChartModel;
-import brotherhood.onboardcomputer.models.SelectablePidModel;
-import brotherhood.onboardcomputer.models.TroubleCodeModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.SelectablePidCardModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.TroubleCodeCardModel;
 
 
 public interface CardModel<D> {
@@ -34,15 +34,15 @@ public interface CardModel<D> {
         public static CardModel getCardModel(Context context, Type type, Object model) {
             switch (type) {
                 case CHART_CARD:
-                    return new ChartCard(context, (ChartModel) model);
+                    return new PidChartCard(context, (ChartCardModel) model);
                 case PHONE_CONTACT:
                     return new PhoneContactCard(context, (String) model);
                 case TROUBLE_CODE_CARD:
-                    return new TroubleCodeCard(context, (TroubleCodeModel) model);
+                    return new TroubleCodeCard(context, (TroubleCodeCardModel) model);
                 case NORMAL_VIEW_CARD:
-                    return new NormalViewCard(context, (ChartModel) model);
+                    return new PidViewCard(context, (ChartCardModel) model);
                 case SELECTABLE_CARD:
-                    return new SelectablePidCard(context, (SelectablePidModel) model);
+                    return new SelectablePidCard(context, (SelectablePidCardModel) model);
             }
             return null;
         }

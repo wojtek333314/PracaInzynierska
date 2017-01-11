@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.models;
+package brotherhood.onboardcomputer.utils.cardsBuilder.models;
 
 import java.util.ArrayList;
 

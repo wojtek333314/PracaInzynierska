@@ -1,11 +1,11 @@
-package brotherhood.onboardcomputer.models;
+package brotherhood.onboardcomputer.utils.cardsBuilder.models;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class ChartModel {
+public class ChartCardModel {
     private EngineCommand engineCommand;
 
-    public ChartModel(EngineCommand pid) {
+    public ChartCardModel(EngineCommand pid) {
         this.engineCommand = pid;
     }
 

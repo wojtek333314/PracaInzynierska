@@ -21,11 +21,11 @@ import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.ControleModuleVoltage;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode9.Vin;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
-import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
 import brotherhood.onboardcomputer.ui.BaseFragment;
 import brotherhood.onboardcomputer.utils.cardsBuilder.adapters.CardsRecyclerViewAdapter;
 import brotherhood.onboardcomputer.utils.cardsBuilder.views.CardModel;
-import brotherhood.onboardcomputer.utils.cardsBuilder.views.NormalViewCard;
+import brotherhood.onboardcomputer.utils.cardsBuilder.views.PidViewCard;
 
 @EFragment(R.layout.car_info_fragment)
 public class CarInfoFragment extends BaseFragment {
@@ -40,7 +40,7 @@ public class CarInfoFragment extends BaseFragment {
     private ArrayList<CardModel> cards;
     private CardsRecyclerViewAdapter adapter;
     private ControleModuleVoltage controleModuleVoltage;
-    private NormalViewCard voltageCard;
+    private PidViewCard voltageCard;
     private Vin vinCommand;
     private Random random = new Random();
 
@@ -66,9 +66,9 @@ public class CarInfoFragment extends BaseFragment {
     private void initCards() {
         controleModuleVoltage = new ControleModuleVoltage();
         vinCommand = new Vin();
-        voltageCard = new NormalViewCard(getContext(), new ChartModel(controleModuleVoltage));
+        voltageCard = new PidViewCard(getContext(), new ChartCardModel(controleModuleVoltage));
         cards.add(voltageCard);
-        cards.add(new NormalViewCard(getContext(), new ChartModel(vinCommand)));
+        cards.add(new PidViewCard(getContext(), new ChartCardModel(vinCommand)));
         if (EngineController.DEMO) {
             controleModuleVoltage.addValue(String.valueOf(random.nextFloat() + 5));
             vinCommand.addValue("D0E0M0O1V1I1N123456");

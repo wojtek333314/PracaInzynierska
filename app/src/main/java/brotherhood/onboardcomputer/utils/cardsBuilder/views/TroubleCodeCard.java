@@ -8,12 +8,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.models.TroubleCodeModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.TroubleCodeCardModel;
 
-public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCodeModel> {
+public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCodeCardModel> {
 
     private Context context;
-    private TroubleCodeModel model;
+    private TroubleCodeCardModel model;
     private View.OnClickListener onClickListener;
     private View view;
     private TextView name;
@@ -24,7 +24,7 @@ public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCo
         inflateView();
     }
 
-    public TroubleCodeCard(Context context, TroubleCodeModel model) {
+    public TroubleCodeCard(Context context, TroubleCodeCardModel model) {
         super(context);
         this.context = context;
         this.model = model;
@@ -41,7 +41,7 @@ public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCo
     }
 
     @Override
-    public void refreshData(TroubleCodeModel data) {
+    public void refreshData(TroubleCodeCardModel data) {
         if (view == null) {
             inflateView();
         }
@@ -58,7 +58,7 @@ public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCo
     }
 
     @Override
-    public TroubleCodeModel getData() {
+    public TroubleCodeCardModel getData() {
         return model;
     }
 

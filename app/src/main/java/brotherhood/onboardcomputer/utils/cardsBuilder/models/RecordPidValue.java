@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.models;
+package brotherhood.onboardcomputer.utils.cardsBuilder.models;
 
 public class RecordPidValue {
     private String value;

@@ -7,16 +7,16 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.models.SelectablePidModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.SelectablePidCardModel;
 
-public class SelectablePidCard extends LinearLayout implements CardModel<SelectablePidModel> {
+public class SelectablePidCard extends LinearLayout implements CardModel<SelectablePidCardModel> {
     private Context context;
-    private SelectablePidModel data;
+    private SelectablePidCardModel data;
     private View.OnClickListener onClickListener;
     private CheckBox checkBox;
     private View view;
 
-    public SelectablePidCard(Context context, SelectablePidModel chartModel) {
+    public SelectablePidCard(Context context, SelectablePidCardModel chartModel) {
         super(context);
         this.context = context;
         this.data = chartModel;
@@ -35,7 +35,7 @@ public class SelectablePidCard extends LinearLayout implements CardModel<Selecta
     }
 
     @Override
-    public void refreshData(SelectablePidModel data) {
+    public void refreshData(SelectablePidCardModel data) {
         this.data = data;
         if(data!=null){
             checkBox.setText(data.getPidName());
@@ -51,7 +51,7 @@ public class SelectablePidCard extends LinearLayout implements CardModel<Selecta
     }
 
     @Override
-    public SelectablePidModel getData() {
+    public SelectablePidCardModel getData() {
         return data;
     }
 

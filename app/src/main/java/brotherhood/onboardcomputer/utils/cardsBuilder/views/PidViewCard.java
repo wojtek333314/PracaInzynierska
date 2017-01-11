@@ -10,10 +10,10 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
 
-public class NormalViewCard extends LinearLayout implements CardModel<ChartModel> {
-    private ChartModel chartModel;
+public class PidViewCard extends LinearLayout implements CardModel<ChartCardModel> {
+    private ChartCardModel chartCardModel;
     private Context context;
     private View view;
     private TextView name;
@@ -22,7 +22,7 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
     private MaterialRippleLayout rippleLayout;
     private OnClickListener onClickListener;
 
-    public NormalViewCard(Context context) {
+    public PidViewCard(Context context) {
         super(context);
         this.context = context;
 
@@ -46,14 +46,14 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
         };
     }
 
-    public NormalViewCard(Context context, ChartModel chartModel) {
+    public PidViewCard(Context context, ChartCardModel chartCardModel) {
         this(context);
-        this.chartModel = chartModel;
-        refreshData(chartModel);
+        this.chartCardModel = chartCardModel;
+        refreshData(chartCardModel);
     }
 
     @Override
-    public void refreshData(ChartModel data) {
+    public void refreshData(ChartCardModel data) {
         if (data == null) {
             return;
         }
@@ -73,8 +73,8 @@ public class NormalViewCard extends LinearLayout implements CardModel<ChartModel
     }
 
     @Override
-    public ChartModel getData() {
-        return chartModel;
+    public ChartCardModel getData() {
+        return chartCardModel;
     }
 
     @Override

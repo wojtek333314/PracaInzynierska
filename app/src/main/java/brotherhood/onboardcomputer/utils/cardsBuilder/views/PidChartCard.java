@@ -15,11 +15,11 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.Arrays;
 
 import brotherhood.onboardcomputer.R;
-import brotherhood.onboardcomputer.models.ChartModel;
+import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
 
-public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
+public class PidChartCard extends LinearLayout implements CardModel<ChartCardModel> {
     private static final int MAX_ENTRIES_ON_CHART = 100;
-    private ChartModel chartModel;
+    private ChartCardModel chartCardModel;
     private Context context;
     private View view;
     private TextView name;
@@ -29,7 +29,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     private MaterialRippleLayout rippleLayout;
     private OnClickListener onClickListener;
 
-    public ChartCard(Context context) {
+    public PidChartCard(Context context) {
         super(context);
         this.context = context;
 
@@ -55,14 +55,14 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         configLineChart();
     }
 
-    public ChartCard(Context context, ChartModel chartModel) {
+    public PidChartCard(Context context, ChartCardModel chartCardModel) {
         this(context);
-        this.chartModel = chartModel;
-        refreshData(chartModel);
+        this.chartCardModel = chartCardModel;
+        refreshData(chartCardModel);
     }
 
     @Override
-    public void refreshData(ChartModel data) {
+    public void refreshData(ChartCardModel data) {
         if (data == null) {
             return;
         }
@@ -83,7 +83,7 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
         rippleLayout.setOnClickListener(onClickListener);
     }
 
-    private void refreshLineChart(ChartModel data){
+    private void refreshLineChart(ChartCardModel data){
         LineDataSet dataSet = new LineDataSet(Arrays.asList(data.getEngineCommand().getChartEntries()), "");
         while (dataSet.getEntryCount() > MAX_ENTRIES_ON_CHART) {
             dataSet.removeFirst();
@@ -125,8 +125,8 @@ public class ChartCard extends LinearLayout implements CardModel<ChartModel> {
     }
 
     @Override
-    public ChartModel getData() {
-        return chartModel;
+    public ChartCardModel getData() {
+        return chartCardModel;
     }
 
     @Override

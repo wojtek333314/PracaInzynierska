@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.ui.recording;
+package brotherhood.onboardcomputer.cameraRecording;
 
 import android.app.Notification;
 import android.app.Service;

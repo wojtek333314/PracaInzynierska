@@ -15,7 +15,7 @@ import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 
 @EActivity(R.layout.pids_list_activity)
-public class PidsListActivity extends BaseActivity {
+public class CarDiagnosticActivity extends BaseActivity {
     public static final String DEVICE_ADDRESS_KEY = "address";
 
     @ViewById

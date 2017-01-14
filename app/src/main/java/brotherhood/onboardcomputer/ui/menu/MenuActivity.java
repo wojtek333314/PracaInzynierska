@@ -37,8 +37,8 @@ import brotherhood.onboardcomputer.assistance.RecognitionSystem;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.ui.devicesList.DevicesListActivity_;
-import brotherhood.onboardcomputer.ui.engine.PidsListActivity_;
-import brotherhood.onboardcomputer.ui.recording.VideoRecoderService;
+import brotherhood.onboardcomputer.ui.engine.CarDiagnosticActivity_;
+import brotherhood.onboardcomputer.cameraRecording.VideoRecoderService;
 import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.utils.Helper;
 
@@ -230,7 +230,7 @@ public class MenuActivity extends BaseActivity {
 
     private void onEngineClick() {
         if (EngineController.DEMO) {
-            startActivity(new Intent(getApplicationContext(), PidsListActivity_.class));
+            startActivity(new Intent(getApplicationContext(), CarDiagnosticActivity_.class));
             return;
         }
         if (checkBluetooth()) {

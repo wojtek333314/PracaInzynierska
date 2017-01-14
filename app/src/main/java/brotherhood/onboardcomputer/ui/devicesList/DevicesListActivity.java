@@ -17,8 +17,8 @@ import java.util.ArrayList;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.ui.BaseActivity;
-import brotherhood.onboardcomputer.ui.engine.PidsListActivity;
-import brotherhood.onboardcomputer.ui.engine.PidsListActivity_;
+import brotherhood.onboardcomputer.ui.engine.CarDiagnosticActivity;
+import brotherhood.onboardcomputer.ui.engine.CarDiagnosticActivity_;
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 
@@ -59,8 +59,8 @@ public class DevicesListActivity extends BaseActivity {
                 bluetooth.cancelScan();
                 System.out.println(list.get(checkedPosition).getAddress());
                 Toast.makeText(getApplicationContext(), list.get(checkedPosition).getAddress(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), PidsListActivity_.class);
-                intent.putExtra(PidsListActivity.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
+                Intent intent = new Intent(getApplicationContext(), CarDiagnosticActivity_.class);
+                intent.putExtra(CarDiagnosticActivity.DEVICE_ADDRESS_KEY, list.get(checkedPosition).getAddress());
                 startActivity(intent);
             }
         });

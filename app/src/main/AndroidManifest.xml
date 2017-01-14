@@ -60,11 +60,9 @@
 
         <activity android:name=".ui.devicesList.DevicesListActivity_"/>
 
-        <activity android:name=".ui.engine.PidsListActivity_"/>
+        <activity android:name=".ui.engine.CarDiagnosticActivity_"/>
 
-        <activity android:name=".ui.recording.RecordActivity_"/>
-
-        <service android:name=".ui.recording.VideoRecoderService"/>
+        <service android:name=".cameraRecording.VideoRecoderService"/>
 
         <receiver
             android:name=".assistance.services.SmsReceiver"

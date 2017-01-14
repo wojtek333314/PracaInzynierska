@@ -66,7 +66,7 @@ public class PidsListFragment extends Fragment implements EngineController.Comma
 
     @UiThread
     void initPidsList() {
-        for (EngineCommand engineCommand : ((PidsListActivity) getActivity()).getEngineController()
+        for (EngineCommand engineCommand : ((CarDiagnosticActivity) getActivity()).getEngineController()
                 .getEngineCommandsController().getOnlyAvailableEngineCommands()) {
             PidChartCard pidChartCard = new PidChartCard(getActivity(), new ChartCardModel(engineCommand));
             cardsList.add(pidChartCard);
@@ -150,16 +150,16 @@ public class PidsListFragment extends Fragment implements EngineController.Comma
 
     @Click(R.id.troubleCodesButton)
     public void onTroubleCodesClick() {
-        ((PidsListActivity) getActivity()).swapToTroubleCodesFragment();
+        ((CarDiagnosticActivity) getActivity()).swapToTroubleCodesFragment();
     }
 
     @Click(R.id.chartsButton)
     public void chartsButtonClick() {
-        ((PidsListActivity) getActivity()).swapToChartsRecorderFragment();
+        ((CarDiagnosticActivity) getActivity()).swapToChartsRecorderFragment();
     }
 
     @Click(R.id.carInfoButton)
     public void carInfoButtonClick() {
-        ((PidsListActivity) getActivity()).swapToCarInfoFragment();
+        ((CarDiagnosticActivity) getActivity()).swapToCarInfoFragment();
     }
 }

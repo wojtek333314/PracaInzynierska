@@ -1,17 +1,18 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class FuelPressure extends EngineCommand {
-    public FuelPressure() {
-        super(1, 10, VisibilityMode.NORMAL_VIEW);
-        setDescription("Engine Gauge Pressure");
-        setUnit("kPa");
+public class CoolantTemperature extends EngineCommand {
+
+    public CoolantTemperature() {
+        super(1, 5, VisibilityMode.CHART_VIEW);
+        setDescription("Coolant temperature");
+        setUnit("°C");
     }
 
     @Override
     protected void performCalculations() {
-        addValue(Float.toString((buffer.get(2) * 3)));
+        addValue(Integer.toString(buffer.get(2) - 40));
     }
 
     @Override

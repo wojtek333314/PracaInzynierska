@@ -1,7 +1,7 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.interfaces.CommandSupportedInterface;
+import brotherhood.onboardcomputer.engine.engineController.interfaces.CommandSupportedInterface;
 import brotherhood.onboardcomputer.utils.ByteHelper;
 
 public class PidsSupported21_40  extends EngineCommand implements CommandSupportedInterface {

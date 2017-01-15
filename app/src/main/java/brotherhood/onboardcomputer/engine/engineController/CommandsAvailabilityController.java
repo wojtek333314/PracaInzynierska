@@ -1,20 +1,20 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
+package brotherhood.onboardcomputer.engine.engineController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.CoolantTemperature;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.EngineLoad;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.EngineRPM;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.PidsSupported01_20;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.PidsSupported21_40;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.PidsSupported41_60;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.RuntimeSinceEngineStart;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.ThrottlePosition;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.VehicleSpeed;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.CoolantTemperature;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.EngineLoad;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.EngineRPM;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.PidsSupported01_20;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.PidsSupported21_40;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.PidsSupported41_60;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.RuntimeSinceEngineStart;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.ThrottlePosition;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.VehicleSpeed;
 
-public class EngineCommandsController {
+public class CommandsAvailabilityController {
     private PidsSupported01_20 pidsSupported01_20;
     private PidsSupported21_40 pidsSupported21_40;
     private PidsSupported41_60 pidsSupported41_60;
@@ -24,7 +24,7 @@ public class EngineCommandsController {
             new ThrottlePosition(), new VehicleSpeed()
     };
 
-    public EngineCommandsController() {
+    public CommandsAvailabilityController() {
         pidsSupported01_20 = new PidsSupported01_20();
         pidsSupported21_40 = new PidsSupported21_40();
         pidsSupported41_60 = new PidsSupported41_60();

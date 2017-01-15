@@ -1,17 +1,17 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands;
+package brotherhood.onboardcomputer.engine.ecuCommands.mode1;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class ThrottlePosition extends EngineCommand {
-    public ThrottlePosition() {
-        super(1, 17, VisibilityMode.CHART_VIEW);
-        setDescription("Throttle position");
-        setUnit("%");
+public class FuelPressure extends EngineCommand {
+    public FuelPressure() {
+        super(1, 10, VisibilityMode.NORMAL_VIEW);
+        setDescription("Engine Gauge Pressure");
+        setUnit("kPa");
     }
 
     @Override
     protected void performCalculations() {
-        addValue(Float.toString((buffer.get(2) * 100) / 255));
+        addValue(Float.toString((buffer.get(2) * 3)));
     }
 
     @Override

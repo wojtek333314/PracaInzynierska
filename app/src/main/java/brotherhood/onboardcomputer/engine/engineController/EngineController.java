@@ -19,7 +19,6 @@ import java.util.Random;
 import java.util.UUID;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.EngineCommandsController;
 
 public class EngineController {
     public static boolean DEMO = false;
@@ -32,14 +31,14 @@ public class EngineController {
     private CommandListener commandListener;
 
     private boolean pidsSupportedChecked;
-    private EngineCommandsController engineCommandsController;
+    private CommandsAvailabilityController commandsAvailabilityController;
     private HashMap<CommandListener, EngineCommand> additionalQueue;
     private boolean controllerThreadRunning = true;
     private boolean collectingData;
 
     public EngineController(String deviceAddress, CommandListener commandListener) throws IOException, InterruptedException {
         this.commandListener = commandListener;
-        this.engineCommandsController = new EngineCommandsController();
+        this.commandsAvailabilityController = new CommandsAvailabilityController();
         this.additionalQueue = new HashMap<>();
         if (DEMO) {
             initTimer();
@@ -75,7 +74,7 @@ public class EngineController {
                 socket.connect();
 
             }
-            initializeOBDconnection(socket);
+            initializeOBDconnection();
         }
         this.socket = socket;
         initTimer();
@@ -104,26 +103,26 @@ public class EngineController {
         timer.start();
     }
 
-    private void initializeOBDconnection(BluetoothSocket socket) throws IOException, InterruptedException {
+    private void initializeOBDconnection() throws IOException, InterruptedException {
         new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
         new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-        new TimeoutCommand(MIN_UPDATE_INTERVAL).run(socket.getInputStream(), socket.getOutputStream());
+        new TimeoutCommand(MIN_UPDATE_INTERVAL / 2).run(socket.getInputStream(), socket.getOutputStream());
         new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
     }
 
     private void checkSupportedCommands(final BluetoothSocket socket) {
         if (!DEMO) {
             try {
-                engineCommandsController.getPidsSupported01_20().run(socket.getInputStream(), socket.getOutputStream());
-                engineCommandsController.getPidsSupported21_40().run(socket.getInputStream(), socket.getOutputStream());
-                engineCommandsController.getPidsSupported41_60().run(socket.getInputStream(), socket.getOutputStream());
+                commandsAvailabilityController.getPidsSupported01_20().run(socket.getInputStream(), socket.getOutputStream());
+                commandsAvailabilityController.getPidsSupported21_40().run(socket.getInputStream(), socket.getOutputStream());
+                commandsAvailabilityController.getPidsSupported41_60().run(socket.getInputStream(), socket.getOutputStream());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            engineCommandsController.prepareDemoAvailability();
+            commandsAvailabilityController.prepareDemoAvailability();
         }
-        engineCommandsController.updatePidsAvailability();
+        commandsAvailabilityController.updatePidsAvailability();
         pidsSupportedChecked = true;
         System.out.println("check supported voiceAssistanceCommand finished");
     }
@@ -131,19 +130,18 @@ public class EngineController {
 
     private void updatePids(BluetoothSocket socket) {
         long time = System.currentTimeMillis();
-        System.out.println("try update");
         if (collectingData) {
             return;
         }
         collectingData = true;
         try {
             if (DEMO) {
-                for (EngineCommand engineCommand : engineCommandsController.getEngineCommands()) {
+                for (EngineCommand engineCommand : commandsAvailabilityController.getEngineCommands()) {
                     int demoValue = random.nextInt(300);
                     engineCommand.addValue(String.valueOf(demoValue));
                 }
             } else {
-                for (EngineCommand engineCommand : engineCommandsController.getOnlyAvailableEngineCommands()) {
+                for (EngineCommand engineCommand : commandsAvailabilityController.getOnlyAvailableEngineCommands()) {
                     try {
                         engineCommand.run(socket.getInputStream(), socket.getOutputStream());
                     } catch (NoDataException e) {
@@ -181,8 +179,8 @@ public class EngineController {
         additionalQueue.put(commandListener, engineCommand);
     }
 
-    public EngineCommandsController getEngineCommandsController() {
-        return engineCommandsController;
+    public CommandsAvailabilityController getCommandsAvailabilityController() {
+        return commandsAvailabilityController;
     }
 
     public void destroy() {

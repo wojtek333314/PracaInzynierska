@@ -10,8 +10,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 
 import brotherhood.onboardcomputer.R;
@@ -33,11 +31,11 @@ public class Helper {
     }
 
     public static boolean checkIsBluetoothEnabled() {
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
             return false;
         } else {
-            if (!mBluetoothAdapter.isEnabled()) {
+            if (!bluetoothAdapter.isEnabled()) {
                 return false;
             }
         }
@@ -55,7 +53,7 @@ public class Helper {
         return px;
     }
 
-    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+    public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -63,22 +61,6 @@ public class Helper {
             }
         }
         return false;
-    }
-
-    public static String loadJSONFromAsset(Context context, String filename) {
-        String json = null;
-        try {
-            InputStream is = context.getAssets().open(filename);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 
     public static int dpToPx(Context context, int dp) {

@@ -10,7 +10,6 @@ public class ClearErrorCodesCommand extends EngineCommand {
 
     @Override
     protected void performCalculations() {
-
     }
 
     @Override

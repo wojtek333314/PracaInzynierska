@@ -1,4 +1,4 @@
-package brotherhood.onboardcomputer.engine.ecuCommands.mode1.interfaces;
+package brotherhood.onboardcomputer.engine.engineController.interfaces;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 

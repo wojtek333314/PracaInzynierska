@@ -73,7 +73,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
             return;
         }
         pids = new ArrayList<>();
-        for (EngineCommand availableCommand : engineController.getEngineCommandsController().getOnlyAvailableEngineCommands()) {
+        for (EngineCommand availableCommand : engineController.getCommandsAvailabilityController().getOnlyAvailableEngineCommands()) {
             pids.add(new SelectablePidCard(getActivity(), new SelectablePidCardModel(availableCommand, false)));
         }
         recreateRecyclerView();

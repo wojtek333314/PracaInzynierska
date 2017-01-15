@@ -97,15 +97,20 @@ public class CarDiagnosticActivity extends BaseActivity {
     }
 
     private void initEngineController() {
-        try {
-            String engineBluetoothAddress = null;
-            if (getIntent().hasExtra(DEVICE_ADDRESS_KEY)) {
-                engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String engineBluetoothAddress = null;
+                    if (getIntent().hasExtra(DEVICE_ADDRESS_KEY)) {
+                        engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
+                    }
+                    engineController = new EngineController(engineBluetoothAddress, commandListener);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            engineController = new EngineController(engineBluetoothAddress, commandListener);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     public EngineController getEngineController() {

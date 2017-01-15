@@ -67,7 +67,7 @@ public class PidsListFragment extends Fragment implements EngineController.Comma
     @UiThread
     void initPidsList() {
         for (EngineCommand engineCommand : ((CarDiagnosticActivity) getActivity()).getEngineController()
-                .getEngineCommandsController().getOnlyAvailableEngineCommands()) {
+                .getCommandsAvailabilityController().getOnlyAvailableEngineCommands()) {
             PidChartCard pidChartCard = new PidChartCard(getActivity(), new ChartCardModel(engineCommand));
             cardsList.add(pidChartCard);
         }

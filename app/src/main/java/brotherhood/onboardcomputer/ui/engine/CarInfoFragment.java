@@ -18,7 +18,7 @@ import java.util.Random;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode1.commands.ControleModuleVoltage;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode1.ControleModuleVoltage;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode9.Vin;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
@@ -127,7 +127,7 @@ public class CarInfoFragment extends BaseFragment {
                 }
             });
 
-            if (engineController.getEngineCommandsController().checkIsCommandAvailable(controleModuleVoltage)) {
+            if (engineController.getCommandsAvailabilityController().checkIsCommandAvailable(controleModuleVoltage)) {
                 engineController.addCommandToQueue(controleModuleVoltage, new EngineController.CommandListener() {
                     @Override
                     public void onDataRefresh() {

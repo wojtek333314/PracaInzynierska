@@ -75,7 +75,6 @@ public class DevicesListActivity extends BaseActivity {
     private void initBluetooth() {
         bluetooth = BluetoothController.getInstance().build(this);
         bluetooth.setBluetoothListener(new BluetoothListener() {
-
             @Override
             public void onReadData(BluetoothDevice device, byte[] data) {
                 System.out.println("read:" + String.valueOf(data));
@@ -91,7 +90,7 @@ public class DevicesListActivity extends BaseActivity {
                 System.out.println("onActionDiscoveryStateChanged" + discoveryState);
                 if (discoveryState.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
                     connectButton.setText(getString(R.string.search));
-                }else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(discoveryState)){
+                } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(discoveryState)) {
                     connectButton.setText(getString(R.string.all_connect));
                     list.clear();
                 }
@@ -111,9 +110,11 @@ public class DevicesListActivity extends BaseActivity {
             public void onActionDeviceFound(BluetoothDevice device, short rssi) {
                 String text = device.getName() + "\n" + device.getAddress();
                 boolean isOnList = false;
-                for (BluetoothDevice item : list)
-                    if (item.getName().equals(device.getName()) && item.getAddress().equals(device.getAddress()))
+                for (BluetoothDevice item : list) {
+                    if (item.getName().equals(device.getName()) && item.getAddress().equals(device.getAddress())) {
                         isOnList = true;
+                    }
+                }
 
                 if (!isOnList) {
                     RadioButton radioButton = new RadioButton(getApplicationContext());

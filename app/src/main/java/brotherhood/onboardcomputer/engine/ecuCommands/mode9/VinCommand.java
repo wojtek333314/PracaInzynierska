@@ -5,10 +5,10 @@ import java.util.regex.Pattern;
 
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 
-public class Vin extends EngineCommand {
+public class VinCommand extends EngineCommand {
     String vin = "";
 
-    public Vin() {
+    public VinCommand() {
         super(9, 2, VisibilityMode.NORMAL_VIEW);
         setUnit("");
         setDescription("VIN");

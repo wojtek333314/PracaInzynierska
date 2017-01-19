@@ -17,14 +17,14 @@ import brotherhood.onboardcomputer.assistance.services.GPSTracker;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class PositionInformVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class PositionInformVoiceCommand extends VoiceAssistanceCommand {
     private static final String[] SEND = new String[]{"wyslij", "wyślij"};
     private static final String[] POSITION = new String[]{"moja pozycje do", "moja pozycja", "moją pozycję do",
             "moją lokalizację do", "pozycję do", "lokalizację do"};
     private String number;
     private GPSTracker gpsTracker;
 
-    public PositionInformVoiceAssistanceCommand(TextToSpeech speaker) {
+    public PositionInformVoiceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 
@@ -40,7 +40,7 @@ public class PositionInformVoiceAssistanceCommand extends VoiceAssistanceCommand
 
     @Override
     protected void initWords() {
-        runWords = getPermutedArray(SEND, POSITION);
+        runWords = permuteArrays(SEND, POSITION);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class PositionInformVoiceAssistanceCommand extends VoiceAssistanceCommand
                     textToSend += city != null ? city + "," : "";
                     textToSend += knownName != null ? knownName : "";
 
-                    ContactsUtil.sendSMS(this, number, "CarInterface: znajduję się w " + textToSend);
+                    ContactsUtil.sendSMS(this, number, "Znajduję się w " + textToSend);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

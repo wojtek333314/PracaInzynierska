@@ -81,7 +81,7 @@ public class EngineController {
     }
 
     private void initTimer() {
-        checkSupportedCommands(socket);
+        checkSupportedCommands();
         Thread timer = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -92,7 +92,7 @@ public class EngineController {
                         }
                         Thread.sleep(UPDATE_INTERVAL);
                         if (canCollectData()) {
-                            updatePids(socket);
+                            updatePids();
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -110,7 +110,7 @@ public class EngineController {
         new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
     }
 
-    private void checkSupportedCommands(final BluetoothSocket socket) {
+    private void checkSupportedCommands() {
         if (!DEMO) {
             try {
                 commandsAvailabilityController.getPidsSupported01_20().run(socket.getInputStream(), socket.getOutputStream());
@@ -128,7 +128,7 @@ public class EngineController {
     }
 
 
-    private void updatePids(BluetoothSocket socket) {
+    private void updatePids() {
         long time = System.currentTimeMillis();
         if (collectingData) {
             return;

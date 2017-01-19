@@ -25,6 +25,7 @@ import java.util.Locale;
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
+import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.utils.cardsBuilder.models.RecordPidModel;
 import brotherhood.onboardcomputer.utils.cardsBuilder.models.RecordPidValue;
 import brotherhood.onboardcomputer.utils.cardsBuilder.models.SelectablePidCardModel;
@@ -58,7 +59,8 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
     private EngineController engineController;
     private boolean recording = false;
     private HashMap<SelectablePidCard, RecordPidModel> recordingPidsModels;
-    private String fileLocalization = "testFile.xls";
+    private String fileLocalization;
+    private String fullFilePath;
 
     @AfterViews
     void initViews() {
@@ -82,7 +84,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
     private void recreateRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new CardsRecyclerViewAdapter(getActivity(), pids);
+        adapter = new CardsRecyclerViewAdapter(((BaseActivity) getActivity()), pids);
         recyclerView.setAdapter(adapter);
         refreshList();
     }
@@ -125,7 +127,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
     }
 
     private void showInfo() {
-        info.setText(String.format("%s %s", getString(R.string.data_is_recording), fileLocalization));
+        info.setText(String.format("%s %s", getString(R.string.data_is_recording), fullFilePath));
         info.setVisibility(View.VISIBLE);
     }
 
@@ -155,8 +157,6 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
 
             }
         });
-
-
     }
 
     private void saveFile() {
@@ -165,7 +165,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
         //Saving file in external storage
         File sdCard = Environment.getExternalStorageDirectory();
         File directory = new File(sdCard.getAbsolutePath() + "/CarInterface/ChartsRecorder");
-
+        fullFilePath = sdCard.getAbsolutePath() + "/CarInterface/ChartsRecorder";
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -181,7 +181,7 @@ public class ChartsRecorderFragment extends BaseFragment implements EngineContro
         try {
             workbook = Workbook.createWorkbook(file, wbSettings);
             //Excel sheet name. 0 represents first sheet
-            WritableSheet sheet = workbook.createSheet("MyShoppingList", 0);
+            WritableSheet sheet = workbook.createSheet("workbook", 0);
 
             try {
                 sheet.addCell(new Label(0, 0, "Time"));

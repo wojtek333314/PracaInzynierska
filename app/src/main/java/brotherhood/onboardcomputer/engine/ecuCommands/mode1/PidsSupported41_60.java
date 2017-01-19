@@ -44,6 +44,6 @@ public class PidsSupported41_60 extends EngineCommand implements CommandSupporte
         if(pidsAvailability == null || (pidsAvailability.length <= engineCommand.getPid()-64)){
             return false;
         }
-        return engineCommand.getPid() >= 64 && pidsAvailability[engineCommand.getPid() - 64];
+        return engineCommand.getPid() >= 64 && pidsAvailability[engineCommand.getPid() - 65];
     }
 }

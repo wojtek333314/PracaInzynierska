@@ -22,8 +22,9 @@ public interface CardModel<D> {
     enum Type {
         CHART_CARD(0),
         PHONE_CONTACT(1),
-        TROUBLE_CODE_CARD(2), NORMAL_VIEW_CARD(3), SELECTABLE_CARD(4);
-
+        TROUBLE_CODE_CARD(2),
+        NORMAL_VIEW_CARD(3),
+        SELECTABLE_CARD(4);
 
         private final int value;
 
@@ -51,14 +52,15 @@ public interface CardModel<D> {
             for (Type type : Type.values())
                 if (id == type.getEnumID())
                     return type;
-
             return null;
         }
 
         public static int getID(Type type) {
-            for (int i = 0; i < Type.values().length; i++)
-                if (Type.values()[i] == type)
+            for (int i = 0; i < Type.values().length; i++) {
+                if (Type.values()[i] == type) {
                     return i;
+                }
+            }
             return -1;
         }
 

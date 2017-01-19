@@ -5,11 +5,11 @@ import android.speech.tts.TextToSpeech;
 import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 
-public class ReplySmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class ReplySmsVoiceCommand extends VoiceAssistanceCommand {
     public static String lastSenderNumber;
     private final static String[] SMS_SENTENCE = new String[]{"odpisz"};
 
-    public ReplySmsVoiceAssistanceCommand(TextToSpeech speaker) {
+    public ReplySmsVoiceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 
@@ -27,7 +27,7 @@ public class ReplySmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
     protected void onCommandRecognized(String sentence) {
         if (lastSenderNumber != null) {
             String message = getSentenceAfterRunWords();
-            ContactsUtil.sendSMS(ReplySmsVoiceAssistanceCommand.this, lastSenderNumber, message);
+            ContactsUtil.sendSMS(ReplySmsVoiceCommand.this, lastSenderNumber, message);
             lastSenderNumber = null;
         } else {
             speak("Nie rozumiem");

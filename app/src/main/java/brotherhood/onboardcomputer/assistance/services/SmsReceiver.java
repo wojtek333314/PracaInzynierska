@@ -9,8 +9,8 @@ import android.telephony.SmsMessage;
 import java.util.HashMap;
 
 import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.ReplySmsVoiceAssistanceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ReplySmsVoiceCommand;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 
 public class SmsReceiver extends BroadcastReceiver {
@@ -23,12 +23,10 @@ public class SmsReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(SMS_RECEIVED)) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                // get sms objects
                 Object[] pdus = (Object[]) bundle.get("pdus");
                 if (pdus.length == 0) {
                     return;
                 }
-                // large message might be broken into many
                 SmsMessage[] messages = new SmsMessage[pdus.length];
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < pdus.length; i++) {
@@ -52,8 +50,8 @@ public class SmsReceiver extends BroadcastReceiver {
                 HashMap senderName = ContactsUtil.getContactNameByNumber(voiceAssistanceCommand.getContext(), sender);
                 voiceAssistanceCommand.speak("Otrzymałeś wiadomość od:"
                         + (senderName.keySet().size() > 0 ? senderName.get(senderName.keySet().iterator().next()) : sender) + ".Odczytać?");
-                ReplySmsVoiceAssistanceCommand.lastSenderNumber = sender;
-                voiceAssistanceCommand.registerConfirmCommand(new ConfirmVoiceAssistanceCommand(null, new ConfirmVoiceAssistanceCommand.ConfirmListener() {
+                ReplySmsVoiceCommand.lastSenderNumber = sender;
+                voiceAssistanceCommand.registerConfirmCommand(new ConfirmVoiceCommand(null, new ConfirmVoiceCommand.ConfirmListener() {
                     @Override
                     public void onConfirm() {
                         voiceAssistanceCommand.speak(message);
@@ -63,8 +61,6 @@ public class SmsReceiver extends BroadcastReceiver {
                     public void onDisagree() {
                     }
                 }));
-                // prevent any other broadcast receivers from receiving broadcast
-                // abortBroadcast();
             }
         }
     }

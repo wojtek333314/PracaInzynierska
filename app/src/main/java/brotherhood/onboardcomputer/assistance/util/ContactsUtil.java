@@ -99,6 +99,7 @@ public class ContactsUtil {
                 }
 
                 Helper.showToast(context, result);
+                context.unregisterReceiver(this);
             }
 
         }, new IntentFilter(SENT));
@@ -107,6 +108,7 @@ public class ContactsUtil {
             @Override
             public void onReceive(Context context, Intent intent) {
                 voiceAssistanceCommand.speak("Wiadomość dostarczono");
+                context.unregisterReceiver(this);
             }
         }, new IntentFilter(DELIVERED));
 

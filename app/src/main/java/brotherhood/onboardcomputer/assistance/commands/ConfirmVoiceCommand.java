@@ -4,12 +4,12 @@ import android.speech.tts.TextToSpeech;
 
 import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 
-public class ConfirmVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class ConfirmVoiceCommand extends VoiceAssistanceCommand {
     private final static String CONFIRM_SENTENCES[] = new String[]{"tak", "nie"};
 
     private ConfirmListener confirmListener;
 
-    public ConfirmVoiceAssistanceCommand(TextToSpeech speaker, ConfirmListener confirmListener) {
+    public ConfirmVoiceCommand(TextToSpeech speaker, ConfirmListener confirmListener) {
         super(speaker);
         this.confirmListener = confirmListener;
     }

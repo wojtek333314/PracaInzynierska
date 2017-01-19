@@ -19,7 +19,7 @@ import java.util.Random;
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.engine.ecuCommands.EngineCommand;
 import brotherhood.onboardcomputer.engine.ecuCommands.mode1.ControleModuleVoltage;
-import brotherhood.onboardcomputer.engine.ecuCommands.mode9.Vin;
+import brotherhood.onboardcomputer.engine.ecuCommands.mode9.VinCommand;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.utils.cardsBuilder.models.ChartCardModel;
 import brotherhood.onboardcomputer.ui.BaseFragment;
@@ -41,7 +41,7 @@ public class CarInfoFragment extends BaseFragment {
     private CardsRecyclerViewAdapter adapter;
     private ControleModuleVoltage controleModuleVoltage;
     private PidViewCard voltageCard;
-    private Vin vinCommand;
+    private VinCommand vinCommandCommand;
     private Random random = new Random();
 
     private boolean dataIsCollected;
@@ -65,13 +65,13 @@ public class CarInfoFragment extends BaseFragment {
 
     private void initCards() {
         controleModuleVoltage = new ControleModuleVoltage();
-        vinCommand = new Vin();
+        vinCommandCommand = new VinCommand();
         voltageCard = new PidViewCard(getContext(), new ChartCardModel(controleModuleVoltage));
         cards.add(voltageCard);
-        cards.add(new PidViewCard(getContext(), new ChartCardModel(vinCommand)));
+        cards.add(new PidViewCard(getContext(), new ChartCardModel(vinCommandCommand)));
         if (EngineController.DEMO) {
             controleModuleVoltage.addValue(String.valueOf(random.nextFloat() + 5));
-            vinCommand.addValue("D0E0M0O1V1I1N123456");
+            vinCommandCommand.addValue("D0E0M0O1V1I1N123456");
             hideInfo();
         } else {
             recyclerView.setVisibility(View.GONE);
@@ -116,7 +116,7 @@ public class CarInfoFragment extends BaseFragment {
     public void onDataRefresh() {
         if (!EngineController.DEMO && !dataIsCollected && isFragmentActive()) {
 
-            engineController.addCommandToQueue(vinCommand, new EngineController.CommandListener() {
+            engineController.addCommandToQueue(vinCommandCommand, new EngineController.CommandListener() {
                 @Override
                 public void onDataRefresh() {
                     onDataCollected();

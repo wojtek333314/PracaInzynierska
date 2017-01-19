@@ -7,11 +7,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import brotherhood.onboardcomputer.assistance.commands.CallVoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.NavigationVoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.PositionInformVoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.ReplySmsVoiceAssistanceCommand;
-import brotherhood.onboardcomputer.assistance.commands.SmsVoiceAssistanceCommand;
+import brotherhood.onboardcomputer.assistance.commands.CallVoiceCommand;
+import brotherhood.onboardcomputer.assistance.commands.NavigationVoiceCommand;
+import brotherhood.onboardcomputer.assistance.commands.PositionInformVoiceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ReplySmsVoiceCommand;
+import brotherhood.onboardcomputer.assistance.commands.SmsVoiceCommand;
 
 public class RecognitionSystem {
     public static final String LOCALE_LANGUAGE = "pl";
@@ -22,20 +22,16 @@ public class RecognitionSystem {
 
     public RecognitionSystem(Context context) {
         this.context = context;
-        init();
-    }
-
-    private void init() {
         createSpeaker();
         initCommands();
     }
 
     private void initCommands() {
-        voiceAssistanceCommands.add(new PositionInformVoiceAssistanceCommand(speaker).setContext(getContext()));
-        voiceAssistanceCommands.add(new NavigationVoiceAssistanceCommand(speaker).setContext(getContext()));
-        voiceAssistanceCommands.add(new SmsVoiceAssistanceCommand(speaker).setContext(getContext()));
-        voiceAssistanceCommands.add(new CallVoiceAssistanceCommand(speaker).setContext(getContext()));
-        voiceAssistanceCommands.add(new ReplySmsVoiceAssistanceCommand(speaker).setContext(getContext()));
+        voiceAssistanceCommands.add(new PositionInformVoiceCommand(speaker).setContext(getContext()));
+        voiceAssistanceCommands.add(new NavigationVoiceCommand(speaker).setContext(getContext()));
+        voiceAssistanceCommands.add(new SmsVoiceCommand(speaker).setContext(getContext()));
+        voiceAssistanceCommands.add(new CallVoiceCommand(speaker).setContext(getContext()));
+        voiceAssistanceCommands.add(new ReplySmsVoiceCommand(speaker).setContext(getContext()));
     }
 
     public Context getContext() {
@@ -44,7 +40,6 @@ public class RecognitionSystem {
 
     public void onRecognize(ArrayList<String> data) {
         if (data.size() > 0) {
-            System.out.println(data.get(0));
             for (VoiceAssistanceCommand voiceAssistanceCommand : voiceAssistanceCommands) {
                 voiceAssistanceCommand.process(data.get(0));
             }

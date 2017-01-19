@@ -11,11 +11,11 @@ import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class CallVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class CallVoiceCommand extends VoiceAssistanceCommand {
     private final static String[] CALL_SENTENCES = new String[]{"zadzwoń do", "zatelefonuj do", "dzwoń do", "nawiąż połączenie z"};
     private boolean waitForConfirmSpecificContact;
 
-    public CallVoiceAssistanceCommand(TextToSpeech speaker) {
+    public CallVoiceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 

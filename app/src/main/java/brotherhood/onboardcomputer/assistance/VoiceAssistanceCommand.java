@@ -3,22 +3,22 @@ package brotherhood.onboardcomputer.assistance;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
-import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceAssistanceCommand;
+import brotherhood.onboardcomputer.assistance.commands.ConfirmVoiceCommand;
 
 public abstract class VoiceAssistanceCommand {
     protected String[] runWords;
     protected String[] stopWords;
     protected TextToSpeech speaker;
-    private String wordAfterRunWords = "";
+    private String sentenceAfterRunWords = "";
     private Context context;
-    private ConfirmVoiceAssistanceCommand confirmCommand;
+    private ConfirmVoiceCommand confirmCommand;
 
     public VoiceAssistanceCommand(TextToSpeech speaker) {
         this.speaker = speaker;
         initWords();
     }
 
-    public void registerConfirmCommand(ConfirmVoiceAssistanceCommand confirmCommand) {
+    public void registerConfirmCommand(ConfirmVoiceCommand confirmCommand) {
         this.confirmCommand = confirmCommand;
     }
 
@@ -45,14 +45,9 @@ public abstract class VoiceAssistanceCommand {
                 wholeSentence = wholeSentence.substring(0, wholeSentence.length() - 1);
                 wholeSentence = wholeSentence.toLowerCase();
                 sentence = sentence.toLowerCase();
-                System.out.println("EngineCommand:    `"
-                        + sentence
-                        + "` contains `"
-                        + wholeSentence + "` ? "
-                        + (sentence.contains(wholeSentence) || sentence.equals(wholeSentence)));
 
                 if (sentence.contains(wholeSentence) || sentence.equals(wholeSentence)) {
-                    wordAfterRunWords = sentence.substring(sentence.indexOf(wholeSentence) + wholeSentence.length());
+                    sentenceAfterRunWords = sentence.substring(sentence.indexOf(wholeSentence) + wholeSentence.length());
                     return true;
                 }
             }
@@ -69,7 +64,7 @@ public abstract class VoiceAssistanceCommand {
     }
 
     protected String getSentenceAfterRunWords() {
-        return wordAfterRunWords;
+        return sentenceAfterRunWords;
     }
 
     protected boolean recognizeStopCommand(String sentence) {
@@ -79,7 +74,7 @@ public abstract class VoiceAssistanceCommand {
                 wholeSentence = wholeSentence.toLowerCase();
                 sentence = sentence.toLowerCase();
                 if (sentence.contains(wholeSentence) || sentence.equals(wholeSentence)) {
-                    wordAfterRunWords = sentence.substring(sentence.indexOf(wholeSentence) + wholeSentence.length());
+                    sentenceAfterRunWords = sentence.substring(sentence.indexOf(wholeSentence) + wholeSentence.length());
                     return true;
                 }
             }
@@ -92,7 +87,7 @@ public abstract class VoiceAssistanceCommand {
 
     public void speak(String textToSpeak) {
         if (textToSpeak != null) {
-            speaker.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            speaker.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
         }
     }
 
@@ -114,7 +109,7 @@ public abstract class VoiceAssistanceCommand {
         return result;
     }
 
-    protected String[] getPermutedArray(String[] array, String toPermute) {
+    protected String[] permuteArrayWithString(String[] array, String toPermute) {
         String[] result = new String[array.length];
         int i = 0;
         for (String string : array) {
@@ -124,7 +119,7 @@ public abstract class VoiceAssistanceCommand {
         return result;
     }
 
-    protected String[] getPermutedArray(String[] array1, String[] array2) {
+    protected String[] permuteArrays(String[] array1, String[] array2) {
         String[] result = new String[array1.length * array2.length];
         int i = 0;
         for (String string1 : array1) {

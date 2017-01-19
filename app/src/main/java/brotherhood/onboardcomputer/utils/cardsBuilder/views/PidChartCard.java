@@ -32,7 +32,40 @@ public class PidChartCard extends LinearLayout implements CardModel<ChartCardMod
     public PidChartCard(Context context) {
         super(context);
         this.context = context;
+    }
 
+    public PidChartCard(Context context, ChartCardModel chartCardModel) {
+        this(context);
+        this.chartCardModel = chartCardModel;
+        refreshData(chartCardModel);
+    }
+
+    @Override
+    public void refreshData(ChartCardModel data) {
+        if (data == null) {
+            return;
+        }
+        if (view == null) {
+            inflateView();
+        }
+        if (data.getEngineCommand().getDescription() != null) {
+            name.setText(data.getEngineCommand().getDescription());
+        }
+
+        lineChartView.setVisibility(data.isShowChart() ? VISIBLE : GONE);
+        if (data.isShowChart()) {
+            refreshLineChart(data);
+        }
+
+        status.setImageDrawable(data.getEngineCommand().isSupported() ?
+                getResources().getDrawable(android.R.drawable.presence_online) :
+                getResources().getDrawable(android.R.drawable.presence_offline));
+        temporaryValue.setText(String.format("%s %s %s", context.getString(R.string.all_current_value),
+                data.getEngineCommand().getLastValue(), data.getEngineCommand().getUnit()));
+        rippleLayout.setOnClickListener(onClickListener);
+    }
+
+    private void inflateView() {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (layoutInflater != null) {
             view = layoutInflater.inflate(R.layout.chart_card, this, true);
@@ -55,35 +88,7 @@ public class PidChartCard extends LinearLayout implements CardModel<ChartCardMod
         configLineChart();
     }
 
-    public PidChartCard(Context context, ChartCardModel chartCardModel) {
-        this(context);
-        this.chartCardModel = chartCardModel;
-        refreshData(chartCardModel);
-    }
-
-    @Override
-    public void refreshData(ChartCardModel data) {
-        if (data == null) {
-            return;
-        }
-        if (data.getEngineCommand().getDescription() != null) {
-            name.setText(data.getEngineCommand().getDescription());
-        }
-
-        lineChartView.setVisibility(data.isShowChart() ? VISIBLE : GONE);
-        if (data.isShowChart()) {
-            refreshLineChart(data);
-        }
-
-        status.setImageDrawable(data.getEngineCommand().isSupported() ?
-                getResources().getDrawable(android.R.drawable.presence_online) :
-                getResources().getDrawable(android.R.drawable.presence_offline));
-        temporaryValue.setText(String.format("%s %s %s", context.getString(R.string.all_current_value),
-                data.getEngineCommand().getLastValue(), data.getEngineCommand().getUnit()));
-        rippleLayout.setOnClickListener(onClickListener);
-    }
-
-    private void refreshLineChart(ChartCardModel data){
+    private void refreshLineChart(ChartCardModel data) {
         LineDataSet dataSet = new LineDataSet(Arrays.asList(data.getEngineCommand().getChartEntries()), "");
         while (dataSet.getEntryCount() > MAX_ENTRIES_ON_CHART) {
             dataSet.removeFirst();

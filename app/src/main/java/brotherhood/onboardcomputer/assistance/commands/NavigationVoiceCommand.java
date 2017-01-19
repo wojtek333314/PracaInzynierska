@@ -7,12 +7,12 @@ import android.speech.tts.TextToSpeech;
 import brotherhood.onboardcomputer.assistance.VoiceAssistanceCommand;
 import brotherhood.onboardcomputer.assistance.util.Words;
 
-public class NavigationVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class NavigationVoiceCommand extends VoiceAssistanceCommand {
     private static final String[] START_NAVIGATION
             = new String[]{"nawiguj do", "nawigacja do", "nawigacja", "nawiguj do", "prowadź do"};
 
 
-    public NavigationVoiceAssistanceCommand(TextToSpeech speaker) {
+    public NavigationVoiceCommand(TextToSpeech speaker) {
         super(speaker);
     }
 
@@ -23,7 +23,7 @@ public class NavigationVoiceAssistanceCommand extends VoiceAssistanceCommand {
 
     @Override
     protected void initWords() {
-        runWords = connectArrays(getPermutedArray(Words.START_COMMANDS, "nawigację"), START_NAVIGATION);
+        runWords = connectArrays(permuteArrayWithString(Words.START_COMMANDS, "nawigację"), START_NAVIGATION);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package brotherhood.onboardcomputer.ui.menu;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -34,11 +32,11 @@ import org.androidannotations.annotations.ViewById;
 
 import brotherhood.onboardcomputer.R;
 import brotherhood.onboardcomputer.assistance.RecognitionSystem;
+import brotherhood.onboardcomputer.cameraRecording.VideoRecoderService;
 import brotherhood.onboardcomputer.engine.engineController.EngineController;
 import brotherhood.onboardcomputer.ui.BaseActivity;
 import brotherhood.onboardcomputer.ui.devicesList.DevicesListActivity_;
 import brotherhood.onboardcomputer.ui.engine.CarDiagnosticActivity_;
-import brotherhood.onboardcomputer.cameraRecording.VideoRecoderService;
 import brotherhood.onboardcomputer.ui.views.dotsBackground.BackgroundView;
 import brotherhood.onboardcomputer.utils.Helper;
 
@@ -100,7 +98,7 @@ public class MenuActivity extends BaseActivity {
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, RecognitionSystem.LOCALE_LANGUAGE);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, "brotherhood.onboardcomputer.assistance.services");
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
     }
 
 
@@ -124,7 +122,6 @@ public class MenuActivity extends BaseActivity {
                             showDialog(getString(R.string.cannot_recognize), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
                                 }
                             });
                             return;
@@ -313,10 +310,10 @@ public class MenuActivity extends BaseActivity {
 
             @Override
             public void onError(int error) {
-                System.out.println(error);
                 switch (error) {
                     case SpeechRecognizer.ERROR_NO_MATCH:
                         Toast.makeText(getApplicationContext(), getString(R.string.all_recognition_no_match), Toast.LENGTH_SHORT).show();
+                        recognitionSystem.getSpeaker().speak("Brak takiego polecenia", TextToSpeech.QUEUE_FLUSH, null);
                         break;
                     default:
                         recognitionSystem.getSpeaker().speak("Błąd połączenia", TextToSpeech.QUEUE_FLUSH, null);
@@ -342,15 +339,5 @@ public class MenuActivity extends BaseActivity {
 
             }
         };
-    }
-
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

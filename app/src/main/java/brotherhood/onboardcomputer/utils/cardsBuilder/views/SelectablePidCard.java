@@ -24,9 +24,11 @@ public class SelectablePidCard extends LinearLayout implements CardModel<Selecta
             @Override
             public void onClick(View v) {
                 data.setChecked(!data.isChecked());
-                System.out.println("checked!"+data.getPidName()+":"+data.isChecked());
             }
         };
+    }
+
+    private void inflateView() {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (layoutInflater != null) {
             view = layoutInflater.inflate(R.layout.selectable_pid_card, this, true);
@@ -37,6 +39,9 @@ public class SelectablePidCard extends LinearLayout implements CardModel<Selecta
     @Override
     public void refreshData(SelectablePidCardModel data) {
         this.data = data;
+        if(view == null) {
+            inflateView();
+        }
         if(data!=null){
             checkBox.setText(data.getPidName());
             checkBox.setChecked(data.isChecked());

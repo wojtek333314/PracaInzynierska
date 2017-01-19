@@ -25,7 +25,15 @@ public class PidViewCard extends LinearLayout implements CardModel<ChartCardMode
     public PidViewCard(Context context) {
         super(context);
         this.context = context;
+    }
 
+    public PidViewCard(Context context, ChartCardModel chartCardModel) {
+        this(context);
+        this.chartCardModel = chartCardModel;
+        refreshData(chartCardModel);
+    }
+
+    private void inflateView() {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (layoutInflater != null) {
             view = layoutInflater.inflate(R.layout.normal_card, this, true);
@@ -46,16 +54,13 @@ public class PidViewCard extends LinearLayout implements CardModel<ChartCardMode
         };
     }
 
-    public PidViewCard(Context context, ChartCardModel chartCardModel) {
-        this(context);
-        this.chartCardModel = chartCardModel;
-        refreshData(chartCardModel);
-    }
-
     @Override
     public void refreshData(ChartCardModel data) {
         if (data == null) {
             return;
+        }
+        if (view == null) {
+            inflateView();
         }
         if (data.getEngineCommand().getDescription() != null) {
             name.setText(data.getEngineCommand().getDescription());

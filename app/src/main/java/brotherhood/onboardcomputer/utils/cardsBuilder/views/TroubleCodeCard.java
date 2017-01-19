@@ -21,14 +21,12 @@ public class TroubleCodeCard extends LinearLayout implements CardModel<TroubleCo
     public TroubleCodeCard(Context context) {
         super(context);
         this.context = context;
-        inflateView();
     }
 
     public TroubleCodeCard(Context context, TroubleCodeCardModel model) {
         super(context);
         this.context = context;
         this.model = model;
-        inflateView();
     }
 
     private void inflateView() {

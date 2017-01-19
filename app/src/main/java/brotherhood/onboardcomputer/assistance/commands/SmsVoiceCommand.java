@@ -11,11 +11,11 @@ import brotherhood.onboardcomputer.assistance.util.ContactsUtil;
 import brotherhood.onboardcomputer.assistance.util.Words;
 import brotherhood.onboardcomputer.ui.dialogs.PhoneContactChooseDialog;
 
-public class SmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
+public class SmsVoiceCommand extends VoiceAssistanceCommand {
     private final static String[] SMS_SENTENCE = new String[]{"sms do", "do", "wiadomość do"};
     private final static String contentSentence = "o treści";
 
-    public SmsVoiceAssistanceCommand(TextToSpeech speaker) {
+    public SmsVoiceCommand(TextToSpeech speaker) {
         super(speaker);
         SmsReceiver.voiceAssistanceCommand = this;
     }
@@ -28,7 +28,7 @@ public class SmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
 
     @Override
     protected void initWords() {
-        runWords = getPermutedArray(Words.SEND_COMMANDS, SMS_SENTENCE);
+        runWords = permuteArrays(Words.SEND_COMMANDS, SMS_SENTENCE);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
                     HashMap<String, String> allContacts = ContactsUtil.getAllContacts(getContext());
                     for (String key : allContacts.keySet()) {
                         if (allContacts.get(key).toLowerCase().equals(contactName.toLowerCase())) {
-                            ContactsUtil.sendSMS(SmsVoiceAssistanceCommand.this, key, message);
+                            ContactsUtil.sendSMS(SmsVoiceCommand.this, key, message);
                             return;
                         }
                     }
@@ -61,7 +61,7 @@ public class SmsVoiceAssistanceCommand extends VoiceAssistanceCommand {
             speak("Wysyłam wiadomość");
             Map.Entry<String, String> entry = contacts.entrySet().iterator().next();
             System.out.println(entry.getKey());
-            ContactsUtil.sendSMS(SmsVoiceAssistanceCommand.this, entry.getKey(), message);
+            ContactsUtil.sendSMS(SmsVoiceCommand.this, entry.getKey(), message);
         }
     }
 

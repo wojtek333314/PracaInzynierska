@@ -75,6 +75,10 @@ public class CarDiagnosticActivity extends BaseActivity {
         troubleCodesFragment = TroubleCodesFragment_.builder().build();
         carInfoFragment = CarInfoFragment_.builder().build();
         chartsRecorderFragment = ChartsRecorderFragment_.builder().build();
+    }
+
+    private void updateEngineControllerInFragments(EngineController engineController) {
+        this.engineController = engineController;
         chartsRecorderFragment.setEngineController(engineController);
         carInfoFragment.setEngineController(engineController);
         troubleCodesFragment.setEngineController(engineController);
@@ -106,6 +110,7 @@ public class CarDiagnosticActivity extends BaseActivity {
                         engineBluetoothAddress = getIntent().getExtras().getString(DEVICE_ADDRESS_KEY);
                     }
                     engineController = new EngineController(engineBluetoothAddress, commandListener);
+                    updateEngineControllerInFragments(engineController);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
